@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti — Complaint Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--warning:#f59e0b;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--shadow-md:0 4px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 30px rgba(0,0,0,.08);--transition:.2s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
+.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6}
+.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
+.topbar-nav{display:flex;gap:1.5rem}.topbar-nav a{font-size:.8125rem;font-weight:500;color:var(--text-muted);padding:4px 0;border-bottom:2px solid transparent}.topbar-nav a.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
+.content{padding:2rem;width:100%;max-width:1120px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:.875rem;font-weight:600;color:var(--text-secondary);margin-bottom:1.5rem;transition:color var(--transition)}.back-link:hover{color:var(--primary)}.back-link .material-symbols-outlined{font-size:18px;transition:transform var(--transition)}.back-link:hover .material-symbols-outlined{transform:translateX(-3px)}
+.detail-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-lg)}
+.detail-header{padding:2rem;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.detail-heading{font-size:1.5rem;font-weight:900;font-family:monospace;letter-spacing:-.02em;text-transform:uppercase}
+.detail-date{font-size:.875rem;color:var(--text-secondary);display:flex;align-items:center;gap:6px;margin-top:.25rem}.detail-date .material-symbols-outlined{font-size:18px}
+.detail-status{font-size:.75rem;font-weight:800;padding:6px 16px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.status-pending{background:#fef3c7;color:#92400e}
+.status-resolved{background:#dcfce7;color:#166534}
+.status-progress{background:#dbeafe;color:#1e40af}
+.status-rejected{background:#fef2f2;color:#991b1b}
+.detail-grid{display:grid;grid-template-columns:5fr 7fr}
+.detail-image-col{padding:2rem;background:var(--bg)}
+.detail-image{border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:1;box-shadow:var(--shadow-md)}.detail-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}.detail-image:hover img{transform:scale(1.03)}
+.image-caption{text-align:center;font-size:.75rem;font-style:italic;color:var(--text-muted);font-weight:500;margin-top:.75rem}
+.location-box{background:rgba(255,255,255,.5);backdrop-filter:blur(8px);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.location-box h4{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--text-muted);margin-bottom:.75rem}
+.location-map{height:110px;background:var(--bg-alt);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin-bottom:.75rem}.location-map .material-symbols-outlined{font-size:2rem;color:var(--text-muted)}
+.location-address{font-size:.875rem;font-weight:600;display:flex;align-items:flex-start;gap:8px}.location-address .material-symbols-outlined{color:var(--primary);font-size:20px;margin-top:1px}
+.detail-info-col{padding:2rem}
+.section-label{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--primary);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}.section-label::before{content:'';width:24px;height:1px;background:var(--primary)}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.spec-field label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);display:block;margin-bottom:.25rem}
+.spec-value{font-size:1.05rem;font-weight:600}
+.spec-gps{font-family:monospace;font-size:.8125rem;background:var(--bg);padding:6px 10px;border-radius:var(--radius-sm);display:inline-block}
+.spec-source{display:flex;align-items:center;gap:6px}.spec-source .material-symbols-outlined{color:#3b82f6;font-size:18px}
+.severity-block{margin:1.5rem 0;padding-top:1.5rem;border-top:1px solid var(--border-light)}
+.severity-badge{display:inline-flex;align-items:center;gap:6px;color:#fff;padding:6px 14px;border-radius:var(--radius-md);font-size:.8125rem;font-weight:800;box-shadow:0 4px 12px rgba(220,38,38,.15)}
+.severity-high{background:var(--error)}.severity-mid{background:var(--warning)}.severity-low{background:var(--primary)}
+.description-block{margin-top:1.25rem}
+.description-block label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);display:block;margin-bottom:.5rem}
+.description-card{background:var(--bg);padding:1.25rem;border-radius:var(--radius-md);border-left:4px solid var(--primary)}.description-card p{font-size:.875rem;font-style:italic;line-height:1.7;color:var(--text-secondary);font-weight:500}
+.timeline-section{padding:2rem;border-top:1px solid var(--border-light);background:var(--white)}
+.timeline-label{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.15em;color:var(--primary);margin-bottom:2rem;display:flex;align-items:center;gap:8px}.timeline-label::before{content:'';width:24px;height:1px;background:var(--primary)}
+.timeline{position:relative;padding-left:2rem}.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border-light)}
+.timeline-step{position:relative;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:1rem}
+.timeline-dot{position:absolute;left:-2rem;top:4px;width:16px;height:16px;border-radius:50%;border:3px solid var(--white);z-index:2;box-shadow:0 1px 2px rgba(0,0,0,.04)}.timeline-dot.done{background:var(--primary)}.timeline-dot.waiting{background:var(--border)}
+.timeline-content h5{font-size:.875rem;font-weight:700;margin-bottom:.125rem}.timeline-content p{font-size:.75rem;color:var(--text-muted)}
+.timeline-trust{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:800;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:20px;margin-left:.5rem}
+.timeline-waiting{color:var(--text-muted);display:flex;align-items:center;gap:6px}.timeline-waiting .material-symbols-outlined{font-size:16px}
+@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1.5s linear infinite}
+.detail-actions{padding:2rem;border-top:1px solid var(--border-light);background:var(--bg);display:flex;justify-content:flex-end;gap:.75rem;flex-wrap:wrap}
+.action-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:var(--radius-md);font-family:inherit;font-size:.875rem;font-weight:700;cursor:pointer;transition:all var(--transition);border:none}
+.action-outline{background:var(--white);color:var(--primary);border:2px solid var(--primary)}.action-outline:hover{background:var(--primary-glow)}
+.action-filled{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(13,124,68,.15)}.action-filled:hover{background:var(--primary-dark);transform:translateY(-1px)}
+/* Toast */
+.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}.toast-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+/* Connection indicator */
+.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:var(--shadow-md)}
+.conn-dot{width:8px;height:8px;border-radius:50%}
+.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
+</style>
+</head>
+<body>
+
+<!-- Toast container -->
+<div id="toast" class="toast"></div>
+
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Monitoring</p></div></a>
+  <nav class="sidebar-nav">
+    <a class="sidebar-link" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
+    <a class="sidebar-link" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
+    <a class="sidebar-link" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
+    <a class="sidebar-link active" href="/history"><span class="material-symbols-outlined">history</span> History</a>
+  </nav>
+  <div class="sidebar-footer"><div class="sidebar-about">Track, monitor, and escalate civic infrastructure issues through intelligent automation.</div></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="topbar-title">🏙️ NagarDrishti</a>
+      <nav class="topbar-nav">
+        <a href="/ai-detection">AI Detection</a>
+        <a href="/manual-report">Manual Report</a>
+        <a href="/complaint-map">Complaint Map</a>
+        <a class="active" href="/history">History</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
+      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <a class="back-link" href="/history"><span class="material-symbols-outlined">arrow_back</span> Back to History</a>
+
+    <div class="detail-card">
+      <!-- Header — uses Jinja data from app.py -->
+      <div class="detail-header">
+        <div>
+          <h2 class="detail-heading">{{ complaint.complaint_id or 'N/A' }}</h2>
+          <p class="detail-date"><span class="material-symbols-outlined">calendar_today</span> {{ complaint.created_at[:19] if complaint.created_at else 'Unknown' }}</p>
+        </div>
+        {% if complaint.status == 'Resolved' %}
+        <span class="detail-status status-resolved"><span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block"></span> ✅ Resolved</span>
+        {% elif complaint.status == 'In Progress' %}
+        <span class="detail-status status-progress"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block"></span> 🔄 In Progress</span>
+        {% elif complaint.status == 'Rejected' %}
+        <span class="detail-status status-rejected"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block"></span> ❌ Rejected</span>
+        {% else %}
+        <span class="detail-status status-pending"><span style="width:8px;height:8px;border-radius:50%;background:#eab308;display:inline-block"></span> 🟡 Pending</span>
+        {% endif %}
+      </div>
+
+      <!-- Two Column -->
+      <div class="detail-grid">
+        <div class="detail-image-col">
+          <div class="detail-image">
+            <img alt="Complaint photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRSJ6LkbFFW_fW3W0Pjd_ia5M9mogdn9RAvQ_21p0tI7OPR9maMpzrWvv07x7z8B486Lz4XtqFIKoQGJvAUNRaYl6RoVu-nhOM1m62sTsFxPXmta8rToaa1BgvK0l_ZLCf5NF2f6Md85TxHZKnWmdES6Mn-te7jQlSVKlK5gUPtEOajaegw4EY-SlUU9tPeljF1dRzSP3kaOPWiPWqV_SsKGPZcAUL8VDH1z63LpFNpcXQUkjaOWrZOWFfDppDrR6tYs0b1IzW-K4"/>
+          </div>
+          <p class="image-caption">Submitted photo</p>
+          <div class="location-box">
+            <h4>Location Context</h4>
+            <div class="location-map"><span class="material-symbols-outlined">map</span></div>
+            <p class="location-address"><span class="material-symbols-outlined">location_on</span> {{ complaint.location or 'Unknown location' }}</p>
+          </div>
+        </div>
+
+        <div class="detail-info-col">
+          <div class="section-label">Complaint Specifications</div>
+          <div class="spec-grid">
+            <div class="spec-field"><label>Category</label><p class="spec-value">{{ complaint.category or complaint.issue_type or '—' }}</p></div>
+            <div class="spec-field"><label>Department</label><p class="spec-value">{{ complaint.municipal_dept or '—' }}</p></div>
+            <div class="spec-field"><label>GPS Coordinates</label><p class="spec-gps">{{ complaint.latitude or 'N/A' }}, {{ complaint.longitude or 'N/A' }}</p></div>
+            <div class="spec-field"><label>Source</label><div class="spec-source"><span class="material-symbols-outlined">devices</span> {{ complaint.source or 'Citizen Portal' }}</div></div>
+          </div>
+
+          <div class="severity-block">
+            <div class="spec-field"><label>Severity Status</label></div>
+            {% if complaint.severity and complaint.severity|string|first == '3' %}
+            <span class="severity-badge severity-high">Level {{ complaint.severity }} 🚨 {{ complaint.severity_label or 'High Alert' }}</span>
+            {% elif complaint.severity and complaint.severity|string|first == '2' %}
+            <span class="severity-badge severity-mid">Level {{ complaint.severity }} ⚠️ {{ complaint.severity_label or 'Risky' }}</span>
+            {% elif complaint.severity %}
+            <span class="severity-badge severity-low">Level {{ complaint.severity }} ✅ {{ complaint.severity_label or 'Safe' }}</span>
+            {% else %}
+            <span class="severity-badge severity-low">N/A</span>
+            {% endif %}
+          </div>
+
+          <div class="description-block">
+            <label>Detailed Description</label>
+            <div class="description-card">
+              <p>"{{ complaint.description or 'No description provided.' }}"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-section">
+        <div class="timeline-label">Action Timeline</div>
+        <div class="timeline">
+          <div class="timeline-step"><div class="timeline-dot done"></div><div class="timeline-content"><h5>✅ Submitted</h5><p>{{ complaint.created_at[:19] if complaint.created_at else 'Unknown' }}</p></div></div>
+          {% if complaint.is_verified %}
+          <div class="timeline-step"><div class="timeline-dot done"></div><div class="timeline-content"><h5>✅ Verified</h5><p>AI verification passed</p></div></div>
+          {% endif %}
+          {% if complaint.pdf_url %}
+          <div class="timeline-step"><div class="timeline-dot done"></div><div class="timeline-content"><h5>✅ Legal Draft Generated</h5><p>PDF: {{ complaint.pdf_url }}</p></div></div>
+          {% endif %}
+          {% if complaint.email_sent %}
+          <div class="timeline-step"><div class="timeline-dot done"></div><div class="timeline-content"><h5>✅ Email Sent to {{ complaint.municipal_dept or 'Department' }}</h5><p>Notification delivered</p></div></div>
+          {% endif %}
+          {% if complaint.status != 'Resolved' %}
+          <div class="timeline-step"><div class="timeline-dot waiting"></div><div class="timeline-content"><h5 class="timeline-waiting"><span class="material-symbols-outlined animate-spin">hourglass_top</span> Awaiting {{ complaint.municipal_dept or 'Municipal' }} Response</h5><p>Pending</p></div></div>
+          {% else %}
+          <div class="timeline-step"><div class="timeline-dot done"></div><div class="timeline-content"><h5>✅ Resolved</h5><p>Issue has been addressed</p></div></div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="detail-actions">
+        <button class="action-btn action-outline" id="detailMapBtn"><span class="material-symbols-outlined" style="font-size:18px">map</span> View on Map</button>
+        <button class="action-btn action-outline" id="detailResendBtn"><span class="material-symbols-outlined" style="font-size:18px">forward_to_inbox</span> Re-send Email</button>
+        <button class="action-btn action-filled" id="detailDownloadBtn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Connection Indicator -->
+<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+
+<script>
+/* ── Toast helper ── */
+function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.className = 'toast toast-' + type + ' show';
+    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' + msg;
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Connection indicator ── */
+(async () => {
+    const el = document.getElementById('connIndicator');
+    try {
+        const r = await fetch('/api/complaints');
+        if (r.ok) { el.className = 'conn-indicator conn-ok'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Connected</span>'; }
+        else throw 0;
+    } catch { el.className = 'conn-indicator conn-fail'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Offline</span>'; }
+    setTimeout(() => el.style.opacity = '0', 4000);
+})();
+
+/* ── Button handlers ── */
+document.getElementById("detailMapBtn").addEventListener("click", () => { window.location.href = "/complaint-map"; });
+document.getElementById("detailResendBtn").addEventListener("click", async () => {
+    showToast('Sending email for {{ complaint.complaint_id }}...', 'success');
+    try {
+        const r = await fetch('/api/resend-email/{{ complaint.complaint_id }}', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) showToast('✅ ' + d.message, 'success');
+        else showToast('❌ ' + (d.error || 'Email failed'), 'error');
+    } catch (e) { showToast('❌ Connection error: ' + e, 'error'); }
+});
+document.getElementById("detailDownloadBtn").addEventListener("click", () => {
+    {% if complaint.pdf_url %}
+    showToast('PDF available at {{ complaint.pdf_url }}', 'success');
+    {% else %}
+    showToast('PDF not yet generated for this complaint.', 'error');
+    {% endif %}
+});
+</script>
+</body>
+</html>

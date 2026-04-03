@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti — AI Detection Rejected</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--surface:#fff;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--error-light:#fef2f2;--error-border:#fecaca;--warning-bg:#fffbeb;--warning-border:#fde68a;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--shadow-sm:0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.06);--transition:.2s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50;overflow-y:auto}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
+.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem}
+.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
+.topbar-nav{display:flex;gap:1.5rem}.topbar-nav a{font-size:.8125rem;font-weight:500;color:var(--text-muted);transition:color var(--transition);padding:4px 0;border-bottom:2px solid transparent}.topbar-nav a:hover{color:var(--text-secondary)}.topbar-nav a.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
+.content{padding:2rem;max-width:1120px;width:100%}
+
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;color:var(--text-muted);margin-bottom:2rem}
+.breadcrumb .material-symbols-outlined{font-size:20px}
+
+.reject-grid{display:grid;grid-template-columns:5fr 7fr;gap:2rem}
+.reject-image-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);overflow:hidden}
+.reject-image-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;background:var(--bg);border-bottom:1px solid var(--border-light);font-size:.8125rem;font-weight:700}
+.reject-badge{font-size:.6rem;text-transform:uppercase;font-weight:800;letter-spacing:.05em;background:var(--error-light);color:var(--error);padding:3px 10px;border-radius:20px}
+.reject-image-card img{width:100%;height:380px;object-fit:cover;filter:grayscale(40%)}
+.reject-image-meta{padding:1rem 1.25rem;display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted)}
+
+/* ERROR BANNER */
+.error-banner{background:var(--error-light);border:1px solid var(--error-border);border-left:6px solid var(--error);padding:1.25rem 1.5rem;border-radius:var(--radius-md);display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.5rem}
+.error-banner .material-symbols-outlined{font-size:28px;color:var(--error);flex-shrink:0;margin-top:2px}
+.error-banner h3{font-size:1rem;font-weight:700;color:#991b1b;margin-bottom:.25rem}
+.error-banner p{font-size:.8125rem;color:#7f1d1d;opacity:.85;line-height:1.5}
+
+.reject-details{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:1.5rem}
+.reject-status-row{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:1rem;border-bottom:1px solid var(--border-light);margin-bottom:1rem}
+.reject-status-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.25rem}
+.reject-status-value{font-size:1.25rem;font-weight:900;color:var(--error);display:flex;align-items:center;gap:6px}
+.trust-score-value{font-size:1.25rem;font-weight:900;color:var(--error)}
+.reject-bar{height:8px;background:var(--bg-alt);border-radius:4px;overflow:hidden;margin-bottom:1.25rem}.reject-bar-fill{height:100%;background:var(--error);border-radius:4px}
+.analysis-title{font-size:.8125rem;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.analysis-title .material-symbols-outlined{font-size:18px}
+.analysis-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:.75rem;font-size:.8125rem;color:var(--text-secondary);line-height:1.5}
+.analysis-item .material-symbols-outlined{color:var(--error);font-size:16px;margin-top:2px;flex-shrink:0}
+.analysis-final{font-weight:600;color:var(--error);font-style:italic;margin-top:1rem}
+
+.warning-box{background:var(--warning-bg);border:1px solid var(--warning-border);padding:1.25rem;border-radius:var(--radius-md);display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.5rem}
+.warning-box .material-symbols-outlined{color:#d97706;font-size:24px;flex-shrink:0}
+.warning-box strong{display:block;margin-bottom:.25rem;font-size:.8125rem}
+.warning-box p{font-size:.8125rem;color:#92400e;line-height:1.5}
+
+.reject-download{width:100%;padding:14px;background:var(--white);border:2px solid var(--border);border-radius:var(--radius-md);font-family:inherit;font-size:.875rem;font-weight:700;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--transition)}
+.reject-download:hover{border-color:var(--text-muted);background:var(--bg)}
+.reject-pdf-note{text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:.75rem;font-family:monospace}
+.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.08);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}.toast-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.conn-dot{width:8px;height:8px;border-radius:50%}.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<aside class="sidebar">
+  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Monitoring</p></div></a>
+  <nav class="sidebar-nav">
+    <a class="sidebar-link active" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
+    <a class="sidebar-link" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
+    <a class="sidebar-link" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
+    <a class="sidebar-link" href="/history"><span class="material-symbols-outlined">history</span> History</a>
+  </nav>
+  <div class="sidebar-footer"><div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and email them to authorities.</div></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="topbar-title">🏙️ NagarDrishti</a>
+      <nav class="topbar-nav">
+        <a class="active" href="/ai-detection">AI Detection</a>
+        <a href="/manual-report">Manual Report</a>
+        <a href="/complaint-map">Complaint Map</a>
+        <a href="/history">History</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
+      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="breadcrumb"><span class="material-symbols-outlined">smart_toy</span> 🤖 AI Detection Analysis</div>
+
+    <div class="reject-grid">
+      <!-- Left: Image -->
+      <div>
+        <div class="reject-image-card">
+          <div class="reject-image-header"><span>Uploaded Evidence</span><span class="reject-badge">Rejected</span></div>
+          <img alt="Uploaded image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHjB2N5RBkBDwtUBfi-_SRPibHmsHHeIIHhvobM7_Cg_kDImHAoXQapTdJ4wg3TNwNYKenoBOJksfXAXmFCt5WRzOC9b2tJ-zFaWTb062Z1iocBamXGSliKiVW1Owg8lEI86JJd_01qCrxr__w9PF_i8Sd3ILCVKEL8s1ujW7cN1P38ch0GCR8HtIYLjLvPFVmGBFGB21rv_dUmxmgPk1kaESjQ9uM72fC4CQvl-3ztRoD-BgsmeUDjx907QxrrBy21RzNyixHK7A"/>
+          <div class="reject-image-meta"><span>File: pothole_stock_01.jpg</span><span>Size: 1.2 MB</span></div>
+        </div>
+      </div>
+
+      <!-- Right: Details -->
+      <div>
+        <div class="error-banner">
+          <span class="material-symbols-outlined">cancel</span>
+          <div>
+            <h3>❌ Image Rejected: This image appears to be AI-generated or a stock photo</h3>
+            <p>Our automated verification system has flagged this submission for failing authenticity protocols. It cannot be used to file an official civic grievance.</p>
+          </div>
+        </div>
+
+        <div class="reject-details">
+          <div class="reject-status-row">
+            <div><div class="reject-status-label">Verification Status</div><div class="reject-status-value">❌ Not Verified</div></div>
+            <div style="text-align:right"><div class="reject-status-label">Trust Score</div><div class="trust-score-value" id="rejectedTrustScore">23/100</div></div>
+          </div>
+          <div class="reject-bar"><div class="reject-bar-fill" style="width:23%"></div></div>
+          <div class="analysis-title"><span class="material-symbols-outlined">troubleshoot</span> Analysis Summary</div>
+          <div class="analysis-item"><span class="material-symbols-outlined">report</span><span>No EXIF metadata found. Digital fingerprint suggests software-processed origin.</span></div>
+          <div class="analysis-item"><span class="material-symbols-outlined">report</span><span>Image texture analysis suggests AI-generated content (GAN artifacts detected).</span></div>
+          <div class="analysis-item"><span class="material-symbols-outlined">report</span><span>No geolocation data embedded. Cannot match image to physical site coordinates.</span></div>
+          <div class="analysis-item analysis-final"><span class="material-symbols-outlined">block</span><span id="rejectedReasonText">This image cannot be used for an official complaint.</span></div>
+        </div>
+
+        <div class="warning-box">
+          <span class="material-symbols-outlined">warning</span>
+          <div>
+            <strong>⚠️ To submit a valid complaint:</strong>
+            <p>Please upload a real photo taken from your phone camera. Real photos contain EXIF metadata (GPS, timestamp) that helps verify authenticity and ensures rapid government response.</p>
+          </div>
+        </div>
+
+        <button class="reject-download" id="rejectedDownloadBtn"><span class="material-symbols-outlined">picture_as_pdf</span> 📥 Download Rejected Report (PDF)</button>
+        <div class="reject-pdf-note">A rejected report has been saved for audit purposes at <span id="rejectedPdfPath">reports/ND-20260403-143025_rejected.pdf</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+
+<script>
+function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.className = 'toast toast-' + type + ' show';
+    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type==='success'?'check_circle':'error') + '</span>' + msg;
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+(async () => {
+    const el = document.getElementById('connIndicator');
+    try {
+        const r = await fetch('/api/complaints');
+        if (r.ok) { el.className='conn-indicator conn-ok'; el.innerHTML='<div class="conn-dot"></div><span>Backend Connected</span>'; }
+        else throw 0;
+    } catch { el.className='conn-indicator conn-fail'; el.innerHTML='<div class="conn-dot"></div><span>Backend Offline</span>'; }
+    setTimeout(() => el.style.opacity='0', 4000);
+})();
+const rejectedParams = new URLSearchParams(window.location.search);
+const rejectedComplaintId = rejectedParams.get("complaint_id");
+const rejectedReason = rejectedParams.get("reason");
+if (rejectedComplaintId) {
+    document.getElementById("rejectedPdfPath").textContent = `reports/${rejectedComplaintId}_rejected.pdf`;
+}
+if (rejectedReason) {
+    document.getElementById("rejectedReasonText").textContent = rejectedReason;
+}
+document.getElementById("rejectedDownloadBtn").addEventListener("click", () => {
+    const pdfPath = document.getElementById("rejectedPdfPath").textContent.trim();
+    showToast(`Rejected report saved: ${pdfPath}`, 'success');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti - Complaint Map</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb1c8",
+                    "secondary-fixed-dim": "#b1cfaa",
+                    "surface-bright": "#f8f9fa",
+                    "outline-variant": "#c0c9bb",
+                    "on-tertiary-fixed-variant": "#7a2949",
+                    "on-tertiary-container": "#ffaec6",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#41493e",
+                    "tertiary-container": "#883454",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#acf4a4",
+                    "on-secondary-fixed": "#082009",
+                    "on-secondary-container": "#4f694b",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-variant": "#e1e3e4",
+                    "surface-tint": "#2a6b2c",
+                    "surface-container": "#edeeef",
+                    "on-error": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "surface-dim": "#d9dadb",
+                    "inverse-surface": "#2e3132",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "primary-fixed-dim": "#91d78a",
+                    "primary": "#00450d",
+                    "on-surface": "#191c1d",
+                    "inverse-primary": "#91d78a",
+                    "on-primary": "#ffffff",
+                    "secondary": "#4b6547",
+                    "on-primary-container": "#90d689",
+                    "on-tertiary-fixed": "#3e001d",
+                    "tertiary": "#6b1d3d",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#002203",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffd9e2",
+                    "on-secondary-fixed-variant": "#344d31",
+                    "surface-container-highest": "#e1e3e4",
+                    "secondary-container": "#cae8c2",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-container-high": "#e7e8e9",
+                    "secondary-fixed": "#cdebc5",
+                    "primary-container": "#1b5e20",
+                    "outline": "#717a6d",
+                    "background": "#f8f9fa",
+                    "on-background": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .map-grid-overlay {
+            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="text-on-background bg-background">
+<!-- Sidebar Shell -->
+<aside class="fixed left-0 top-0 h-full z-40 h-screen w-64 bg-slate-50 dark:bg-slate-900 font-['Inter'] text-sm leading-relaxed">
+<div class="flex flex-col h-full px-4 py-6">
+<!-- Brand Section -->
+<div class="mb-10 px-2">
+<a href="/" style="text-decoration:none;"><h1 class="text-xl font-bold text-green-900 dark:text-green-100">NagarDrishti</h1></a>
+<p class="text-xs text-slate-500 font-medium">Civic Insight Portal</p>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-green-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all scale-98 active:opacity-80" href="/ai-detection">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-green-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all scale-98 active:opacity-80" href="/manual-report">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:text-green-700 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all scale-98 active:opacity-80" href="/complaint-map">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span>Reports</span>
+</a>
+<!-- SETTINGS as Active mapping (representing About/Info structure in Sidebar context) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-green-800 dark:text-green-400 font-semibold rounded-lg shadow-sm transition-all scale-98 active:opacity-80" href="/complaint-map">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+<span>About</span>
+</a>
+</nav>
+<!-- Sidebar Footer/About Info -->
+<div class="mt-auto p-4 bg-slate-100 dark:bg-slate-800 rounded-xl">
+<h3 class="font-bold text-green-900 dark:text-green-100 mb-2">About NagarDrishti</h3>
+<p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Empowering citizens to improve urban infrastructure through AI-driven insights and real-time mapping.</p>
+<div class="flex flex-col gap-2">
+<a class="text-xs text-green-800 dark:text-green-500 hover:underline" href="/history">Community Guidelines</a>
+<a class="text-xs text-green-800 dark:text-green-500 hover:underline" href="/complaint-map">Privacy Policy</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen bg-white">
+<!-- Top Navigation -->
+<header class="sticky top-0 w-full z-30 flex justify-between items-center px-8 py-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="text-lg font-black text-green-900 dark:text-white">🏙️ NagarDrishti</span>
+</div>
+<nav class="flex gap-8">
+<a class="font-['Inter'] font-medium text-sm tracking-tight text-slate-500 dark:text-slate-400 pb-2 hover:text-green-700 dark:hover:text-green-300 transition-colors opacity-90 hover:opacity-100" href="/ai-detection">AI Detection</a>
+<a class="font-['Inter'] font-medium text-sm tracking-tight text-slate-500 dark:text-slate-400 pb-2 hover:text-green-700 dark:hover:text-green-300 transition-colors opacity-90 hover:opacity-100" href="/manual-report">Manual Report</a>
+<a class="font-['Inter'] font-medium text-sm tracking-tight text-green-800 dark:text-green-400 border-b-2 border-green-800 dark:border-green-400 pb-2 opacity-90 hover:opacity-100" href="/complaint-map">Complaint Map</a>
+<a class="font-['Inter'] font-medium text-sm tracking-tight text-slate-500 dark:text-slate-400 pb-2 hover:text-green-700 dark:hover:text-green-300 transition-colors opacity-90 hover:opacity-100" href="/history">History</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-600 cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-slate-600 cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Page Content -->
+<div class="w-full px-4 md:px-8 py-12">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="text-4xl font-extrabold text-on-surface mb-2 tracking-tight">📍 Complaint Heatmap</h2>
+<p class="text-on-surface-variant text-lg w-full px-4 md:px-8 font-light">View all civic complaints with GPS data on an interactive map</p>
+</div>
+<!-- Filters (Streamlit Style) -->
+<div class="flex gap-6 mb-8 items-end">
+<div class="w-64">
+<label class="block text-xs font-bold text-on-surface-variant mb-2 uppercase tracking-widest">Status</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg py-2 px-4 text-sm focus:ring-2 focus:ring-primary/40 appearance-none">
+<option>All</option>
+<option>Pending</option>
+<option>In Progress</option>
+<option>Resolved</option>
+</select>
+</div>
+<div class="w-64">
+<label class="block text-xs font-bold text-on-surface-variant mb-2 uppercase tracking-widest">Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg py-2 px-4 text-sm focus:ring-2 focus:ring-primary/40 appearance-none">
+<option>All</option>
+<option>Potholes</option>
+<option>Waste Management</option>
+<option>Street Lights</option>
+<option>Water Leakage</option>
+</select>
+</div>
+</div>
+<!-- Map Area (Empty State) -->
+<div class="relative w-full aspect-[21/9] bg-surface-container-low rounded-xl overflow-hidden flex flex-col items-center justify-center border border-slate-100">
+<!-- Background Map Suggestion -->
+<div class="absolute inset-0 opacity-10 map-grid-overlay flex items-center justify-center">
+<img alt="" class="w-full h-full object-contain p-20 grayscale opacity-20" data-alt="faded grey outline of India map on a light dotted grid background representing an empty data state" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXXhMhmDQjFMg-OXXrtpatHYTKzY1PDmfm-knWCrDz-HbsRGGmU-JCyEh5RzN0FRGyH8ehgyZEJtLvIoFoD5iHI1JtFImdQmX14txXASNX01T6HuKEjvFPc7qKj21wuK6f3oHGFaWJGZFFqo77a4k9NLKPE4cCMCic7kf93mEaDWo3qgRr-wa3z2WL730yreztUqgqpJbSGtSoZX97h8QthDGGLfmh77bR7YBMomPAIaErz-Xbx9colaFtQynzeqKRya5psCMB6cQ"/>
+</div>
+<!-- Info Box (Streamlit st.info style) -->
+<div class="z-10 bg-[#e3f2fd] text-[#0d47a1] px-6 py-4 rounded-lg flex items-start gap-4 w-full px-4 md:px-8 border-l-4 border-[#1e88e5] mb-8">
+<span class="material-symbols-outlined mt-0.5" data-icon="info">info</span>
+<div>
+<p class="font-semibold text-sm leading-tight">No complaints with GPS data yet.</p>
+</div>
+</div>
+<!-- Empty State Center Content -->
+<div class="z-10 flex flex-col items-center text-center px-6">
+<span class="material-symbols-outlined text-[128px] text-slate-200 mb-6 block" data-icon="location_on" style="font-variation-settings: 'wght' 200;">location_on</span>
+<p class="text-on-surface-variant w-full px-4 md:px-8 mb-6 font-medium">
+                        Complaints with GPS coordinates will appear here as markers on the map. Submit a complaint with location data to see it on the heatmap.
+                    </p>
+<a class="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all duration-300" href="/manual-report">
+                        → Submit your first complaint
+                    </a>
+</div>
+<!-- Ghost Map Context Decorations -->
+<div class="absolute bottom-4 right-6 bg-white/60 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] text-slate-400 uppercase tracking-widest border border-slate-200">
+                    Map Data Unavailable
+                </div>
+</div>
+<!-- Stats/Footer Indicators -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+<div class="bg-surface-container-low p-8 rounded-xl border border-white">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">Total Geotagged</span>
+<span class="text-4xl font-bold text-slate-300">0</span>
+</div>
+<div class="bg-surface-container-low p-8 rounded-xl border border-white">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">Active Hotspots</span>
+<span class="text-4xl font-bold text-slate-300">None</span>
+</div>
+<div class="bg-surface-container-low p-8 rounded-xl border border-white">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">Last Sync</span>
+<span class="text-xs font-medium text-slate-400 mt-5 block">No data found in current selection</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual Map Data Image for Visualization (External to main container but in layout) -->
+<div class="hidden" data-location="India" style=""></div>
+</body></html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e1e3e4",
+                    "on-surface": "#191c1d",
+                    "on-error-container": "#93000a",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d9dadb",
+                    "secondary-fixed-dim": "#b1cfaa",
+                    "on-tertiary-fixed": "#3e001d",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#4f694b",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f3f4f5",
+                    "primary": "#00450d",
+                    "on-secondary-fixed": "#082009",
+                    "on-background": "#191c1d",
+                    "surface-tint": "#2a6b2c",
+                    "surface-container-high": "#e7e8e9",
+                    "on-surface-variant": "#41493e",
+                    "on-tertiary-container": "#ffaec6",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed-dim": "#ffb1c8",
+                    "tertiary": "#6b1d3d",
+                    "primary-fixed-dim": "#91d78a",
+                    "secondary": "#4b6547",
+                    "on-primary-fixed": "#002203",
+                    "primary-fixed": "#acf4a4",
+                    "on-primary-container": "#90d689",
+                    "inverse-primary": "#91d78a",
+                    "secondary-container": "#cae8c2",
+                    "outline-variant": "#c0c9bb",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#7a2949",
+                    "on-secondary-fixed-variant": "#344d31",
+                    "tertiary-fixed": "#ffd9e2",
+                    "inverse-surface": "#2e3132",
+                    "secondary-fixed": "#cdebc5",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#883454",
+                    "outline": "#717a6d",
+                    "surface-container": "#edeeef",
+                    "primary-container": "#1b5e20",
+                    "surface-container-highest": "#e1e3e4",
+                    "background": "#f8f9fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .upload-demo { position: relative; overflow: hidden; }
+        .upload-demo input[type="file"] { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+        .upload-demo-preview { display:none; margin-top:1rem; padding:1rem 1.1rem; border:1px solid rgba(113, 122, 109, 0.24); border-radius:0.75rem; background:#f3f4f5; align-items:center; justify-content:space-between; gap:1rem; }
+        .upload-demo-preview.show { display:flex; }
+        .upload-demo-preview strong { display:block; font-size:0.92rem; color:#191c1d; }
+        .upload-demo-preview span { font-size:0.78rem; color:#41493e; }
+        .toast { position:fixed; top:84px; right:24px; z-index:1000; transform:translateX(140%); transition:transform .3s ease; border-radius:0.75rem; padding:0.9rem 1rem; font-size:0.9rem; font-weight:700; box-shadow:0 10px 24px rgba(25, 28, 29, 0.14); }
+        .toast.show { transform:translateX(0); }
+        .toast-success { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+        .toast-info { background:#e0f2fe; color:#075985; border:1px solid #7dd3fc; }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background min-h-screen flex flex-col">
+<div class="toast toast-info" id="aiDemoToast">Select an image to begin.</div>
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-white dark:bg-slate-950 z-50">
+<nav class="flex justify-between items-center px-8 py-4 w-full px-4 md:px-8  font-['Inter'] antialiased tracking-tight">
+<a href="/" class="text-2xl font-black tracking-tighter text-green-900 dark:text-green-50" style="text-decoration:none">NagarDrishti</a>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-green-900 dark:text-green-400 font-bold border-b-2 border-green-900 dark:border-green-400 pb-1" href="/ai-detection">AI Detection</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-green-800 transition-colors duration-200" href="/manual-report">Manual Report</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-green-800 transition-colors duration-200" href="/complaint-map">Complaint Map</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-green-800 transition-colors duration-200" href="/history">History</a>
+</div>
+<button class="md:hidden text-green-900">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</nav>
+<div class="bg-slate-100 dark:bg-slate-900 h-[1px] w-full"></div>
+</header>
+<main class="flex-grow w-full px-4 md:px-8  w-full px-6 py-12">
+<!-- Hero Section -->
+<div class="mb-12">
+<h1 class="text-5xl font-black tracking-tight text-on-surface mb-2">🔍 AI-Powered Detection</h1>
+<p class="text-lg text-on-surface-variant font-medium opacity-80">Upload a photo of road damage for instant AI analysis</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- Left Column: Upload Area -->
+<div class="lg:col-span-7">
+<label class="upload-demo h-full min-h-[400px] flex flex-col items-center justify-center border-4 border-dashed border-outline-variant bg-surface-container-lowest rounded-xl p-12 transition-all hover:bg-surface-container-low group cursor-pointer" for="aiDemoFile">
+<div class="w-20 h-20 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="photo_camera">photo_camera</span>
+</label>
+<div class="upload-demo-preview" id="aiDemoPreview">
+<div>
+<strong id="aiDemoFileName">No file selected</strong>
+<span id="aiDemoFileSize">The selected file will appear here</span>
+</div>
+<span class="material-symbols-outlined text-green-700">task_alt</span>
+</div>
+<p class="text-2xl font-bold text-on-surface mb-2">Drop your image here or click to upload</p>
+<p class="text-on-surface-variant">Supported formats: JPG, PNG • Max size: 10MB</p>
+</div>
+</div>
+<!-- Right Column: Form -->
+<div class="lg:col-span-5">
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col gap-6 shadow-[0px_12px_32px_rgba(25,28,29,0.06)]">
+<div class="space-y-2">
+<label class="block text-sm font-bold text-on-surface">Location</label>
+<input class="w-full px-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-outline" placeholder="Enter street address or landmark" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="block text-sm font-bold text-on-surface">Latitude (Optional)</label>
+<input class="w-full px-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-outline" placeholder="0.0000" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-bold text-on-surface">Longitude (Optional)</label>
+<input class="w-full px-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-outline" placeholder="0.0000" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-bold text-on-surface">Issue Type</label>
+<select class="w-full px-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all text-on-surface">
+<option>Pothole</option>
+<option>Garbage</option>
+<option>Broken Streetlight</option>
+<option>Other</option>
+</select>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2" onclick="window.location.href='/ai-detection'" type="button">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+                        Analyze with AI
+                    </button>
+</div>
+</div>
+</div>
+<!-- Results Section -->
+<section class="mt-16">
+<h2 class="text-2xl font-black mb-8 text-on-surface tracking-tight uppercase">Analysis Outcome</h2>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(25,28,29,0.06)]">
+<div class="grid lg:grid-cols-3 gap-0">
+<div class="lg:col-span-1 p-0">
+<img class="w-full h-full object-cover min-h-[300px]" data-alt="Close-up of a deep pothole on an urban asphalt road with cracked edges and gravel debris" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPXq19sftX3dVf4kfaP2MjquF7K8qiXjPt0TXWS5RxcRGqBs9pC60mRUu0v1GxuImS8qt54RykLT6E2UGq2kYpAJOZHQ2wUVzOTn3WNmBp0CFCH_sQ2ttLlt15sHHd4oMRI5BV025xntlGofLQygtIBOnOkwoY4s-3JzNfWDxMbmbTnZdf4VgoedG1MoBNMmnGeY-8WiCH4NQN41xe2xUqFSGgkDv3_jVQOApj3X3x6qxTmNqRDRWprejK-3VwKYbiMMtdZqLBFWI"/>
+</div>
+<div class="lg:col-span-2 p-10 flex flex-col justify-between bg-surface-container-lowest">
+<div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+<div class="flex flex-wrap gap-3">
+<div class="px-4 py-1.5 bg-[#FFF4E5] text-[#B25E09] rounded-full text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+                                    Level 2 - ⚠️ Risky
+                                </div>
+<div class="px-4 py-1.5 bg-secondary-container text-on-secondary-container rounded-full text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+                                    ✅ Verified
+                                </div>
+</div>
+<div class="text-right">
+<div class="text-xs uppercase font-black text-outline tracking-widest mb-1">Trust Score</div>
+<div class="text-4xl font-black text-primary">87<span class="text-xl text-on-surface-variant font-medium">/100</span></div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+<div class="p-6 bg-surface-container-low rounded-xl">
+<h3 class="text-sm font-black text-outline uppercase tracking-wider mb-3">Detection Summary</h3>
+<p class="text-on-surface leading-relaxed">System identified a <span class="font-bold">Severe Asphalt Depression</span> spanning approximately 1.2 meters. Structural integrity of the immediate lane is compromised.</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-xl">
+<h3 class="text-sm font-black text-outline uppercase tracking-wider mb-3">Administrative Action</h3>
+<p class="text-on-surface leading-relaxed">Auto-generated priority ticket #ND-8821. Notification dispatched to Public Works Department (District 4).</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 items-center justify-between pt-6 border-t border-outline-variant/30">
+<button class="w-full sm:w-auto px-8 py-3 bg-primary text-on-primary font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-2" onclick="window.location.href='/ai-detection/verified'" type="button">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                                Download PDF Report
+                            </button>
+<details class="w-full sm:w-auto group">
+<summary class="list-none cursor-pointer text-on-primary-fixed-variant font-bold flex items-center gap-2 hover:underline">
+                                    Legal Draft Preview
+                                    <span class="material-symbols-outlined transition-transform group-open:rotate-180" data-icon="expand_more">expand_more</span>
+</summary>
+<div class="absolute left-6 right-6 mt-4 p-8 bg-surface-container-high rounded-xl z-10 shadow-xl w-full px-4 md:px-8 border border-outline-variant/20">
+<p class="font-serif text-sm text-on-surface leading-loose italic">
+                                        "Subject: Formal Notice of Infrastructure Hazard (ID: ND-8821). This document serves as a verified record of road surface failure located at the specified GPS coordinates. Under municipal ordinance Section 4.2, the relevant authorities are hereby notified of the required maintenance window..."
+                                    </p>
+</div>
+</details>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 font-['Inter'] text-sm leading-relaxed mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 w-full w-full px-4 md:px-8 ">
+<a href="/" class="font-bold text-green-900 dark:text-green-50 text-lg mb-6 md:mb-0" style="text-decoration:none">NagarDrishti</a>
+<div class="flex space-x-8 mb-6 md:mb-0">
+<a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-300 transition-colors" href="/">Privacy Policy</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-300 transition-colors" href="/">Terms of Service</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-300 transition-colors" href="mailto:support@nagardrishti.in">Contact Support</a>
+</div>
+<div class="text-slate-500 dark:text-slate-400 font-medium">© 2026 NagarDrishti</div>
+</div>
+</footer>
+<script>
+    const aiDemoUploadColumn = document.querySelector(".lg\\:col-span-7");
+    if (aiDemoUploadColumn) {
+        aiDemoUploadColumn.innerHTML = `
+<label class="upload-demo h-full min-h-[400px] flex flex-col items-center justify-center border-4 border-dashed border-outline-variant bg-surface-container-lowest rounded-xl p-12 transition-all hover:bg-surface-container-low group cursor-pointer" for="aiDemoFile">
+  <div class="w-20 h-20 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+    <span class="material-symbols-outlined text-4xl" data-icon="photo_camera">photo_camera</span>
+  </div>
+  <p class="text-2xl font-bold text-on-surface mb-2">Drop your image here or click to upload</p>
+  <p class="text-on-surface-variant">Supported formats: JPG, PNG • Max size: 10MB</p>
+  <input accept=".jpg,.jpeg,.png" id="aiDemoFile" type="file"/>
+</label>
+<div class="upload-demo-preview" id="aiDemoPreview">
+  <div>
+    <strong id="aiDemoFileName">No file selected</strong>
+    <span id="aiDemoFileSize">The selected file will appear here</span>
+  </div>
+  <span class="material-symbols-outlined text-green-700">task_alt</span>
+</div>`;
+    }
+
+    const aiDemoToast = document.getElementById("aiDemoToast");
+    const aiDemoFile = document.getElementById("aiDemoFile");
+    const aiDemoPreview = document.getElementById("aiDemoPreview");
+    const aiDemoFileName = document.getElementById("aiDemoFileName");
+    const aiDemoFileSize = document.getElementById("aiDemoFileSize");
+
+    function showAiDemoToast(message, type = "info") {
+        aiDemoToast.className = `toast toast-${type} show`;
+        aiDemoToast.textContent = message;
+        clearTimeout(window.aiDemoToastTimer);
+        window.aiDemoToastTimer = setTimeout(() => {
+            aiDemoToast.classList.remove("show");
+        }, 2600);
+    }
+
+    if (aiDemoFile) {
+        aiDemoFile.addEventListener("change", () => {
+            const file = aiDemoFile.files[0];
+            if (!file) {
+                aiDemoPreview.classList.remove("show");
+                return;
+            }
+            aiDemoFileName.textContent = file.name;
+            aiDemoFileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB selected`;
+            aiDemoPreview.classList.add("show");
+            showAiDemoToast(`Selected ${file.name}`, "success");
+        });
+    }
+
+    const aiDemoNotifications = document.querySelector(".topbar-right .topbar-icon");
+    if (aiDemoNotifications) {
+        const aiDemoNotificationBox = document.createElement("div");
+        aiDemoNotificationBox.style.cssText = "display:none;position:absolute;top:44px;right:0;width:280px;padding:12px;background:#fff;border:1px solid rgba(113, 122, 109, 0.22);border-radius:12px;box-shadow:0 10px 24px rgba(25, 28, 29, 0.14);z-index:60";
+        aiDemoNotificationBox.innerHTML = '<div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Notifications</div><div style="padding:10px 0;border-top:1px solid rgba(113, 122, 109, 0.14)"><div style="font-size:.82rem;font-weight:700;color:#191c1d">AI scan complete</div><div style="font-size:.75rem;color:#41493e">2 uploads are ready for verification.</div></div><div style="padding:10px 0;border-top:1px solid rgba(113, 122, 109, 0.14)"><div style="font-size:.82rem;font-weight:700;color:#191c1d">Quality reminder</div><div style="font-size:.75rem;color:#41493e">Use daylight images for stronger trust scores.</div></div>';
+        aiDemoNotifications.style.position = "relative";
+        aiDemoNotifications.appendChild(aiDemoNotificationBox);
+        aiDemoNotifications.addEventListener("click", (event) => {
+            event.stopPropagation();
+            aiDemoNotificationBox.style.display = aiDemoNotificationBox.style.display === "block" ? "none" : "block";
+        });
+        document.addEventListener("click", () => {
+            aiDemoNotificationBox.style.display = "none";
+        });
+    }
+
+    const aiDetectionContactButton = document.querySelector("aside button");
+    if (aiDetectionContactButton) {
+        aiDetectionContactButton.addEventListener("click", () => {
+            window.location.href = "mailto:support@nagardrishti.in";
+        });
+    }
+</script>
+</body></html>

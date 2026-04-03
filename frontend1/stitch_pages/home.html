@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti | AI-Powered Civic Complaint Automation</title>
+<meta name="description" content="Detect potholes, verify complaints, and auto-escalate to municipal authorities — powered by YOLOv8 and Gemini AI."/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════ DESIGN SYSTEM ═══════════════════ */
+:root {
+  --white: #ffffff;
+  --bg: #f7f8fa;
+  --bg-alt: #f0f2f5;
+  --surface: #ffffff;
+  --surface-hover: #f7f8fa;
+  --border: #e2e5ea;
+  --border-light: #edf0f4;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --primary: #0d7c44;
+  --primary-dark: #095c32;
+  --primary-light: #e6f5ed;
+  --primary-glow: rgba(13, 124, 68, 0.08);
+  --accent: #059669;
+  --error: #dc2626;
+  --warning: #f59e0b;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,0.1);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--white);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* ═══════════════════ NAVBAR ═══════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 2rem;
+}
+.navbar-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  height: 64px;
+}
+.navbar-brand {
+  font-size: 1.35rem; font-weight: 800; color: var(--primary);
+  letter-spacing: -0.03em; display: flex; align-items: center; gap: 8px;
+}
+.navbar-brand .icon { font-size: 1.5rem; }
+.navbar-links { display: flex; align-items: center; gap: 2rem; }
+.navbar-links a {
+  font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+  transition: color var(--transition); position: relative; padding: 4px 0;
+}
+.navbar-links a::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px;
+  background: var(--primary); border-radius: 1px; transition: width var(--transition);
+}
+.navbar-links a:hover { color: var(--primary); }
+.navbar-links a:hover::after { width: 100%; }
+.navbar-cta {
+  background: var(--primary); color: #fff; padding: 8px 20px; border-radius: var(--radius-sm);
+  font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer;
+  transition: all var(--transition);
+}
+.navbar-cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+/* ═══════════════════ HERO ═══════════════════ */
+.hero {
+  max-width: 1280px; margin: 0 auto; padding: 5rem 2rem 6rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--primary-light); color: var(--primary); padding: 6px 14px;
+  border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: 3.5rem; font-weight: 900; line-height: 1.08;
+  letter-spacing: -0.04em; color: var(--text-primary); margin-bottom: 1.5rem;
+}
+.hero h1 span { color: var(--primary); }
+.hero p {
+  font-size: 1.125rem; color: var(--text-secondary); line-height: 1.7;
+  margin-bottom: 2.5rem; max-width: 520px;
+}
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--primary); color: #fff; padding: 14px 28px;
+  border-radius: var(--radius-md); font-size: 1rem; font-weight: 700;
+  border: none; cursor: pointer; transition: all var(--transition);
+  box-shadow: 0 4px 14px rgba(13,124,68,0.2);
+}
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,124,68,0.25); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg); color: var(--text-primary); padding: 14px 28px;
+  border-radius: var(--radius-md); font-size: 1rem; font-weight: 600;
+  border: 1px solid var(--border); cursor: pointer; transition: all var(--transition);
+}
+.btn-secondary:hover { background: var(--bg-alt); border-color: var(--text-muted); }
+
+.hero-visual { position: relative; }
+.hero-image-wrapper {
+  border-radius: var(--radius-xl); overflow: hidden; position: relative;
+  box-shadow: var(--shadow-xl);
+}
+.hero-image-wrapper img { width: 100%; height: 480px; object-fit: cover; }
+.hero-image-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(13,124,68,0.15) 100%);
+}
+.hero-card {
+  position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
+  padding: 1.25rem; border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.6); display: flex; align-items: center; gap: 1rem;
+}
+.hero-card-icon {
+  width: 40px; height: 40px; border-radius: var(--radius-sm);
+  background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.hero-card-title { font-size: 0.875rem; font-weight: 700; }
+.hero-card-sub { font-size: 0.75rem; color: var(--text-muted); }
+.hero-card-bar { height: 6px; background: var(--bg-alt); border-radius: 3px; margin-top: 0.75rem; overflow: hidden; }
+.hero-card-bar-fill { height: 100%; width: 66%; background: var(--primary); border-radius: 3px; }
+.hero-glow {
+  position: absolute; top: -3rem; right: -3rem;
+  width: 200px; height: 200px; background: var(--primary-light);
+  border-radius: 50%; filter: blur(60px); opacity: 0.5; z-index: -1;
+}
+
+/* ═══════════════════ STATS ═══════════════════ */
+.stats-section { background: var(--bg); padding: 4rem 2rem; }
+.stats-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: center;
+}
+.stat-value { font-size: 3rem; font-weight: 900; color: var(--primary); letter-spacing: -0.03em; }
+.stat-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted); margin-top: 0.25rem;
+}
+.stat-link{display:block;padding:1rem;border-radius:var(--radius-lg);transition:background var(--transition)}
+.stat-link:hover{background:rgba(13,124,68,.04)}
+
+/* ═══════════════════ FEATURES ═══════════════════ */
+.features-section { padding: 6rem 2rem; max-width: 1280px; margin: 0 auto; }
+.features-header { margin-bottom: 3rem; }
+.features-header h2 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
+.features-header p { font-size: 1rem; color: var(--text-secondary); max-width: 560px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.feature-card {
+  padding: 2.5rem; border-radius: var(--radius-lg); background: var(--surface);
+  border: 1px solid var(--border-light); transition: all 0.3s ease;
+  display: flex; flex-direction: column; text-decoration: none;
+}
+.feature-card:hover {
+  border-color: var(--primary-light); box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+.feature-icon {
+  width: 52px; height: 52px; border-radius: var(--radius-md);
+  background: var(--primary-light); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.5rem; transition: transform var(--transition);
+}
+.feature-card:hover .feature-icon { transform: scale(1.1); }
+.feature-icon .material-symbols-outlined { font-size: 1.75rem; }
+.feature-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; }
+.feature-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+.feature-link {
+  margin-top: auto; padding-top: 1.5rem;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.875rem; font-weight: 700; color: var(--primary);
+  opacity: 0; transition: opacity var(--transition);
+}
+.feature-card:hover .feature-link { opacity: 1; }
+
+/* ═══════════════════ CTA ═══════════════════ */
+.cta-section { padding: 0 2rem 6rem; }
+.cta-inner {
+  max-width: 1280px; margin: 0 auto; position: relative; overflow: hidden;
+  background: var(--primary); border-radius: var(--radius-xl);
+  padding: 5rem 4rem; text-align: center; color: #fff;
+}
+.cta-inner::before {
+  content: ''; position: absolute; inset: 0;
+  background: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChKtsRuTTXCvQdS-l5e0N-ENaXIl4xyEPEBT1cY4-Y3A5_C3pMNHQujijWZyCkt64KiCbbjp_pHfhbMXnUtii8SA_ob9qKyUEzq5JpFFwLOsYvQoDnghQmQdkyrAxTZ5pnHaggo9Laszqqc5gZMreliADGsZVPAZNehpE6MIULON0q44YpBaTf_NhqeEeqWP4p25VjPw60u9Fg-P7j1yMcyuadv_1CBExj-Ufk2xbsBlCjLkV0ZQLYGHhUFmZQvho9flsx3vC-i2c') center/cover;
+  opacity: 0.15; mix-blend-mode: overlay;
+}
+.cta-inner h2 {
+  font-size: 2.75rem; font-weight: 900; letter-spacing: -0.03em;
+  margin-bottom: 1rem; position: relative;
+}
+.cta-inner p {
+  font-size: 1.125rem; opacity: 0.85; margin-bottom: 2.5rem;
+  max-width: 600px; margin-left: auto; margin-right: auto; position: relative;
+}
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--primary); padding: 16px 36px;
+  border-radius: var(--radius-lg); font-size: 1.125rem; font-weight: 800;
+  border: none; cursor: pointer; transition: all var(--transition); position: relative;
+}
+.cta-btn:hover { transform: scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.15); }
+
+/* ═══════════════════ FOOTER ═══════════════════ */
+.footer {
+  border-top: 1px solid var(--border-light); padding: 3rem 2rem;
+  background: var(--bg);
+}
+.footer-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-brand { font-size: 1.125rem; font-weight: 700; color: var(--primary); }
+.footer-tagline { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+.footer-links { display: flex; gap: 2rem; }
+.footer-links a { font-size: 0.8125rem; color: var(--text-muted); font-weight: 500; transition: color var(--transition); }
+.footer-links a:hover { color: var(--primary); }
+.footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 1.5rem 4rem; }
+  .hero h1 { font-size: 2.75rem; }
+  .hero-visual { max-width: 600px; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .navbar-links { display: none; }
+  .hero h1 { font-size: 2.25rem; }
+  .stats-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .cta-inner { padding: 3rem 2rem; }
+  .cta-inner h2 { font-size: 2rem; }
+  .footer-inner { flex-direction: column; text-align: center; }
+}
+
+/* ═══════════════════ ANIMATIONS ═══════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeInUp 0.6s ease forwards; }
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════ NAVBAR ══════ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="navbar-brand">
+      <span class="material-symbols-outlined icon">location_city</span>
+      NagarDrishti
+    </a>
+    <nav class="navbar-links">
+      <a href="/ai-detection">AI Detection</a>
+      <a href="/manual-report">Manual Report</a>
+      <a href="/complaint-map">Complaint Map</a>
+      <a href="/history">History</a>
+    </nav>
+    <button class="navbar-cta" onclick="window.location.href='/ai-detection'">Get Started</button>
+  </div>
+</header>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+  <div class="animate-in">
+    <div class="hero-badge">
+      <span class="material-symbols-outlined" style="font-size:14px">auto_awesome</span>
+      Civic Intelligence Platform
+    </div>
+    <h1>AI-Powered Civic <span>Complaint</span> Automation</h1>
+    <p>Detect potholes, verify complaints, and auto-escalate to municipal authorities — powered by YOLOv8 and Gemini AI.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="window.location.href='/ai-detection'">
+        Report an Issue
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+      <button class="btn-secondary" onclick="window.location.href='/complaint-map'">
+        View Live Map
+      </button>
+    </div>
+  </div>
+  <div class="hero-visual animate-in delay-2">
+    <div class="hero-glow"></div>
+    <div class="hero-image-wrapper">
+      <img alt="Urban road infrastructure with visible markings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCth-ObrlnASe0eOHfikd29Ntf5gHh23-c3dZtaAHwzlKd3IvHkRe8DNSJZYe-5geOsiU3ACk0lPLDb3Coj9lwntwIj__CfcPDv5W38s14vKklwzVmUaoXVPGq9BPVFL2WbKtWHNRKkwNq51OD0iH7Jem72oKeVBxNjXLfsrOF9Sk92Wuvrw2I6mioQ_QyEZy_oWtuYl57E44gsuvH1ugu8bozbP_hpM860LDECVaHBs7sOc-cD2ryTnK-lOiiocazDtUSNwDrrOJ4"/>
+      <div class="hero-image-overlay"></div>
+      <div class="hero-card">
+        <div class="hero-card-icon">
+          <span class="material-symbols-outlined">auto_awesome</span>
+        </div>
+        <div style="flex:1">
+          <div class="hero-card-title">AI Analysis Active</div>
+          <div class="hero-card-sub">Scanning infrastructure...</div>
+          <div class="hero-card-bar"><div class="hero-card-bar-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ STATS ══════ -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="animate-in delay-1">
+      <div class="stat-value">{{ stats.total_complaints }}</div>
+      <div class="stat-label">Complaints Filed</div>
+    </div>
+    <div class="animate-in delay-2">
+      <div class="stat-value">{{ stats.verified_rate }}%</div>
+      <div class="stat-label">Verified Successfully</div>
+    </div>
+    <a class="animate-in delay-3 stat-link" href="/departments">
+      <div class="stat-value">{{ stats.connected_departments }}</div>
+      <div class="stat-label">Municipal Depts Connected</div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════ FEATURES ══════ -->
+<section class="features-section">
+  <div class="features-header">
+    <h2>Precision Intelligence</h2>
+    <p>Our multi-layered verification system ensures that every report is accurate, geotagged, and ready for official processing.</p>
+  </div>
+  <div class="features-grid">
+    <a class="feature-card" href="/ai-detection">
+      <div class="feature-icon">
+        <span class="material-symbols-outlined">photo_camera</span>
+      </div>
+      <h3>AI Detection</h3>
+      <p>Detect road damage, potholes, and illegal dumping instantly using high-precision YOLOv8 neural networks.</p>
+      <div class="feature-link">Learn More <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></div>
+    </a>
+    <a class="feature-card" href="/history">
+      <div class="feature-icon">
+        <span class="material-symbols-outlined">verified_user</span>
+      </div>
+      <h3>Smart Verification</h3>
+      <p>Cross-referencing EXIF metadata with Gemini Vision analysis to eliminate false positives and fraud.</p>
+      <div class="feature-link">View Protocol <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></div>
+    </a>
+    <a class="feature-card" href="/manual-report">
+      <div class="feature-icon">
+        <span class="material-symbols-outlined">outgoing_mail</span>
+      </div>
+      <h3>Auto Escalation</h3>
+      <p>Legal complaints are automatically formatted and routed directly to the specific responsible municipal authorities.</p>
+      <div class="feature-link">Escalation Flow <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════ CTA ══════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Ready to transform your city?</h2>
+    <p>Join hundreds of citizens already using AI to ensure their local infrastructure stays safe and well-maintained.</p>
+    <button class="cta-btn" onclick="window.location.href='/ai-detection'">Launch Dashboard</button>
+  </div>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">NagarDrishti</div>
+      <div class="footer-tagline">Building transparent cities through advanced AI verification.</div>
+    </div>
+    <div class="footer-links">
+      <a href="/">Privacy Policy</a>
+      <a href="/">Terms of Service</a>
+      <a href="mailto:support@nagardrishti.in">Contact Support</a>
+    </div>
+    <div class="footer-copy">© 2026 NagarDrishti</div>
+  </div>
+</footer>
+
+</body>
+</html>

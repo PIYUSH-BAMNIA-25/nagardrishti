@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti - Manual Report Validation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#6b1d3d",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#cdebc5",
+                    "on-tertiary-container": "#ffaec6",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "outline-variant": "#c0c9bb",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#b1cfaa",
+                    "on-secondary-fixed": "#082009",
+                    "on-primary-container": "#90d689",
+                    "primary-container": "#1b5e20",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-fixed": "#acf4a4",
+                    "on-error": "#ffffff",
+                    "primary": "#00450d",
+                    "tertiary-fixed": "#ffd9e2",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#4b6547",
+                    "primary-fixed-dim": "#91d78a",
+                    "tertiary-container": "#883454",
+                    "surface-container": "#edeeef",
+                    "on-background": "#191c1d",
+                    "inverse-surface": "#2e3132",
+                    "on-secondary-container": "#4f694b",
+                    "error-container": "#ffdad6",
+                    "outline": "#717a6d",
+                    "surface-bright": "#f8f9fa",
+                    "surface-dim": "#d9dadb",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-variant": "#e1e3e4",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-secondary-fixed-variant": "#344d31",
+                    "inverse-primary": "#91d78a",
+                    "on-tertiary-fixed-variant": "#7a2949",
+                    "on-surface": "#191c1d",
+                    "on-surface-variant": "#41493e",
+                    "tertiary-fixed-dim": "#ffb1c8",
+                    "secondary-container": "#cae8c2",
+                    "on-primary": "#ffffff",
+                    "background": "#f8f9fa",
+                    "on-tertiary-fixed": "#3e001d",
+                    "surface-tint": "#2a6b2c",
+                    "on-primary-fixed": "#002203",
+                    "surface": "#f8f9fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #191c1d; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar from JSON Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-900 flex flex-col py-8 px-4 space-y-2 z-40">
+<div class="mb-8 px-4">
+<a href="/" style="text-decoration:none;"><h1 class="text-emerald-900 dark:text-white font-bold text-2xl tracking-tighter">NagarDrishti</h1></a>
+<p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Civic Portal</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-xl translate-x-1 duration-200" href="/manual-report">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<!-- ACTIVE: Manual Report -->
+<a class="flex items-center px-4 py-3 text-emerald-900 dark:text-emerald-400 font-bold border-r-4 border-emerald-800 bg-slate-100 dark:bg-slate-800/50 rounded-xl" href="/manual-report">
+<span class="material-symbols-outlined mr-3" data-icon="edit_document">edit_document</span>
+<span class="font-medium text-sm">Manual Report</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-xl" href="/complaint-map">
+<span class="material-symbols-outlined mr-3" data-icon="map">map</span>
+<span class="font-medium text-sm">Civic Map</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-xl" href="/trust-score">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span class="font-medium text-sm">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-slate-200/50">
+<div class="bg-surface-container-low p-4 rounded-xl mb-4">
+<h3 class="text-xs font-bold text-emerald-900 mb-2 uppercase tracking-tight">About</h3>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">
+                    NagarDrishti is a unified civic monitoring platform empowering citizens to report infrastructure issues and track administrative resolution in real-time.
+                </p>
+</div>
+<a class="flex items-center px-4 py-2 text-slate-500 text-sm hover:bg-slate-100 rounded-xl transition-all" href="/manual-report">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="info">info</span>
+<span>About</span>
+</a>
+<a class="flex items-center px-4 py-2 text-slate-500 text-sm hover:bg-slate-100 rounded-xl transition-all" href="/history">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="shield">shield</span>
+<span>Privacy</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 bg-background min-h-screen relative">
+<!-- Top Navigation / Header -->
+<header class="w-full h-16 sticky top-0 z-50 flex items-center justify-between px-8 bg-gradient-to-r from-emerald-900 to-emerald-950">
+<div class="flex items-center space-x-2">
+<span class="text-2xl">🏙️</span>
+<span class="text-xl font-bold tracking-tighter text-white">NagarDrishti</span>
+</div>
+<div class="flex items-center space-x-6">
+<div class="hidden md:flex items-center space-x-4">
+<button onclick="window.location.href=\'/ai-detection\'" class="text-emerald-200/70 hover:text-white transition-colors text-sm font-medium">AI Detection</button>
+<button onclick="window.location.href=\'/manual-report\'" class="text-white font-semibold border-b-2 border-emerald-500 pb-1 text-sm">📝 Manual Report</button>
+<button onclick="window.location.href=\'/complaint-map\'" class="text-emerald-200/70 hover:text-white transition-colors text-sm font-medium">Complaint Map</button>
+<button onclick="window.location.href=\'/history\'" class="text-emerald-200/70 hover:text-white transition-colors text-sm font-medium">History</button>
+</div>
+<div class="flex items-center space-x-4 text-white">
+<span class="material-symbols-outlined cursor-pointer hover:bg-emerald-800/50 p-2 rounded-full transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-emerald-800/50 p-2 rounded-full transition-colors" data-icon="help">help</span>
+<img alt="Civic Officer Profile" class="w-8 h-8 rounded-full border-2 border-emerald-500/30 object-cover" data-alt="Professional headshot of a civic administrative officer in a clean office setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgXmh9Im1HvSxdVicp2fLrKbKUW3qLtJgwGPYI9RdUdTfz4-UMdop5a6YTytZKFr2BXvbXZwqVOxV4hlQ8qAkW_bEm_dDwxYsOYTFRLPADTpStg9gtPqxpiBfY8Uli-uXrP8088PAfDlu1oW0vx6ikU7vPD3WhiwGRhQiReMz0Omm09g8rFV67WKNGVqc3RivYvPcLNGrKt_r8YpRu0mAS-3DuHmxZ8O9LxerUinHx4KgIYPTBIGFhChiwKtnfEYE-TYV8Y5DY4Gw"/>
+</div>
+</div>
+</header>
+<section class="w-full px-4 md:px-8  py-12 px-8">
+<div class="mb-10">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Submit Manual Report</h2>
+<p class="text-on-surface-variant w-full px-4 md:px-8">Lodge a detailed civic complaint for departmental review. Please ensure all mandatory fields are accurate to expedite resolution.</p>
+</div>
+<!-- Bento Grid Layout for Form -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Main Form Section -->
+<div class="col-span-8 space-y-8">
+<div class="bg-surface-container-lowest p-8 rounded-xl">
+<div class="grid grid-cols-2 gap-6 mb-8">
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center">
+                                    Category
+                                </label>
+<select class="bg-surface-container-low border-0 rounded-xl h-12 px-4 focus:ring-2 focus:ring-primary/40 text-on-surface">
+<option>Infrastructure</option>
+<option>Sanitation</option>
+<option>Water Supply</option>
+<option selected="">Other</option>
+</select>
+</div>
+<div class="flex flex-col space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center">
+                                    Municipal Department
+                                </label>
+<select class="bg-surface-container-low border-0 rounded-xl h-12 px-4 focus:ring-2 focus:ring-primary/40 text-on-surface">
+<option selected="">General</option>
+<option>Public Works</option>
+<option>Urban Planning</option>
+<option>Waste Management</option>
+</select>
+</div>
+</div>
+<!-- Description Field (ERROR STATE) -->
+<div class="flex flex-col space-y-2 mb-8">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center">
+                                Description <span class="text-error ml-1">*</span>
+</label>
+<textarea class="bg-surface-container-low border-2 border-error/50 rounded-xl p-4 h-40 focus:ring-2 focus:ring-error/20 focus:border-error text-on-surface outline-none" placeholder="Describe the civic issue in detail..."></textarea>
+<span class="text-xs text-error font-medium">Please provide a description of the issue.</span>
+</div>
+<!-- Location Field (ERROR STATE) -->
+<div class="flex flex-col space-y-2 mb-8">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center">
+                                Location <span class="text-error ml-1">*</span>
+</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="location_on">location_on</span>
+<input class="w-full bg-surface-container-low border-2 border-error/50 rounded-xl h-12 pl-12 pr-4 focus:ring-2 focus:ring-error/20 focus:border-error text-on-surface outline-none" placeholder="Enter street address or landmark..." type="text"/>
+</div>
+<span class="text-xs text-error font-medium">Location is required for field inspection.</span>
+</div>
+</div>
+<!-- Validation Message Cluster (Streamlit-style) -->
+<div class="space-y-4">
+<div class="bg-[#FFF9E6] border-l-4 border-[#FFB000] p-4 rounded-r-lg flex items-start space-x-3">
+<span class="material-symbols-outlined text-[#FFB000]" data-icon="warning">warning</span>
+<div>
+<p class="text-sm font-medium text-on-surface">⚠️ Please provide a description of the issue.</p>
+</div>
+</div>
+<div class="bg-error-container p-4 rounded-xl flex items-center space-x-3">
+<span class="material-symbols-outlined text-on-error-container" data-icon="error">error</span>
+<p class="text-sm font-medium text-on-error-container">Please fill in all required fields marked with *</p>
+</div>
+</div>
+<div class="flex justify-end pt-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-bold hover:bg-primary-container transition-all flex items-center space-x-2">
+<span>Submit Report</span>
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+<!-- Secondary Info Panel / File Upload -->
+<div class="col-span-4 space-y-8">
+<!-- Photo Upload Area -->
+<div class="bg-surface-container-low p-8 rounded-xl flex flex-col items-center justify-center text-center border-2 border-dashed border-outline-variant/30">
+<span class="material-symbols-outlined text-5xl text-outline mb-4" data-icon="cloud_upload">cloud_upload</span>
+<h4 class="text-on-surface font-semibold mb-1">Evidence Photo</h4>
+<p class="text-xs text-on-surface-variant mb-6">Attach a clear photograph of the issue.</p>
+<div class="bg-surface-container-highest px-6 py-4 rounded-xl w-full">
+<span class="text-sm text-on-surface-variant font-medium">No file uploaded</span>
+</div>
+<button class="mt-4 text-primary text-sm font-bold hover:underline">Browse Files</button>
+</div>
+<!-- Map Preview Placeholder -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden aspect-square relative">
+<img alt="Urban map projection" class="w-full h-full object-cover grayscale opacity-50" data-location="New Delhi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmzFLsiOy1_Lc35nK2-66_mgONrqg77SSYuShARE4_PZNq6wrgkyM0wzNi3hM6kM_kZpB8gIL-KoCxiE0-hLw-22Bqbip4TOX9uwP13o53BnZXLULDP3nJJr4Sk-17gabBxzGlwo7p2bCFd3uwHtI4L5OFpYX-T3G3xWlPPUpktJDHny57XlsRWlfbsOcuWtTmpr_xTgY1V86PdCwLVZr3mb1eRjFl-YAWiM8Ie_E4Pc9--m5afKMyzoaoOS3yZwvNcATQ_weiOvw"/>
+<div class="absolute inset-0 flex flex-col items-center justify-center bg-emerald-900/10 backdrop-blur-[2px]">
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="map_search">map_search</span>
+<p class="text-xs font-bold text-primary uppercase tracking-widest">Select on Map</p>
+</div>
+</div>
+<!-- Reporting Policy -->
+<div class="bg-secondary-container p-6 rounded-xl">
+<h4 class="text-on-secondary-container font-bold text-sm mb-2 flex items-center">
+<span class="material-symbols-outlined mr-2 text-lg" data-icon="verified_user">verified_user</span>
+                            Civic Integrity
+                        </h4>
+<p class="text-xs leading-relaxed text-on-secondary-fixed-variant">
+                            All reports are subject to verification. False reporting may lead to temporary suspension of civic portal access.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

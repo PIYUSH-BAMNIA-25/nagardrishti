@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Complaint History - NagarDrishti</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#4b6547",
+                        "surface-bright": "#f8f9fa",
+                        "tertiary-container": "#883454",
+                        "on-surface-variant": "#41493e",
+                        "on-tertiary-fixed": "#3e001d",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed": "#ffd9e2",
+                        "tertiary": "#6b1d3d",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed-variant": "#0c5216",
+                        "surface-container": "#edeeef",
+                        "on-surface": "#191c1d",
+                        "inverse-surface": "#2e3132",
+                        "background": "#f8f9fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "primary": "#00450d",
+                        "inverse-primary": "#91d78a",
+                        "surface-container-low": "#f3f4f5",
+                        "outline": "#717a6d",
+                        "surface": "#f8f9fa",
+                        "surface-dim": "#d9dadb",
+                        "surface-variant": "#e1e3e4",
+                        "primary-fixed-dim": "#91d78a",
+                        "primary-fixed": "#acf4a4",
+                        "on-primary-container": "#90d689",
+                        "tertiary-fixed-dim": "#ffb1c8",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#002203",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#ffaec6",
+                        "on-secondary-fixed": "#082009",
+                        "secondary-fixed": "#cdebc5",
+                        "secondary-container": "#cae8c2",
+                        "surface-tint": "#2a6b2c",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#344d31",
+                        "on-secondary-container": "#4f694b",
+                        "primary-container": "#1b5e20",
+                        "secondary-fixed-dim": "#b1cfaa",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7a2949",
+                        "on-background": "#191c1d",
+                        "outline-variant": "#c0c9bb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-pending { background-color: #FBBF24; color: #451a03; }
+        .status-progress { background-color: #60A5FA; color: #1e3a8a; }
+        .status-resolved { background-color: #34D399; color: #064e3b; }
+        .severity-low { background-color: #d1fae5; color: #065f46; }
+        .severity-medium { background-color: #ffedd5; color: #9a3412; }
+        .severity-high { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 py-4 w-full px-4 md:px-8 ">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold tracking-tighter text-green-900 dark:text-green-50">NagarDrishti</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-green-800 dark:hover:text-green-200 font-inter tracking-tight" href="/ai-detection">AI Detection</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-green-800 dark:hover:text-green-200 font-inter tracking-tight" href="/manual-report">Manual Report</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-green-800 dark:hover:text-green-200 font-inter tracking-tight" href="/complaint-map">Complaint Map</a>
+<a class="text-green-900 dark:text-green-400 font-bold border-b-2 border-green-900 dark:border-green-400 pb-1 font-inter tracking-tight" href="/history">History</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+<div class="bg-slate-200/50 dark:bg-slate-800/50 h-[1px] w-full"></div>
+</header>
+<main class="mt-24 mb-12 flex-grow w-full px-4 md:px-8  w-full px-8">
+<!-- Header Section -->
+<div class="mb-10 space-y-2">
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface">📋 Complaint History</h1>
+<p class="text-on-surface-variant text-lg">Track all your submitted complaints with real-time updates.</p>
+</div>
+<!-- Filter and Search Bar Section -->
+<div class="bg-surface-container-lowest rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-4 items-center">
+<div class="relative flex-grow w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-primary/40 text-on-surface placeholder:text-outline transition-all" placeholder="Search by Complaint ID, Category or Location..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-3 w-full md:w-auto">
+<select class="bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/40 cursor-pointer">
+<option>All Statuses</option>
+<option>Pending</option>
+<option>In Progress</option>
+<option>Resolved</option>
+</select>
+<select class="bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/40 cursor-pointer">
+<option>Category</option>
+<option>Pothole</option>
+<option>Garbage</option>
+<option>Streetlight</option>
+</select>
+<select class="bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/40 cursor-pointer">
+<option>Last 30 Days</option>
+<option>Last 3 Months</option>
+<option>Last Year</option>
+</select>
+</div>
+</div>
+<!-- Data Table Section -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high text-on-surface uppercase text-xs font-bold tracking-wider">
+<th class="px-6 py-5">Complaint ID</th>
+<th class="px-6 py-5">Category</th>
+<th class="px-6 py-5">Location</th>
+<th class="px-6 py-5">Severity</th>
+<th class="px-6 py-5">Status</th>
+<th class="px-6 py-5">Date</th>
+<th class="px-6 py-5 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-white">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0847</td>
+<td class="px-6 py-5 text-sm">Pothole</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">MG Road, Pune</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-high flex items-center gap-1 w-fit">
+                                    Level 3 🚨
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-pending flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">schedule</span> Pending
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Apr 2, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-slate-50/30">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0846</td>
+<td class="px-6 py-5 text-sm">Garbage</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Station Rd, Mumbai</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-medium flex items-center gap-1 w-fit">
+                                    Level 2 ⚠️
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-progress flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">sync</span> In Progress
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Apr 1, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-white">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0845</td>
+<td class="px-6 py-5 text-sm">Streetlight</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">NH48, Delhi</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-low flex items-center gap-1 w-fit">
+                                    Level 1 ✅
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-resolved flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Resolved
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Mar 31, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-slate-50/30">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0844</td>
+<td class="px-6 py-5 text-sm">Water Leak</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Jayanagar, Bangalore</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-medium flex items-center gap-1 w-fit">
+                                    Level 2 ⚠️
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-pending flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">schedule</span> Pending
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Mar 30, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-white">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0843</td>
+<td class="px-6 py-5 text-sm">Pavement</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Hitech City, Hyderabad</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-low flex items-center gap-1 w-fit">
+                                    Level 1 ✅
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-resolved flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Resolved
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Mar 29, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-slate-50/30">
+<td class="px-6 py-5 font-mono text-sm font-medium text-primary">ND-2026-0842</td>
+<td class="px-6 py-5 text-sm">Pothole</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Indiranagar, Pune</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold severity-high flex items-center gap-1 w-fit">
+                                    Level 3 🚨
+                                </span>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full text-xs font-bold status-progress flex items-center gap-1 w-fit">
+<span class="material-symbols-outlined text-[14px]">sync</span> In Progress
+                                </span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Mar 28, 2026</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary font-semibold text-sm hover:underline mr-4">View</button>
+<button class="text-outline hover:text-on-surface"><span class="material-symbols-outlined text-lg">download</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Section -->
+<div class="px-6 py-6 border-t border-surface-container flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-sm text-on-surface-variant">Showing 1-10 of 47 complaints</span>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant">5</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Summary Insight Card -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/10 flex items-start gap-4">
+<div class="bg-primary-container p-3 rounded-lg text-on-primary-container">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-primary-fixed-variant uppercase tracking-wider">Total Reports</p>
+<p class="text-3xl font-extrabold text-primary">47</p>
+</div>
+</div>
+<div class="bg-secondary-container p-6 rounded-xl border border-secondary/10 flex items-start gap-4">
+<div class="bg-secondary p-3 rounded-lg text-white">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-secondary-fixed-variant uppercase tracking-wider">Resolved</p>
+<p class="text-3xl font-extrabold text-secondary">32</p>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl border border-surface-container-high flex items-start gap-4">
+<div class="bg-on-surface p-3 rounded-lg text-white">
+<span class="material-symbols-outlined">speed</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Avg. Response Time</p>
+<p class="text-3xl font-extrabold text-on-surface">14h</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">NagarDrishti</span>
+<span class="text-slate-400">|</span>
+<p class="text-sm font-inter leading-relaxed text-slate-500 dark:text-slate-400">© 2024 NagarDrishti Municipal Governance. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap gap-6">
+<a class="text-sm font-inter leading-relaxed text-slate-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-300 transition-opacity opacity-80 hover:opacity-100" href="/">Privacy Policy</a>
+<a class="text-sm font-inter leading-relaxed text-slate-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-300 transition-opacity opacity-80 hover:opacity-100" href="/">Terms of Service</a>
+<a class="text-sm font-inter leading-relaxed text-slate-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-300 transition-opacity opacity-80 hover:opacity-100" href="/manual-report">Civic Guidelines</a>
+<a class="text-sm font-inter leading-relaxed text-slate-500 dark:text-slate-400 hover:text-green-600 dark:hover:text-green-300 transition-opacity opacity-80 hover:opacity-100" href="mailto:support@nagardrishti.in">Contact Support</a>
+</div>
+</div>
+</footer>
+<!-- FAB (Suppressed on this page per rule but common to navigation flow - optional here) -->
+<!-- The prompt doesn't ask for a FAB for History, focusing on the table instead. -->
+<script>
+    const historyActionRows = Array.from(document.querySelectorAll("tbody tr"));
+    historyActionRows.forEach((row) => {
+        const complaintId = row.querySelector("td")?.textContent?.trim();
+        const viewButton = Array.from(row.querySelectorAll("button")).find((button) => button.textContent.includes("View"));
+        const downloadButton = Array.from(row.querySelectorAll("button")).find((button) => button.querySelector(".material-symbols-outlined"));
+
+        if (viewButton && complaintId) {
+            viewButton.addEventListener("click", () => {
+                window.location.href = `/history/${encodeURIComponent(complaintId)}`;
+            });
+        }
+
+        if (downloadButton && complaintId) {
+            downloadButton.addEventListener("click", () => {
+                alert(`PDF export placeholder for ${complaintId}`);
+            });
+        }
+    });
+</script>
+</body></html>

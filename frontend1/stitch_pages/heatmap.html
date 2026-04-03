@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Complaint Heatmap | NagarDrishti</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4f694b",
+                        "surface-container": "#edeeef",
+                        "on-tertiary-fixed-variant": "#7a2949",
+                        "on-secondary-fixed-variant": "#344d31",
+                        "on-primary-container": "#90d689",
+                        "surface": "#f8f9fa",
+                        "on-surface": "#191c1d",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d9dadb",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-container": "#883454",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary-fixed": "#002203",
+                        "on-tertiary-fixed": "#3e001d",
+                        "on-tertiary-container": "#ffaec6",
+                        "outline": "#717a6d",
+                        "surface-variant": "#e1e3e4",
+                        "surface-tint": "#2a6b2c",
+                        "outline-variant": "#c0c9bb",
+                        "on-primary-fixed-variant": "#0c5216",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#91d78a",
+                        "tertiary": "#6b1d3d",
+                        "secondary-fixed": "#cdebc5",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb1c8",
+                        "secondary-container": "#cae8c2",
+                        "tertiary-fixed": "#ffd9e2",
+                        "background": "#f8f9fa",
+                        "primary-fixed-dim": "#91d78a",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1b5e20",
+                        "secondary": "#4b6547",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#082009",
+                        "surface-bright": "#f8f9fa",
+                        "primary-fixed": "#acf4a4",
+                        "on-surface-variant": "#41493e",
+                        "on-background": "#191c1d",
+                        "secondary-fixed-dim": "#b1cfaa",
+                        "primary": "#00450d",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(to top, rgba(25, 28, 29, 0.05), transparent 20%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- TopNavBar Execution -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md flex justify-between items-center px-8 h-20 w-full w-full px-4 md:px-8">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-black text-green-900 dark:text-green-500 font-inter tracking-tight">NagarDrishti</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-stone-500 dark:text-stone-400 hover:text-green-800 transition-colors font-inter tracking-tight" href="/complaint-map">Dashboard</a>
+<a class="text-green-900 dark:text-green-400 font-bold border-b-2 border-green-900 dark:border-green-400 pb-1 font-inter tracking-tight" href="/history">Heatmap</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-green-800 transition-colors font-inter tracking-tight" href="/history">My Reports</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-green-800 transition-colors font-inter tracking-tight" href="/trust-score">Statistics</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-all duration-200 ease-in-out">
+<span class="material-symbols-outlined text-stone-600">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-all duration-200 ease-in-out">
+<span class="material-symbols-outlined text-stone-600">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<main class="pt-20 h-screen flex flex-col md:flex-row">
+<!-- Left Content: Map and Controls -->
+<section class="flex-1 flex flex-col relative overflow-hidden">
+<!-- Header and Filter Bar -->
+<div class="px-8 py-6 bg-surface-container-lowest z-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-3xl font-extrabold text-on-surface tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">location_on</span>
+                            Complaint Heatmap
+                        </h1>
+<p class="text-on-surface-variant mt-1 text-sm">View all civic complaints on an interactive map</p>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap gap-3 items-center">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest ml-1">Status</label>
+<select class="bg-surface-container-low border-none rounded-xl text-sm px-4 py-2 focus:ring-2 focus:ring-primary/40 transition-all">
+<option>All Statuses</option>
+<option>Pending</option>
+<option>In Progress</option>
+<option>Resolved</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest ml-1">Category</label>
+<select class="bg-surface-container-low border-none rounded-xl text-sm px-4 py-2 focus:ring-2 focus:ring-primary/40 transition-all">
+<option>All Categories</option>
+<option>Pothole</option>
+<option>Waste Management</option>
+<option>Streetlights</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest ml-1">Date Range</label>
+<div class="bg-surface-container-low rounded-xl text-sm px-4 py-2 flex items-center gap-2 cursor-pointer">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Last 30 Days</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Area -->
+<div class="flex-1 relative bg-surface-container-high m-4 rounded-3xl overflow-hidden group">
+<img class="w-full h-full object-cover filter brightness-95" data-alt="Detailed satellite map of an urban Indian city area with street layouts, parks, and buildings in bright daylight" data-location="Bengaluru" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg5k-6eu4zz6yGyMSn2Rp4aT-8vw0BXl9E3jmeNPr_uAX33LQcsu4pI7eAzOAKvt1_LSYIU1SwxkpxPHGu4Jl3xAxtjHszbBTC942xdzWxLpuaeGzMNQ7PULY4dgtSIj6lca0IgBg6j12gnsVAUx1ZWqHChRyLpfEQ_R2df4jrobgmDL9dljCBrjmTrewPLijYQ-QHpr8XFqRlvxjRqNigqw6VUE9xJth767L6JqdjJkXRM9uv_NHtA86eael3fAFmkrvgQAh65NQ"/>
+<div class="absolute inset-0 map-gradient-overlay pointer-events-none"></div>
+<!-- Custom Markers (Simulated) -->
+<div class="absolute top-1/4 left-1/3 group-hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-yellow-500 drop-shadow-md text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="absolute top-1/2 left-1/2 group-hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-blue-500 drop-shadow-md text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="absolute bottom-1/3 right-1/4 group-hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-green-600 drop-shadow-md text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="absolute top-1/3 right-1/3 group-hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-yellow-500 drop-shadow-md text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<!-- Map Legend -->
+<div class="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl flex flex-col gap-2 shadow-lg border border-white/20">
+<span class="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider mb-1">Map Legend</span>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+<span class="text-xs font-medium">Pending Issues</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-blue-500"></div>
+<span class="text-xs font-medium">In Progress</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-green-600"></div>
+<span class="text-xs font-medium">Resolved</span>
+</div>
+</div>
+<!-- Map Interactions -->
+<div class="absolute top-6 right-6 flex flex-col gap-2">
+<button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md hover:bg-surface-container transition-colors mt-4">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</div>
+<!-- Summary Stats Bar -->
+<div class="px-8 py-4 bg-surface flex items-center justify-center md:justify-start gap-8 border-t border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="text-primary font-bold text-lg">47</span>
+<span class="text-on-surface-variant text-sm font-medium">Total Complaints</span>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-2">
+<span class="text-yellow-600 font-bold text-lg">23</span>
+<span class="text-on-surface-variant text-sm font-medium">Pending</span>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-2">
+<span class="text-blue-600 font-bold text-lg">12</span>
+<span class="text-on-surface-variant text-sm font-medium">In Progress</span>
+</div>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-2">
+<span class="text-green-700 font-bold text-lg">12</span>
+<span class="text-on-surface-variant text-sm font-medium">Resolved</span>
+</div>
+</div>
+</section>
+<!-- SideNavBar Execution -->
+<aside class="hidden lg:flex h-full w-80 border-l border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 flex-col p-6 space-y-4">
+<div class="mb-2">
+<h2 class="text-lg font-bold text-green-900 dark:text-green-400 font-inter">Recent Reports</h2>
+<p class="text-xs text-stone-600 dark:text-stone-400">Live civic updates</p>
+</div>
+<div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+<!-- Complaint Card 1 -->
+<div class="bg-white dark:bg-stone-900 p-4 rounded-xl border border-stone-100 dark:border-stone-800 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-mono text-stone-400">#ND-8842</span>
+<span class="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</div>
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-yellow-600 text-lg">warning</span>
+</div>
+<p class="text-sm font-semibold text-on-surface">Major Pothole</p>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
+<span class="material-symbols-outlined text-xs">location_on</span>
+<span>Indiranagar, 12th Main</span>
+</div>
+<p class="text-[10px] text-stone-400 mt-2">2 hours ago</p>
+</div>
+<!-- Complaint Card 2 -->
+<div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800/20 hover:translate-x-1 transition-transform cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-mono text-stone-400">#ND-8839</span>
+<span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Resolved</span>
+</div>
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-700 text-lg">delete</span>
+</div>
+<p class="text-sm font-semibold text-on-surface">Waste Clearance</p>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
+<span class="material-symbols-outlined text-xs">location_on</span>
+<span>Koramangala, 4th Block</span>
+</div>
+<p class="text-[10px] text-stone-400 mt-2">5 hours ago</p>
+</div>
+<!-- Complaint Card 3 -->
+<div class="bg-white dark:bg-stone-900 p-4 rounded-xl border border-stone-100 dark:border-stone-800 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-mono text-stone-400">#ND-8835</span>
+<span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+</div>
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600 text-lg">lightbulb</span>
+</div>
+<p class="text-sm font-semibold text-on-surface">Broken Streetlight</p>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
+<span class="material-symbols-outlined text-xs">location_on</span>
+<span>Whitefield, Hope Farm</span>
+</div>
+<p class="text-[10px] text-stone-400 mt-2">Yesterday</p>
+</div>
+<!-- Complaint Card 4 -->
+<div class="bg-white dark:bg-stone-900 p-4 rounded-xl border border-stone-100 dark:border-stone-800 hover:translate-x-1 transition-transform cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-mono text-stone-400">#ND-8831</span>
+<span class="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</div>
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-stone-600 text-lg">water_damage</span>
+</div>
+<p class="text-sm font-semibold text-on-surface">Water Leakage</p>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant text-[11px]">
+<span class="material-symbols-outlined text-xs">location_on</span>
+<span>Jayanagar, 5th Block</span>
+</div>
+<p class="text-[10px] text-stone-400 mt-2">2 days ago</p>
+</div>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                File New Complaint
+            </button>
+</aside>
+</main>
+<!-- BottomNavBar Execution -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 md:hidden bg-white dark:bg-stone-900 z-50 rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-stone-100 dark:border-stone-800">
+<div class="flex flex-col items-center justify-center bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-100 rounded-2xl px-6 py-2 transition-transform duration-150">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[11px] font-medium font-inter mt-1">Live Map</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 hover:text-green-700 dark:hover:text-green-300 transition-transform duration-150">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[11px] font-medium font-inter mt-1">Status</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 hover:text-green-700 dark:hover:text-green-300 transition-transform duration-150">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[11px] font-medium font-inter mt-1">Summary</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 hover:text-green-700 dark:hover:text-green-300 transition-transform duration-150">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[11px] font-medium font-inter mt-1">Profile</span>
+</div>
+</nav>
+</body></html>

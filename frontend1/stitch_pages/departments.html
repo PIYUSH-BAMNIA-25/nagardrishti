@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NagarDrishti - Connected Departments</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+:root{--white:#fff;--bg:#f7f8fa;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--shadow-md:0 4px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 30px rgba(0,0,0,.08);--transition:.2s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.navbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light)}
+.navbar-inner{max-width:1180px;margin:0 auto;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:1.25rem;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:1.5rem;align-items:center}.nav-links a{font-size:.875rem;color:var(--text-secondary)}.nav-links a.active{color:var(--primary);font-weight:700}
+.page{max-width:1180px;margin:0 auto;padding:2rem}
+.hero{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-xl);padding:2rem 2.25rem;box-shadow:var(--shadow-md);margin-bottom:1.5rem}
+.eyebrow{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.5rem}
+.hero h1{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
+.hero p{font-size:.95rem;color:var(--text-secondary);max-width:760px}
+.hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:700;border:none;cursor:pointer;transition:all var(--transition)}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--primary-light);color:var(--primary)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.25rem}
+.stat-value{font-size:2rem;font-weight:900;color:var(--primary)}.stat-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.dept-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow-md)}
+.dept-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.75rem}
+.dept-name{font-size:1rem;font-weight:800}
+.dept-pill{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary);padding:6px 10px;border-radius:999px;font-size:.72rem;font-weight:800}
+.dept-meta{font-size:.84rem;color:var(--text-secondary);margin-bottom:1rem}
+.dept-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+.mail-link{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-size:.82rem;font-weight:700}
+.open-link{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--bg);color:var(--text-primary);font-size:.82rem;font-weight:700;border:1px solid var(--border)}
+@media (max-width:768px){.nav-links{display:none}.stats,.grid{grid-template-columns:1fr}.page{padding:1rem}.hero{padding:1.5rem}}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/"><span class="material-symbols-outlined">location_city</span>NagarDrishti</a>
+    <nav class="nav-links">
+      <a href="/ai-detection">AI Detection</a>
+      <a href="/manual-report">Manual Report</a>
+      <a href="/complaint-map">Live View</a>
+      <a href="/history">History</a>
+      <a class="active" href="/departments">Departments</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <div class="eyebrow">Department Directory</div>
+    <h1>Connected Municipal Departments</h1>
+    <p>These departments are available for routing and email escalation from NagarDrishti. Use this page as the shared send-mail entry point from AI Detection, Manual Report, History, and Live View.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/history"><span class="material-symbols-outlined">history</span>Open Complaint History</a>
+      <a class="btn btn-secondary" href="/ai-detection/verified"><span class="material-symbols-outlined">forward_to_inbox</span>Open Send Mail View</a>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat-card">
+      <div class="stat-value">{{ department_count }}</div>
+      <div class="stat-label">Departments Connected</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ departments|length }}</div>
+      <div class="stat-label">Mail Routes Ready</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">Live</div>
+      <div class="stat-label">Routing Status</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    {% for department in departments %}
+    <article class="dept-card">
+      <div class="dept-head">
+        <div class="dept-name">{{ department.name }}</div>
+        <div class="dept-pill"><span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Connected</div>
+      </div>
+      <div class="dept-meta">Official routing mailbox: <strong>{{ department.email }}</strong></div>
+      <div class="dept-actions">
+        <a class="mail-link" href="mailto:{{ department.email }}?subject=NagarDrishti Complaint Routing"><span class="material-symbols-outlined" style="font-size:18px">mail</span>Send Mail</a>
+        <a class="open-link" href="/ai-detection/verified"><span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>Open Mail Panel</a>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+</main>
+</body>
+</html>
