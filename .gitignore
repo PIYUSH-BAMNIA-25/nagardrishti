@@ -1,0 +1,37 @@
+# ── Python ──────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Environment ─────────────────────────────
+.env
+venv/
+.venv/
+env/
+
+# ── IDE ─────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Reports (generated at runtime) ──────────
+reports/*.pdf
+reports/*.jpg
+
+# ── Model cache ─────────────────────────────
+*.onnx
+models/
+
+# ── Temp files ──────────────────────────────
+temp_upload.*
+*.tmp

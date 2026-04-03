@@ -1,0 +1,26 @@
+# ─── NagarDrishti Dependencies ───────────────────────────────
+
+# AI / Vision
+ultralytics>=8.0.0          # YOLOv8 for pothole detection
+google-genai>=1.0.0         # Gemini API (new SDK)
+Pillow>=10.0.0              # Image processing & EXIF extraction
+
+# Frontend
+streamlit>=1.30.0           # Web UI
+
+# Database
+supabase>=2.0.0             # Supabase Python client
+
+# Mapping
+folium>=0.15.0              # Interactive map / heatmap
+streamlit-folium>=0.15.0    # Render folium maps in Streamlit
+
+# PDF & Email
+reportlab>=4.0              # PDF generation
+
+# Utilities
+python-dotenv>=1.0.0        # Load .env variables
+
+# ONNX Runtime (for HuggingFace ONNX model)
+onnx>=1.14.0                # ONNX model format
+onnxruntime>=1.16.0         # ONNX inference engine
