@@ -46,5 +46,5 @@ MUNICIPAL_EMAILS = {
 }
 
 # ── Testing / App ──────────────────────────────────────────────────────────────
-TEST_EMAIL_OVERRIDE = os.getenv("TEST_EMAIL_OVERRIDE", "")
+TEST_EMAIL_OVERRIDE = os.getenv("TEST_EMAIL_OVERRIDE", "tailaung16@gmail.com")
 APP_TITLE           = os.getenv("APP_TITLE", "NagarDrishti")

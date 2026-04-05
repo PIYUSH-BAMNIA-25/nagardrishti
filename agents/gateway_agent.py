@@ -51,6 +51,10 @@ class ComplaintPayload:
         self.latitude        : float = 0.0
         self.longitude       : float = 0.0
         self.location_text   : str   = ""          # e.g. "Near Bus Stand, Bikaner"
+
+        # EXIF GPS (extracted by Veracity Agent)
+        self.exif_latitude   : float = 0.0
+        self.exif_longitude  : float = 0.0
         self.image_b64       : str   = ""          # base64 JPEG for Gemini Vision
         self.image_path      : str   = ""          # local file path (if saved)
         self.timestamp       : str   = datetime.now().isoformat()
@@ -182,6 +186,13 @@ class GatewayAgent:
         # Step 1 — Veracity check
         print("[Gateway] → Step 1: Veracity check")
         payload = self.veracity.verify(payload)
+
+        # Use EXIF GPS if available and user didn't provide GPS
+        if payload.exif_latitude != 0.0 and payload.exif_longitude != 0.0:
+            if payload.latitude == 0.0 or payload.longitude == 0.0:
+                payload.latitude = payload.exif_latitude
+                payload.longitude = payload.exif_longitude
+                print(f"[Gateway] 📍 Using EXIF GPS: {payload.latitude:.6f}, {payload.longitude:.6f}")
 
         if not payload.is_verified:
             print(f"[Gateway] ❌ REJECTED — {payload.veracity_reason}")

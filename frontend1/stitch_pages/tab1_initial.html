@@ -940,16 +940,28 @@
         const res = await fetch('/api/analyze', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.success) {
-          if (data.data.is_verified) {
+          // Save ALL data to sessionStorage BEFORE redirect
+          sessionStorage.setItem('lastComplaintId', data.complaint_id || '');
+          sessionStorage.setItem('lastSeverityLevel', String(data.severity_level || ''));
+          sessionStorage.setItem('lastSeverityLabel', data.severity_label || '');
+          sessionStorage.setItem('lastVeracityReason', data.veracity_reason || '');
+          sessionStorage.setItem('lastLegalDraft', data.legal_draft || '');
+          sessionStorage.setItem('lastPdfUrl', data.pdf_url || '');
+          sessionStorage.setItem('lastLocation', data.location || '');
+          sessionStorage.setItem('lastLatitude', String(data.latitude || 0));
+          sessionStorage.setItem('lastLongitude', String(data.longitude || 0));
+          sessionStorage.setItem('lastExifGpsUsed', data.exif_gps_used ? 'true' : 'false');
+          sessionStorage.setItem('lastEmailSent', data.email_sent ? 'true' : 'false');
+          sessionStorage.setItem('lastTrustScore', String(data.trust_score || 0));
+          sessionStorage.setItem('lastMunicipalDept', data.municipal_dept || '');
+          console.log('[AI] Saved to session:', data.complaint_id, 'GPS:', data.latitude, data.longitude);
+          
+          if (data.is_verified) {
             showToast('✅ Verified! Redirecting...', 'success');
-            setTimeout(() => {
-              window.location.href = '/ai-detection/verified?complaint_id=' + data.data.complaint_id + '&severity_label=' + encodeURIComponent(data.data.severity_label || '');
-            }, 800);
+            setTimeout(() => { window.location.href = '/ai-detection/verified'; }, 800);
           } else {
             showToast('❌ Image rejected by AI.', 'error');
-            setTimeout(() => {
-              window.location.href = '/ai-detection/rejected?reason=' + encodeURIComponent(data.data.reason) + '&complaint_id=' + encodeURIComponent(data.data.complaint_id || '');
-            }, 800);
+            setTimeout(() => { window.location.href = '/ai-detection/rejected'; }, 800);
           }
         } else {
           showToast('AI Analysis Failed: ' + data.error, 'error');

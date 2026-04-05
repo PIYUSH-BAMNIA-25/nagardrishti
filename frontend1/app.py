@@ -319,19 +319,40 @@ def api_analyze():
             longitude=longitude,
         )
 
+        # Determine final GPS: EXIF > Pipeline > User input
+        final_lat = 0.0
+        final_lon = 0.0
+        exif_gps_used = False
+        
+        if hasattr(result, 'exif_latitude') and result.exif_latitude and result.exif_latitude != 0.0:
+            final_lat = result.exif_latitude
+            final_lon = result.exif_longitude
+            exif_gps_used = True
+            print(f"[Analyze] Using EXIF GPS: {final_lat:.6f}, {final_lon:.6f}")
+        elif hasattr(result, 'latitude') and result.latitude and result.latitude != 0.0:
+            final_lat = result.latitude
+            final_lon = result.longitude
+            print(f"[Analyze] Using pipeline GPS: {final_lat:.6f}, {final_lon:.6f}")
+        elif latitude != 0.0:
+            final_lat = latitude
+            final_lon = longitude
+            print(f"[Analyze] Using user GPS: {final_lat}, {final_lon}")
+        else:
+            print("[Analyze] No GPS coordinates available")
+
+        pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
+
         # Only save VERIFIED complaints to Supabase
-        # Rejected complaints are logged but NOT stored
         if result.is_verified:
             try:
-                pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
                 complaint_data = {
                     "complaint_id"   : result.complaint_id,
                     "category"       : result.issue_type,
                     "description"    : result.description,
                     "severity"       : result.severity_level,
                     "severity_label" : result.severity_label,
-                    "latitude"       : latitude if latitude != 0.0 else None,
-                    "longitude"      : longitude if longitude != 0.0 else None,
+                    "latitude"       : final_lat if final_lat != 0.0 else None,
+                    "longitude"      : final_lon if final_lon != 0.0 else None,
                     "location"       : result.location_text,
                     "status"         : "Pending",
                     "is_verified"    : True,
@@ -350,13 +371,21 @@ def api_analyze():
             print(f"[Analyze] Complaint {result.complaint_id} REJECTED — not saved to Supabase")
 
         return jsonify({
-            "success": True,
-            "data": {
-                "is_verified": result.is_verified,
-                "reason": result.veracity_reason,
-                "complaint_id": result.complaint_id,
-                "severity_label": result.severity_label
-            }
+            "success"        : True,
+            "complaint_id"   : result.complaint_id,
+            "severity_level" : result.severity_level,
+            "severity_label" : result.severity_label,
+            "is_verified"    : result.is_verified,
+            "veracity_reason": result.veracity_reason,
+            "legal_draft"    : result.legal_draft,
+            "pdf_url"        : f"/reports/{pdf_filename}",
+            "location"       : result.location_text,
+            "latitude"       : final_lat,
+            "longitude"      : final_lon,
+            "exif_gps_used"  : exif_gps_used,
+            "email_sent"     : getattr(result, 'email_sent', False),
+            "trust_score"    : getattr(result, 'trust_score', 0),
+            "municipal_dept" : result.municipal_dept,
         })
 
     except Exception as e:

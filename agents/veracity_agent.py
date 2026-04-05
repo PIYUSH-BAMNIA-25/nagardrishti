@@ -149,15 +149,20 @@ class VeracityAgent:
                     gps.get("GPSLongitude"), gps.get("GPSLongitudeRef", "E")
                 )
 
+                # STORE EXIF GPS ON PAYLOAD
+                if lat is not None and lon is not None:
+                    payload.exif_latitude = lat
+                    payload.exif_longitude = lon
+                    print(f"[Veracity] GPS EXTRACTED: {lat:.6f}, {lon:.6f}")
+                    score += 25
+                    detail = f"GPS data found in image ({lat:.4f}, {lon:.4f})"
+                
                 if lat and lon and payload.latitude and payload.longitude:
                     dist = self._haversine(lat, lon, payload.latitude, payload.longitude)
                     if dist > 50:
                         return -40, f"GPS mismatch — photo taken {dist:.0f}km from reported location"
-                    score += 30
-                    detail = f"GPS verified — {dist:.1f}km from location"
-                else:
-                    score += 15
-                    detail = "GPS data found in image"
+                    score += 5
+                    detail += f", verified {dist:.1f}km from user location"
 
             # Check for timestamp
             dt = exif.get("DateTimeOriginal") or exif.get("DateTime")

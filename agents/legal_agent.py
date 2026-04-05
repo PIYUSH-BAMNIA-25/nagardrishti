@@ -19,6 +19,7 @@ Fills in:
 """
 
 import json
+import re
 from google import genai
 from config import GEMINI_API_KEY, MUNICIPAL_EMAILS
 from agents.gemini_client import call_with_fallback, TEXT_MODELS
@@ -78,29 +79,22 @@ class LegalAgent:
     def _find_municipal_email(self, payload) -> str:
         """
         Looks up municipal email from config first.
-        Falls back to Gemini if not found.
+        Uses TEST_EMAIL_OVERRIDE for testing.
         """
-        location_lower = payload.location_text.lower()
+        from config import TEST_EMAIL_OVERRIDE
+        
+        # Always use TEST_EMAIL_OVERRIDE if set (most reliable for testing)
+        if TEST_EMAIL_OVERRIDE:
+            return TEST_EMAIL_OVERRIDE
+        
+        # Check config for known cities
+        location_lower = payload.location_text.lower() if payload.location_text else ""
         for city, email in MUNICIPAL_EMAILS.items():
             if city.lower() in location_lower:
                 return email
-        prompt = (
-            f"Official grievance email for municipal corporation "
-            f"in '{payload.location_text}', India. "
-            f"Department: {payload.municipal_dept}. "
-            f"Reply with ONLY the email. If unknown: grievance@municipalcorporation.gov.in"
-        )
-        try:
-            email = call_with_fallback(
-                self.client, prompt, TEXT_MODELS, "email lookup"
-            ).lower()
-            if "@" in email and "." in email:
-                return email
-        except Exception as e:
-            print(f"[Legal] Email lookup failed: {e}")
         
-        from config import TEST_EMAIL_OVERRIDE
-        return TEST_EMAIL_OVERRIDE or "grievance@municipalcorporation.gov.in"
+        # Default fallback - don't use Gemini as it returns unreliable results
+        return "grievance@municipalcorporation.gov.in"
 
     # ── Reverse Geocode ───────────────────────────────────────────────────────
     def _reverse_geocode(self, lat: float, lon: float) -> str:
@@ -128,6 +122,8 @@ class LegalAgent:
 
         prompt = f"""You are a legal complaint drafting system for 
 Indian municipal governance. Write a formal complaint letter.
+
+IMPORTANT: Write in FIRST PERSON. DO NOT use any markdown formatting - no asterisks, no bold, no headers. Plain text only.
 
 COMPLAINT DETAILS:
 - ID: {payload.complaint_id}
@@ -157,9 +153,11 @@ MANDATORY REQUIREMENTS:
 10. Keep under 350 words, formal government tone"""
 
         try:
-            return call_with_fallback(
+            draft = call_with_fallback(
                 self.client, prompt, TEXT_MODELS, "legal draft"
             )
+            # Remove any markdown formatting
+            return self._remove_markdown(draft)
         except Exception as e:
             print(f"[Legal] All models failed: {e}")
             return self._fallback_draft(payload, deadline)
@@ -185,3 +183,24 @@ Under IPC Section 283 (obstruction in public way) and the Motor Vehicles Act Sec
 You are hereby requested to take corrective action {deadline}.
 
 Reported via NagarDrishti AI Civic Platform | Complaint ID: {payload.complaint_id}"""
+
+    def _remove_markdown(self, text: str) -> str:
+        """Remove all markdown formatting from text."""
+        if not text:
+            return text
+        # Remove bold markers **text** and __text__
+        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)
+        text = re.sub(r'__([^_]+)__', r'\1', text)
+        # Remove italic markers *text* and _text_
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)
+        text = re.sub(r'_([^_]+)_', r'\1', text)
+        # Remove headers
+        text = re.sub(r'^#{1,6}\s*', '', text, flags=re.MULTILINE)
+        # Remove bullet points
+        text = re.sub(r'^\s*[\*\-•]\s+', '', text, flags=re.MULTILINE)
+        # Remove any remaining double asterisks
+        text = text.replace('**', '')
+        # Clean up extra whitespace
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        return text.strip()
+
