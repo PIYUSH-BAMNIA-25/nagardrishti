@@ -342,6 +342,17 @@ def api_analyze():
 
         pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
 
+        # Upload image to Supabase Storage BEFORE saving to database
+        image_public_url = ""
+        if filepath and os.path.exists(filepath):
+            print(f"[Analyze] Uploading image to Supabase Storage...")
+            image_public_url = db.upload_image(filepath, result.complaint_id)
+            if image_public_url:
+                print(f"[Analyze] Image URL: {image_public_url}")
+            else:
+                print(f"[Analyze] Storage upload failed — using local path")
+                image_public_url = filepath  # fallback to local
+
         # Only save VERIFIED complaints to Supabase
         if result.is_verified:
             try:
@@ -357,7 +368,7 @@ def api_analyze():
                     "status"         : "Pending",
                     "is_verified"    : True,
                     "veracity_reason": result.veracity_reason,
-                    "image_url"      : filepath if filepath else None,
+                    "image_url"      : image_public_url or filepath or None,
                     "pdf_url"        : pdf_filename,
                     "email_sent"     : getattr(result, 'email_sent', False),
                     "municipal_dept" : result.municipal_dept,
@@ -492,6 +503,17 @@ def api_manual_report():
 
         # Manual report storage logic
         try:
+            # Upload image to Supabase Storage if available
+            image_public_url = ""
+            if image_path and os.path.exists(image_path):
+                print(f"[Manual] Uploading image to Supabase Storage...")
+                image_public_url = db.upload_image(image_path, result.complaint_id)
+                if image_public_url:
+                    print(f"[Manual] Image URL: {image_public_url}")
+                else:
+                    print(f"[Manual] Storage upload failed — using local path")
+                    image_public_url = image_path
+            
             pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
             complaint_data = {
                 "complaint_id"   : result.complaint_id,
@@ -505,7 +527,7 @@ def api_manual_report():
                 "status"         : "Pending",
                 "is_verified"    : result.is_verified,
                 "veracity_reason": result.veracity_reason,
-                "image_url"      : image_path if image_path else None,
+                "image_url"      : image_public_url or image_path or None,
                 "pdf_url"        : pdf_filename,
                 "email_sent"     : getattr(result, 'email_sent', False),
                 "municipal_dept" : result.municipal_dept,

@@ -856,8 +856,21 @@
         <div class="detail-grid">
           <div class="detail-image-col">
             <div class="detail-image">
-              <img alt="Complaint photo"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRSJ6LkbFFW_fW3W0Pjd_ia5M9mogdn9RAvQ_21p0tI7OPR9maMpzrWvv07x7z8B486Lz4XtqFIKoQGJvAUNRaYl6RoVu-nhOM1m62sTsFxPXmta8rToaa1BgvK0l_ZLCf5NF2f6Md85TxHZKnWmdES6Mn-te7jQlSVKlK5gUPtEOajaegw4EY-SlUU9tPeljF1dRzSP3kaOPWiPWqV_SsKGPZcAUL8VDH1z63LpFNpcXQUkjaOWrZOWFfDppDrR6tYs0b1IzW-K4" />
+              {% if complaint.image_url %}
+                {% if complaint.image_url.startswith('http') %}
+                  <img alt="Complaint Evidence"
+                       src="{{ complaint.image_url }}"
+                       onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'"/>
+                {% else %}
+                  <img alt="Complaint Evidence"
+                       src="{{ complaint.image_url }}" 
+                       onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'"/>
+                {% endif %}
+              {% else %}
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;font-size:3rem;">
+                  No Image Available
+                </div>
+              {% endif %}
             </div>
             <p class="image-caption">Submitted photo</p>
             <div class="location-box">

@@ -155,3 +155,78 @@ class SupabaseClient:
             .execute()
         )
         return response.data or []
+    # ── Storage ───────────────────────────────────────────────
+    # IMPORTANT: The Supabase Storage bucket must be set to PUBLIC
+    # in Supabase Dashboard → Storage → complaint-images → 
+    # Policies → Enable public access
+    # Otherwise get_public_url() returns URLs that require auth
+
+    def upload_image(self, image_path: str, complaint_id: str) -> str:
+        """
+        Uploads image to Supabase Storage bucket.
+        Returns public URL of uploaded image.
+        Returns empty string if upload fails.
+        
+        Args:
+            image_path  : local path to image file
+            complaint_id: used to create unique storage filename
+        """
+        try:
+            import os
+            from config import SUPABASE_STORAGE_BUCKET
+            
+            if not image_path or not os.path.exists(image_path):
+                print(f"[Storage] Image not found: {image_path}")
+                return ""
+            
+            # Create unique filename for storage
+            ext = os.path.splitext(image_path)[1] or ".jpg"
+            storage_filename = f"complaints/{complaint_id}_evidence{ext}"
+            
+            # Read image bytes
+            with open(image_path, "rb") as f:
+                image_bytes = f.read()
+            
+            # Upload to Supabase Storage
+            response = self.client.storage.from_(SUPABASE_STORAGE_BUCKET).upload(
+                path=storage_filename,
+                file=image_bytes,
+                file_options={"content-type": "image/jpeg", "upsert": "true"}
+            )
+            
+            # Get public URL
+            public_url = self.client.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(storage_filename)
+            
+            print(f"[Storage] ✅ Image uploaded: {public_url}")
+            return public_url
+            
+        except Exception as e:
+            print(f"[Storage] ❌ Upload failed: {type(e).__name__}: {e}")
+            return ""
+
+    def upload_image_bytes(self, image_bytes: bytes, complaint_id: str, ext: str = ".jpg") -> str:
+        """
+        Uploads image from bytes (used by vision engine 
+        which has base64 snapshots, not file paths).
+        Returns public URL or empty string.
+        """
+        try:
+            from config import SUPABASE_STORAGE_BUCKET
+            
+            storage_filename = f"complaints/{complaint_id}_snapshot{ext}"
+            
+            response = self.client.storage.from_(SUPABASE_STORAGE_BUCKET).upload(
+                path=storage_filename,
+                file=image_bytes,
+                file_options={"content-type": "image/jpeg", "upsert": "true"}
+            )
+            
+            public_url = self.client.storage.from_(SUPABASE_STORAGE_BUCKET).get_public_url(storage_filename)
+            
+            print(f"[Storage] ✅ Snapshot uploaded: {public_url}")
+            return public_url
+            
+        except Exception as e:
+            print(f"[Storage] ❌ Snapshot upload failed: {e}")
+            return ""
+

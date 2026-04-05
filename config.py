@@ -46,5 +46,9 @@ MUNICIPAL_EMAILS = {
 }
 
 # ── Testing / App ──────────────────────────────────────────────────────────────
-TEST_EMAIL_OVERRIDE = os.getenv("TEST_EMAIL_OVERRIDE", "tailaung16@gmail.com")
+TEST_EMAIL_OVERRIDE = os.getenv("tailaung16@gmail.com")
 APP_TITLE           = os.getenv("APP_TITLE", "NagarDrishti")
+
+# -- Supabase Storage -----------------------------------------------------------
+SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "complaint-images")
+SUPABASE_STORAGE_URL = os.getenv("SUPABASE_URL", "").replace("https://", "").split(".")[0]
