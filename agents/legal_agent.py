@@ -21,6 +21,7 @@ Fills in:
 import json
 from google import genai
 from config import GEMINI_API_KEY, MUNICIPAL_EMAILS
+from agents.gemini_client import call_with_fallback, TEXT_MODELS
 
 
 # ── Department Routing ────────────────────────────────────────────────────────
@@ -45,7 +46,7 @@ class LegalAgent:
 
     def __init__(self):
         self.client = genai.Client(api_key=GEMINI_API_KEY)
-        self.model  = "gemini-2.5-flash"
+        # Uses fallback system — no single model
         print("[Legal] Agent ready ✓")
 
     def draft(self, payload) -> object:
@@ -84,33 +85,37 @@ class LegalAgent:
             if city.lower() in location_lower:
                 return email
         prompt = (
-            f"What is the official complaint/grievance email of the municipal corporation "
-            f"or nagar palika for: '{payload.location_text}' in India?\n"
-            f"Department: {payload.municipal_dept}\n"
-            f"Reply with ONLY the email address. If unknown reply: grievance@municipalcorporation.gov.in"
+            f"Official grievance email for municipal corporation "
+            f"in '{payload.location_text}', India. "
+            f"Department: {payload.municipal_dept}. "
+            f"Reply with ONLY the email. If unknown: grievance@municipalcorporation.gov.in"
         )
         try:
-            resp  = self.client.models.generate_content(model=self.model, contents=prompt)
-            email = resp.text.strip().lower()
+            email = call_with_fallback(
+                self.client, prompt, TEXT_MODELS, "email lookup"
+            ).lower()
             if "@" in email and "." in email:
                 return email
         except Exception as e:
             print(f"[Legal] Email lookup failed: {e}")
-        return "grievance@municipalcorporation.gov.in"
+        
+        from config import TEST_EMAIL_OVERRIDE
+        return TEST_EMAIL_OVERRIDE or "grievance@municipalcorporation.gov.in"
 
     # ── Reverse Geocode ───────────────────────────────────────────────────────
     def _reverse_geocode(self, lat: float, lon: float) -> str:
         """Asks Gemini to describe the location from GPS coords."""
         prompt = (
-            f"Given GPS coordinates Latitude {lat}, Longitude {lon} in India, "
-            f"give a short location name (area, city, state). "
-            f"Reply with ONLY the location. Example: Near Bus Stand, Bikaner, Rajasthan"
+            f"GPS: Lat {lat}, Lon {lon} in India. "
+            f"Short location name only. "
+            f"Example: Near Bus Stand, Bikaner, Rajasthan"
         )
         try:
-            resp = self.client.models.generate_content(model=self.model, contents=prompt)
-            return resp.text.strip()
+            return call_with_fallback(
+                self.client, prompt, TEXT_MODELS, "geocode"
+            )
         except Exception:
-            return f"GPS Location ({lat:.4f}, {lon:.4f})"
+            return f"GPS ({lat:.4f}, {lon:.4f})"
 
     # ── Legal Draft ───────────────────────────────────────────────────────────
     def _draft_complaint(self, payload) -> str:
@@ -118,33 +123,45 @@ class LegalAgent:
         Uses Gemini to write an official, legally-backed complaint letter.
         """
         deadline = DEADLINE_MAP.get(payload.severity_level, "within 7 days")
+        lat = getattr(payload, 'latitude', 0.0) or 0.0
+        lon = getattr(payload, 'longitude', 0.0) or 0.0
 
-        prompt = f"""Write a formal Indian government complaint letter for road damage.
+        prompt = f"""You are a legal complaint drafting system for 
+Indian municipal governance. Write a formal complaint letter.
 
-Complaint ID: {payload.complaint_id}
-Date: {payload.timestamp[:10]}
-Issue: {payload.issue_type} — Level {payload.severity_level} ({payload.severity_label})
-Location: {payload.location_text}
-Description: {payload.description}
-Department: {payload.municipal_dept}
-Deadline: {deadline}
+COMPLAINT DETAILS:
+- ID: {payload.complaint_id}
+- Date: {payload.timestamp[:10]}
+- Issue Type: {payload.issue_type}
+- Severity: Level {payload.severity_level} — {payload.severity_label}
+- Location: {payload.location_text}
+- GPS: {lat:.4f}N, {lon:.4f}E
+- Description: {payload.description}
+- Department: {payload.municipal_dept}
+- Repair Deadline: {deadline}
+- Source: {'Autonomous AI Vision System' if getattr(payload, 'source', '') == 'vision' else 'Citizen Report'}
 
-Requirements:
-1. Start with: To, The {payload.municipal_dept}, Municipal Authority
-2. Add a Subject line mentioning severity level
-3. Formal body describing the issue
-4. Cite IPC Section 283, Motor Vehicles Act Section 138, and Municipal Corporation Act
-5. Demand repair {deadline}
-6. End with: Reported via NagarDrishti AI Civic Platform | Complaint ID: {payload.complaint_id}
-7. Under 300 words, formal tone
-
-Write ONLY the letter starting with To,"""
+MANDATORY REQUIREMENTS:
+1. Address: To, The {payload.municipal_dept}, {payload.location_text.split(',')[-1].strip() if payload.location_text else 'Municipal Authority'}
+2. Subject line must mention: Level {payload.severity_level}, issue type, location
+3. Opening paragraph describing the {payload.issue_type} at {payload.location_text}
+4. Cite these exact laws:
+   - IPC Section 283 (danger or obstruction in public way)
+   - Motor Vehicles Act Section 138 (power to make rules regarding roads)  
+   - Municipal Corporations Act obligation for road maintenance
+5. State the severity level and its implications for public safety
+6. Demand repair {deadline} due to Level {payload.severity_level} classification
+7. Mention GPS coordinates: {lat:.4f}N, {lon:.4f}E
+8. If from vision engine, mention: "Detected by NagarDrishti AI Vision System"
+9. Closing: "Reported via NagarDrishti AI Civic Platform | ID: {payload.complaint_id}"
+10. Keep under 350 words, formal government tone"""
 
         try:
-            resp = self.client.models.generate_content(model=self.model, contents=prompt)
-            return resp.text.strip()
+            return call_with_fallback(
+                self.client, prompt, TEXT_MODELS, "legal draft"
+            )
         except Exception as e:
-            print(f"[Legal] Draft failed: {e}")
+            print(f"[Legal] All models failed: {e}")
             return self._fallback_draft(payload, deadline)
 
     def _fallback_draft(self, payload, deadline: str) -> str:

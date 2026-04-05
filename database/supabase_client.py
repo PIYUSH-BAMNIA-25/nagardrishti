@@ -7,18 +7,24 @@ helper methods for storing, retrieving, and updating civic complaints.
 Expected table schema (create in Supabase dashboard):
 
     CREATE TABLE complaints (
-        id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        created_at  TIMESTAMPTZ DEFAULT now(),
-        category    TEXT NOT NULL,
-        description TEXT,
-        severity    INT,
-        latitude    FLOAT,
-        longitude   FLOAT,
-        location    TEXT,
-        status      TEXT DEFAULT 'Pending',    -- Pending | In Progress | Resolved
-        image_url   TEXT,
-        pdf_url     TEXT,
-        email_sent  BOOLEAN DEFAULT FALSE
+        id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        created_at      TIMESTAMPTZ DEFAULT now(),
+        complaint_id    TEXT UNIQUE NOT NULL,
+        category        TEXT NOT NULL,
+        description     TEXT,
+        severity        INT,
+        severity_label  TEXT,
+        latitude        FLOAT,
+        longitude       FLOAT,
+        location        TEXT,
+        status          TEXT DEFAULT 'Pending',
+        is_verified     BOOLEAN DEFAULT FALSE,
+        veracity_reason TEXT,
+        image_url       TEXT,
+        pdf_url         TEXT,
+        email_sent      BOOLEAN DEFAULT FALSE,
+        municipal_dept  TEXT,
+        source          TEXT
     );
 """
 
@@ -50,48 +56,72 @@ class SupabaseClient:
     def insert_complaint(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Insert a new complaint record.
-
-        Parameters
-        ----------
-        data : dict
-            Must include at least: category, description.
-            Optional: severity, latitude, longitude, location,
-            image_url, pdf_url, email_sent.
-
-        Returns
-        -------
-        dict — the inserted row
+        Only sends columns that exist in the Supabase schema.
         """
-        response = self.client.table(TABLE_NAME).insert(data).execute()
-        logger.info("Complaint inserted: %s", response.data)
-        return response.data[0] if response.data else {}
+        ALLOWED_COLUMNS = {
+            'complaint_id', 'category', 'description',
+            'severity', 'severity_label', 'latitude', 'longitude',
+            'location', 'status', 'is_verified', 'veracity_reason',
+            'image_url', 'pdf_url', 'email_sent', 'municipal_dept', 'source'
+        }
+        try:
+            # Only send columns that exist in Supabase schema
+            clean_data = {
+                k: v for k, v in data.items()
+                if k in ALLOWED_COLUMNS and v is not None
+            }
+            response = self.client.table(TABLE_NAME).insert(clean_data).execute()
+            logger.info("Complaint inserted: %s", response.data)
+            return response.data[0] if response.data else {}
+        except Exception as e:
+            print(f"[Supabase] insert error: {e}")
+            return None
 
     # ── Read ──────────────────────────────────────────────────
 
     def get_all_complaints(self, status: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Fetch all complaints, optionally filtered by status.
-
-        Parameters
-        ----------
-        status : str, optional — "Pending", "In Progress", or "Resolved"
         """
-        query = self.client.table(TABLE_NAME).select("*")
-        if status:
-            query = query.eq("status", status)
-        response = query.order("created_at", desc=True).execute()
-        return response.data or []
+        try:
+            query = self.client.table(TABLE_NAME).select("*")
+            if status:
+                query = query.eq("status", status)
+            response = query.order("created_at", desc=True).execute()
+            return response.data or []
+        except Exception as e:
+            print(f"[Supabase] get_all_complaints error: {e}")
+            return []
 
     def get_complaint_by_id(self, complaint_id: str) -> Optional[Dict[str, Any]]:
         """Fetch a single complaint by UUID."""
-        response = (
-            self.client.table(TABLE_NAME)
-            .select("*")
-            .eq("id", complaint_id)
-            .single()
-            .execute()
-        )
-        return response.data
+        try:
+            response = (
+                self.client.table(TABLE_NAME)
+                .select("*")
+                .eq("id", complaint_id)
+                .single()
+                .execute()
+            )
+            return response.data
+        except Exception as e:
+            print(f"[Supabase] get_complaint_by_id error: {e}")
+            return None
+
+    def get_complaint_by_public_id(self, complaint_id: str) -> Optional[Dict[str, Any]]:
+        """Fetch a single complaint by the public-facing complaint_id value."""
+        try:
+            response = (
+                self.client.table(TABLE_NAME)
+                .select("*")
+                .eq("complaint_id", complaint_id)
+                .single()
+                .execute()
+            )
+            return response.data
+        except Exception as e:
+            print(f"[Supabase] get_complaint_by_public_id error: {e}")
+            return None
 
     # ── Update ────────────────────────────────────────────────
 

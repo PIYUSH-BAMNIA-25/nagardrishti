@@ -35,12 +35,16 @@ REPORTS_DIR = str(BASE_DIR / "reports")   # PDFs + snapshots saved here
 # ── Known Municipal Emails ─────────────────────────────────────────────────────
 # Add your city here. Gateway Agent checks this before asking Gemini.
 MUNICIPAL_EMAILS = {
-    "bikaner"   : "commissioner@bikamc.rajasthan.gov.in",
-    "jaipur"    : "commissioner@jaipurmc.org",
-    "jodhpur"   : "jmc@jodhpur.rajasthan.gov.in",
-    "delhi"     : "complaints@mcdonline.nic.in",
-    "mumbai"    : "grievance@mcgm.gov.in",
-    "bangalore" : "complaints@bbmp.gov.in",
-    "hyderabad" : "complaints@ghmc.gov.in",
-    "chennai"   : "complaints@chennaicorporation.gov.in",
+    "bikaner"   : "tailaung16@gmail.com",
+    "jaipur"    : "tailaung16@gmail.com",
+    "jodhpur"   : "tailaung16@gmail.com",
+    "delhi"     : "tailaung16@gmail.com",
+    "mumbai"    : "tailaung16@gmail.com",
+    "bangalore" : "tailaung16@gmail.com",
+    "hyderabad" : "tailaung16@gmail.com",
+    "chennai"   : "tailaung16@gmail.com",
 }
+
+# ── Testing / App ──────────────────────────────────────────────────────────────
+TEST_EMAIL_OVERRIDE = os.getenv("TEST_EMAIL_OVERRIDE", "")
+APP_TITLE           = os.getenv("APP_TITLE", "NagarDrishti")

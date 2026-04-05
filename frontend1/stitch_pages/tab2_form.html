@@ -1,283 +1,862 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NagarDrishti — Manual Report</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--shadow-md:0 4px 12px rgba(0,0,0,.06);--transition:.2s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50}
-.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
-.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem}
-.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
-.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
-.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
-.topbar-nav{display:flex;gap:1.5rem}.topbar-nav a{font-size:.8125rem;font-weight:500;color:var(--text-muted);transition:color var(--transition);padding:4px 0;border-bottom:2px solid transparent}.topbar-nav a:hover{color:var(--text-secondary)}.topbar-nav a.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
-.topbar-right{display:flex;align-items:center;gap:1rem}
-.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
-.content{padding:2rem;max-width:800px;width:100%}
-.page-header-card{background:var(--white);border:1px solid var(--border-light);border-left:4px solid var(--primary);padding:1.5rem 2rem;border-radius:var(--radius-md);margin-bottom:2rem}
-.page-header-card h2{font-size:1.25rem;font-weight:800;margin-bottom:.25rem}
-.page-header-card p{font-size:.875rem;color:var(--text-secondary)}
-.page-header-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
-.page-action-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:700;border:1px solid var(--border);background:var(--white);color:var(--text-primary)}
-.page-action-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
-.form-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:2rem 2.5rem}
-.form-group{margin-bottom:1.5rem}
-.form-label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.5rem}
-.form-input,.form-select,.form-textarea{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.875rem;color:var(--text-primary);background:var(--bg);transition:all var(--transition);outline:none}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);background:var(--white)}
-.form-input::placeholder,.form-textarea::placeholder{color:var(--text-muted)}
-.form-textarea{resize:none;min-height:120px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.location-field{position:relative}.location-field .material-symbols-outlined{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:20px}.location-field input{padding-left:44px}
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>NagarDrishti — Manual Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --white: #fff;
+      --bg: #f7f8fa;
+      --bg-alt: #f0f2f5;
+      --border: #e2e5ea;
+      --border-light: #edf0f4;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --primary: #0d7c44;
+      --primary-dark: #095c32;
+      --primary-light: #e6f5ed;
+      --primary-glow: rgba(13, 124, 68, .08);
+      --error: #dc2626;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .06);
+      --transition: .2s cubic-bezier(.4, 0, .2, 1)
+    }
 
-.upload-area{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem;text-align:center;cursor:pointer;transition:all var(--transition);position:relative}
-.upload-area:hover{border-color:var(--primary);background:var(--primary-glow)}
-.upload-area .material-symbols-outlined{font-size:36px;color:var(--text-muted);margin-bottom:.5rem;transition:transform var(--transition)}
-.upload-area:hover .material-symbols-outlined{transform:scale(1.1);color:var(--primary)}
-.upload-area p{font-size:.875rem;font-weight:600;color:var(--text-primary)}
-.upload-area small{font-size:.75rem;color:var(--text-muted)}
-.upload-area input[type="file"]{display:none}
-.upload-file-meta{display:none;margin-top:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);align-items:center;justify-content:space-between;gap:12px}
-.upload-file-meta.show{display:flex}.upload-file-meta strong{font-size:.82rem;color:var(--text-primary)}.upload-file-meta span{font-size:.75rem;color:var(--text-secondary)}
-.notif-badge{position:absolute;top:-2px;right:-1px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-.submit-btn{width:100%;padding:16px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-md);font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.5rem;box-shadow:0 4px 14px rgba(13,124,68,.15)}
-.submit-btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.submit-note{text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:1rem}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased
+    }
 
-.page-footer{margin-top:3rem;padding:2rem 0;border-top:1px solid var(--border-light);text-align:center}
-.page-footer-items{display:flex;justify-content:center;gap:2rem;font-size:.75rem;color:var(--text-muted);margin-bottom:.5rem}
-.page-footer-items span{display:flex;align-items:center;gap:4px}
-.page-footer-items .material-symbols-outlined{font-size:14px}
-.page-footer small{font-size:.7rem;color:var(--text-muted);opacity:.6}
-/* Toast */
-.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}.toast-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
-.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:var(--shadow-md)}
-.conn-dot{width:8px;height:8px;border-radius:50%}.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
-</style>
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle
+    }
+
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: var(--white);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      z-index: 50
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2rem
+    }
+
+    .sidebar-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .sidebar-brand h1 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: var(--primary)
+    }
+
+    .sidebar-brand p {
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted)
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      cursor: pointer
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg)
+    }
+
+    .sidebar-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    .sidebar-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light)
+    }
+
+    .sidebar-about {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1rem
+    }
+
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700
+    }
+
+    .topbar-nav {
+      display: flex;
+      gap: 1.5rem
+    }
+
+    .topbar-nav a {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition);
+      padding: 4px 0;
+      border-bottom: 2px solid transparent
+    }
+
+    .topbar-nav a:hover {
+      color: var(--text-secondary)
+    }
+
+    .topbar-nav a.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem
+    }
+
+    .topbar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition)
+    }
+
+    .topbar-icon:hover {
+      background: var(--bg)
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 800px;
+      width: 100%
+    }
+
+    .page-header-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-left: 4px solid var(--primary);
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 2rem
+    }
+
+    .page-header-card h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: .25rem
+    }
+
+    .page-header-card p {
+      font-size: .875rem;
+      color: var(--text-secondary)
+    }
+
+    .page-header-actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-top: 1rem
+    }
+
+    .page-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text-primary)
+    }
+
+    .page-action-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff
+    }
+
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.5rem
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem
+    }
+
+    .form-label {
+      display: block;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: .5rem
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: .875rem;
+      color: var(--text-primary);
+      background: var(--bg);
+      transition: all var(--transition);
+      outline: none
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: var(--white)
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--text-muted)
+    }
+
+    .form-textarea {
+      resize: none;
+      min-height: 120px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem
+    }
+
+    .location-field {
+      position: relative
+    }
+
+    .location-field .material-symbols-outlined {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 20px
+    }
+
+    .location-field input {
+      padding-left: 44px
+    }
+
+    .upload-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow)
+    }
+
+    .upload-area .material-symbols-outlined {
+      font-size: 36px;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+      transition: transform var(--transition)
+    }
+
+    .upload-area:hover .material-symbols-outlined {
+      transform: scale(1.1);
+      color: var(--primary)
+    }
+
+    .upload-area p {
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--text-primary)
+    }
+
+    .upload-area small {
+      font-size: .75rem;
+      color: var(--text-muted)
+    }
+
+    .upload-area input[type="file"] {
+      display: none
+    }
+
+    .upload-file-meta {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px
+    }
+
+    .upload-file-meta.show {
+      display: flex
+    }
+
+    .upload-file-meta strong {
+      font-size: .82rem;
+      color: var(--text-primary)
+    }
+
+    .upload-file-meta span {
+      font-size: .75rem;
+      color: var(--text-secondary)
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -1px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: .5rem;
+      box-shadow: 0 4px 14px rgba(13, 124, 68, .15)
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px)
+    }
+
+    .submit-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .submit-note {
+      text-align: center;
+      font-size: .75rem;
+      color: var(--text-muted);
+      margin-top: 1rem
+    }
+
+    .page-footer {
+      margin-top: 3rem;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      text-align: center
+    }
+
+    .page-footer-items {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      font-size: .75rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem
+    }
+
+    .page-footer-items span {
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .page-footer-items .material-symbols-outlined {
+      font-size: 14px
+    }
+
+    .page-footer small {
+      font-size: .7rem;
+      color: var(--text-muted);
+      opacity: .6
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 72px;
+      right: 2rem;
+      z-index: 9999;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(120%);
+      transition: transform .4s ease
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .toast-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca
+    }
+
+    .conn-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md)
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%
+    }
+
+    .conn-ok .conn-dot {
+      background: #22c55e
+    }
+
+    .conn-fail .conn-dot {
+      background: #ef4444
+    }
+  </style>
 </head>
+
 <body>
-<div id="toast" class="toast"></div>
+  <div id="toast" class="toast"></div>
 
-<aside class="sidebar">
-  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Oversight</p></div></a>
-  <nav class="sidebar-nav">
-    <a class="sidebar-link" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
-    <a class="sidebar-link active" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
-    <a class="sidebar-link" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
-    <a class="sidebar-link" href="/history"><span class="material-symbols-outlined">history</span> History</a>
-  </nav>
-  <div class="sidebar-footer"><div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and email them to authorities — all in one click.</div></div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <a href="/" class="topbar-title">NagarDrishti</a>
-      <nav class="topbar-nav">
-        <a href="/ai-detection">AI Detection</a>
-        <a class="active" href="/manual-report">Manual Report</a>
-        <a href="/complaint-map">Complaint Map</a>
-        <a href="/history">History</a>
-      </nav>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-icon" style="position:relative"><span class="material-symbols-outlined">notifications</span><span class="notif-badge">3</span></div>
-      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
-    </div>
-  </header>
-
-  <div class="content">
-    <div class="page-header-card">
-      <h2>Submit a Manual Complaint</h2>
-      <p>Use this form for issues that don't require AI detection — garbage dumping, broken streetlights, open manholes, etc.</p>
-      <div class="page-header-actions">
-        <a class="page-action-btn" href="/departments"><span class="material-symbols-outlined" style="font-size:18px">apartment</span>Departments</a>
-        <a class="page-action-btn primary" href="/ai-detection/verified"><span class="material-symbols-outlined" style="font-size:18px">mail</span>Send Mail</a>
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
+      <div>
+        <h1>NagarDrishti</h1>
+        <p>AI Civic Platform</p>
       </div>
     </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="/">
+        <span class="material-symbols-outlined">home</span> Home
+      </a>
+      <a class="sidebar-link" href="/ai-detection">
+        <span class="material-symbols-outlined">psychology</span> AI Detection
+      </a>
+      <a class="sidebar-link active" href="/manual-report">
+        <span class="material-symbols-outlined">edit_document</span> Manual Report
+      </a>
+      <a class="sidebar-link" href="/complaint-map">
+        <span class="material-symbols-outlined">map</span> Complaint Map
+      </a>
+      <a class="sidebar-link" href="/history">
+        <span class="material-symbols-outlined">history</span> History
+      </a>
+      <a class="sidebar-link" href="/departments">
+        <span class="material-symbols-outlined">apartment</span> Departments
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
+        email them to authorities — all in one click.</div>
+      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
+        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        support@nagardrishti.in
+      </a>
+    </div>
+  </aside>
 
-    <div class="form-card">
-      <form id="manualReportForm">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Issue Category</label>
-            <select class="form-select" name="category" required>
-              <option disabled selected value="">Select category</option>
-              <option>Garbage / Waste</option>
-              <option>Broken Streetlight</option>
-              <option>Open Manhole</option>
-              <option>Water Logging</option>
-              <option>Illegal Construction</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Municipal Department</label>
-            <select class="form-select" name="municipal_department" required>
-              <option disabled selected value="">Route to department</option>
-              <option>PWD</option>
-              <option>Sanitation</option>
-              <option>Electrical</option>
-              <option>Water Supply</option>
-              <option>General</option>
-            </select>
-          </div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <nav class="topbar-nav">
+          <a href="/ai-detection">AI Detection</a>
+          <a class="active" href="/manual-report">Manual Report</a>
+          <a href="/complaint-map">Complaint Map</a>
+          <a href="/history">History</a>
+        </nav>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon" style="position:relative"><span class="material-symbols-outlined">notifications</span>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Describe the issue</label>
-          <textarea class="form-textarea" name="description" placeholder="e.g. Large garbage pile near the main road junction..." required></textarea>
-        </div>
+      </div>
+    </header>
 
-        <div class="form-group">
-          <label class="form-label">Location / Address</label>
-          <div class="location-field">
-            <span class="material-symbols-outlined">location_on</span>
-            <input class="form-input" name="location" placeholder="e.g. MG Road, near City Mall, Jaipur" required type="text"/>
-          </div>
+    <div class="content">
+      <div class="page-header-card">
+        <h2>Submit a Manual Complaint</h2>
+        <p>Use this form for issues that don't require AI detection — garbage dumping, broken streetlights, open
+          manholes, etc.</p>
+        <div class="page-header-actions">
+          <a class="page-action-btn" href="/departments"><span class="material-symbols-outlined"
+              style="font-size:18px">apartment</span>Departments</a>
+          <a href="mailto:tailaung16@gmail.com?subject=NagarDrishti%20Complaint%20Escalation&body=Please%20find%20the%20complaint%20details%20attached."
+            class="page-action-btn primary"><span class="material-symbols-outlined" style="font-size:18px">mail</span>
+            Send Mail</a>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">GPS Coordinates (Optional)</label>
+      <div class="form-card">
+        <form id="complaint-form">
           <div class="form-row">
-            <input class="form-input" name="latitude" placeholder="Latitude" type="text"/>
-            <input class="form-input" name="longitude" placeholder="Longitude" type="text"/>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Attach a photo (optional)</label>
-          <label class="upload-area" for="manualReportImage">
-            <span class="material-symbols-outlined">add_a_photo</span>
-            <p>Click to upload or drag and drop</p>
-            <small id="manualImageLabel">PNG, JPG up to 10MB</small>
-            <input accept=".png,.jpg,.jpeg" id="manualReportImage" name="image" type="file"/>
-          </label>
-          <div class="upload-file-meta" id="manualFileMeta">
-            <div>
-              <strong id="manualFileName">No file selected</strong>
-              <span id="manualFileSize">Upload is optional</span>
+            <div class="form-group">
+              <label class="form-label">Issue Category</label>
+              <select class="form-select" name="category" required>
+                <option disabled selected value="">Select category</option>
+                <option>Garbage / Waste</option>
+                <option>Broken Streetlight</option>
+                <option>Open Manhole</option>
+                <option>Water Logging</option>
+                <option>Illegal Construction</option>
+                <option>Other</option>
+              </select>
             </div>
-            <span class="material-symbols-outlined" style="color:var(--primary)">attachment</span>
+            <div class="form-group">
+              <label class="form-label">Municipal Department</label>
+              <select class="form-select" name="municipal_department" required>
+                <option disabled selected value="">Route to department</option>
+                <option>PWD</option>
+                <option>Sanitation</option>
+                <option>Electrical</option>
+                <option>Water Supply</option>
+                <option>General</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <button class="submit-btn" id="manualSubmitBtn" type="submit">
-          <span class="material-symbols-outlined">send</span>
-          Submit Complaint
-        </button>
-        <div class="submit-note">By submitting, you agree to our terms of service and accurate reporting guidelines.</div>
-      </form>
-    </div>
+          <div class="form-group">
+            <label class="form-label">Describe the issue</label>
+            <textarea class="form-textarea" name="description"
+              placeholder="e.g. Large garbage pile near the main road junction..." required></textarea>
+          </div>
 
-    <footer class="page-footer">
-      <div class="page-footer-items">
-        <span><span class="material-symbols-outlined">verified_user</span> End-to-End Encrypted</span>
-        <span><span class="material-symbols-outlined">gavel</span> Official Govt Portal</span>
+          <div class="form-group">
+            <label class="form-label">Location / Address</label>
+            <div class="location-field">
+              <span class="material-symbols-outlined">location_on</span>
+              <input class="form-input" name="location" placeholder="e.g. MG Road, near City Mall, Jaipur" required
+                type="text" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">GPS Coordinates (Optional)</label>
+            <div class="form-row">
+              <input class="form-input" id="latitude" name="latitude" placeholder="Latitude" type="text" />
+              <input class="form-input" id="longitude" name="longitude" placeholder="Longitude" type="text" />
+              <button type="button" onclick="getLocation()" style="margin-left:8px; padding:6px 12px; 
+              background:#166534; color:white; border:none; 
+              border-radius:6px; cursor:pointer; font-size:13px;">
+                📍 Use My Location
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Attach a photo (optional)</label>
+            <label class="upload-area" for="manualReportImage">
+              <span class="material-symbols-outlined">add_a_photo</span>
+              <p>Click to upload or drag and drop</p>
+              <small id="manualImageLabel">PNG, JPG up to 10MB</small>
+              <input accept=".png,.jpg,.jpeg" id="manualReportImage" name="image" type="file" />
+            </label>
+            <div class="upload-file-meta" id="manualFileMeta">
+              <div>
+                <strong id="manualFileName">No file selected</strong>
+                <span id="manualFileSize">Upload is optional</span>
+              </div>
+              <span class="material-symbols-outlined" style="color:var(--primary)">attachment</span>
+            </div>
+          </div>
+
+          <button class="submit-btn" id="submit-btn" type="submit">
+            <span class="material-symbols-outlined">send</span>
+            Submit Complaint
+          </button>
+          <div class="submit-note">By submitting, you agree to our terms of service and accurate reporting guidelines.
+          </div>
+        </form>
       </div>
-      <small>© 2026 NagarDrishti - Ministry of Housing and Urban Affairs</small>
-    </footer>
+
+      <footer class="page-footer">© 2026 NagarDrishti — AI-Powered Civic Complaint System</footer>
+    </div>
   </div>
-</div>
 
-<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+  <div class="conn-indicator" id="connIndicator">
+    <div class="conn-dot"></div><span>Checking...</span>
+  </div>
 
-<script>
-function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.className = 'toast toast-' + type + ' show';
-    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type==='success'?'check_circle':'error') + '</span>' + msg;
-    setTimeout(() => t.classList.remove('show'), 3500);
-}
+  <script>
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.className = 'toast toast-' + type + ' show';
+      t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' + msg;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
 
-/* Connection check */
-(async () => {
-    const el = document.getElementById('connIndicator');
-    try {
+    /* Connection check */
+    (async () => {
+      const el = document.getElementById('connIndicator');
+      try {
         const r = await fetch('/api/complaints');
-        if (r.ok) { el.className='conn-indicator conn-ok'; el.innerHTML='<div class="conn-dot"></div><span>Backend Connected</span>'; }
+        if (r.ok) { el.className = 'conn-indicator conn-ok'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Connected</span>'; }
         else throw 0;
-    } catch { el.className='conn-indicator conn-fail'; el.innerHTML='<div class="conn-dot"></div><span>Backend Offline</span>'; }
-    setTimeout(() => el.style.opacity='0', 4000);
-})();
+      } catch { el.className = 'conn-indicator conn-fail'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Offline</span>'; }
+      setTimeout(() => el.style.opacity = '0', 4000);
+    })();
 
-const manualReportForm = document.getElementById("manualReportForm");
-const manualSubmitBtn = document.getElementById("manualSubmitBtn");
-const manualReportImage = document.getElementById("manualReportImage");
-const manualImageLabel = document.getElementById("manualImageLabel");
-const manualFileMeta = document.getElementById("manualFileMeta");
-const manualFileName = document.getElementById("manualFileName");
-const manualFileSize = document.getElementById("manualFileSize");
-const manualNotifications = document.querySelector('.topbar-icon[style*="position:relative"]');
+    const manualReportForm = document.getElementById("complaint-form");
+    const manualSubmitBtn = document.getElementById("submit-btn");
+    const manualReportImage = document.getElementById("manualReportImage");
+    const manualImageLabel = document.getElementById("manualImageLabel");
+    const manualFileMeta = document.getElementById("manualFileMeta");
+    const manualFileName = document.getElementById("manualFileName");
+    const manualFileSize = document.getElementById("manualFileSize");
 
-manualReportImage.addEventListener("change", () => {
-    if (!manualReportImage.files.length) {
+
+    manualReportImage.addEventListener("change", () => {
+      if (!manualReportImage.files.length) {
         manualImageLabel.textContent = "PNG, JPG up to 10MB";
         manualFileMeta.classList.remove("show");
         return;
-    }
-    const file = manualReportImage.files[0];
-    manualImageLabel.textContent = file.name;
-    manualFileName.textContent = file.name;
-    manualFileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB selected`;
-    manualFileMeta.classList.add("show");
-    showToast(`File selected: ${file.name}`, "success");
-});
-
-if (manualNotifications) {
-    const manualNotificationBox = document.createElement('div');
-    manualNotificationBox.style.cssText = 'display:none;position:absolute;top:44px;right:0;width:280px;padding:12px;background:#fff;border:1px solid var(--border-light);border-radius:12px;box-shadow:var(--shadow-lg);z-index:60';
-    manualNotificationBox.innerHTML = '<div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Notifications</div><div style="padding:10px 0;border-top:1px solid var(--border-light)"><div style="font-size:.82rem;font-weight:700;color:var(--text-primary)">Department queue updated</div><div style="font-size:.75rem;color:var(--text-secondary)">Sanitation and PWD routing are available.</div></div><div style="padding:10px 0;border-top:1px solid var(--border-light)"><div style="font-size:.82rem;font-weight:700;color:var(--text-primary)">Manual reports pending</div><div style="font-size:.75rem;color:var(--text-secondary)">3 complaints are waiting for review.</div></div>';
-    manualNotifications.appendChild(manualNotificationBox);
-    manualNotifications.addEventListener("click", (event) => {
-        event.stopPropagation();
-        manualNotificationBox.style.display = manualNotificationBox.style.display === 'block' ? 'none' : 'block';
+      }
+      const file = manualReportImage.files[0];
+      manualImageLabel.textContent = file.name;
+      manualFileName.textContent = file.name;
+      manualFileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB selected`;
+      manualFileMeta.classList.add("show");
+      showToast(`File selected: ${file.name}`, "success");
     });
-    document.addEventListener("click", () => {
-        manualNotificationBox.style.display = 'none';
-    });
-}
 
-manualReportForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(manualReportForm);
-    manualSubmitBtn.disabled = true;
-    manualSubmitBtn.style.opacity = "0.7";
-    manualSubmitBtn.innerHTML = '<span class="material-symbols-outlined">hourglass_top</span><span>Submitting...</span>';
-    showToast('Submitting your complaint...', 'success');
 
-    try {
+
+    manualReportForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(manualReportForm);
+
+      // Disable button after first click to prevent double submit
+      var btn = document.getElementById('submit-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined">hourglass_top</span><span>Submitting...</span>';
+      }
+
+
+
+      showToast('Submitting your complaint...', 'success');
+
+      try {
         const response = await fetch("/api/manual-report", { method: "POST", body: formData });
         const result = await response.json();
         if (!response.ok || !result.success) {
-            throw new Error(result.error || result.message || "Unable to submit complaint");
+          throw new Error(result.error || result.message || "Unable to submit complaint");
         }
         showToast('✅ Complaint submitted! ID: ' + result.data.complaint_id, 'success');
+        sessionStorage.setItem('lastManualComplaintId', result.data.complaint_id);
         const params = new URLSearchParams({
-            complaint_id: result.data.complaint_id || "",
-            category: result.data.category || "",
-            location: result.data.location || "",
-            municipal_dept: result.data.municipal_dept || "",
-            attachment_name: result.data.attachment_name || ""
+          complaint_id: result.data.complaint_id || "",
+          category: result.data.category || "",
+          location: result.data.location || "",
+          municipal_dept: result.data.municipal_dept || "",
+          attachment_name: result.data.attachment_name || ""
         });
         setTimeout(() => {
-            window.location.href = `/manual-report/submitted?${params.toString()}`;
+          window.location.href = `/manual-report/submitted?${params.toString()}`;
         }, 800);
-    } catch (error) {
+      } catch (error) {
         showToast(error.message || 'Unable to submit complaint right now.', 'error');
         manualSubmitBtn.disabled = false;
         manualSubmitBtn.style.opacity = "1";
         manualSubmitBtn.innerHTML = '<span class="material-symbols-outlined">send</span><span>Submit Complaint</span>';
+      }
+    });
+  </script>
+
+  <script>
+    function getLocation() {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          document.getElementById('latitude').value =
+            position.coords.latitude.toFixed(6);
+          document.getElementById('longitude').value =
+            position.coords.longitude.toFixed(6);
+        },
+        function () {
+          alert('Unable to retrieve location. Please enter manually.');
+        }
+      );
     }
-});
-</script>
+  </script>
 </body>
+
 </html>

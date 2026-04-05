@@ -1,232 +1,262 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NagarDrishti - AI Detection</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "tertiary": "#6b1d3d",
-                    "surface-container-high": "#e7e8e9",
-                    "surface-bright": "#f8f9fa",
-                    "surface-variant": "#e1e3e4",
-                    "error": "#ba1a1a",
-                    "on-tertiary-fixed-variant": "#7a2949",
-                    "on-surface-variant": "#41493e",
-                    "error-container": "#ffdad6",
-                    "secondary-fixed": "#cdebc5",
-                    "secondary-container": "#cae8c2",
-                    "on-secondary-container": "#4f694b",
-                    "on-tertiary-fixed": "#3e001d",
-                    "surface-tint": "#2a6b2c",
-                    "outline": "#717a6d",
-                    "on-secondary-fixed": "#082009",
-                    "inverse-surface": "#2e3132",
-                    "background": "#f8f9fa",
-                    "on-surface": "#191c1d",
-                    "on-error-container": "#93000a",
-                    "surface": "#f8f9fa",
-                    "on-primary-fixed-variant": "#0c5216",
-                    "tertiary-fixed-dim": "#ffb1c8",
-                    "inverse-primary": "#91d78a",
-                    "on-secondary-fixed-variant": "#344d31",
-                    "tertiary-container": "#883454",
-                    "primary-container": "#1b5e20",
-                    "on-primary": "#ffffff",
-                    "on-error": "#ffffff",
-                    "primary": "#00450d",
-                    "on-tertiary": "#ffffff",
-                    "on-tertiary-container": "#ffaec6",
-                    "on-primary-fixed": "#002203",
-                    "surface-container-highest": "#e1e3e4",
-                    "on-secondary": "#ffffff",
-                    "surface-dim": "#d9dadb",
-                    "secondary-fixed-dim": "#b1cfaa",
-                    "surface-container-lowest": "#ffffff",
-                    "primary-fixed": "#acf4a4",
-                    "outline-variant": "#c0c9bb",
-                    "tertiary-fixed": "#ffd9e2",
-                    "on-primary-container": "#90d689",
-                    "surface-container-low": "#f3f4f5",
-                    "secondary": "#4b6547",
-                    "primary-fixed-dim": "#91d78a",
-                    "on-background": "#191c1d",
-                    "inverse-on-surface": "#f0f1f2",
-                    "surface-container": "#edeeef"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Inter"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>NagarDrishti - AI Detection</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#6b1d3d",
+            "surface-container-high": "#e7e8e9",
+            "surface-bright": "#f8f9fa",
+            "surface-variant": "#e1e3e4",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#7a2949",
+            "on-surface-variant": "#41493e",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#cdebc5",
+            "secondary-container": "#cae8c2",
+            "on-secondary-container": "#4f694b",
+            "on-tertiary-fixed": "#3e001d",
+            "surface-tint": "#2a6b2c",
+            "outline": "#717a6d",
+            "on-secondary-fixed": "#082009",
+            "inverse-surface": "#2e3132",
+            "background": "#f8f9fa",
+            "on-surface": "#191c1d",
+            "on-error-container": "#93000a",
+            "surface": "#f8f9fa",
+            "on-primary-fixed-variant": "#0c5216",
+            "tertiary-fixed-dim": "#ffb1c8",
+            "inverse-primary": "#91d78a",
+            "on-secondary-fixed-variant": "#344d31",
+            "tertiary-container": "#883454",
+            "primary-container": "#1b5e20",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "primary": "#00450d",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#ffaec6",
+            "on-primary-fixed": "#002203",
+            "surface-container-highest": "#e1e3e4",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#d9dadb",
+            "secondary-fixed-dim": "#b1cfaa",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed": "#acf4a4",
+            "outline-variant": "#c0c9bb",
+            "tertiary-fixed": "#ffd9e2",
+            "on-primary-container": "#90d689",
+            "surface-container-low": "#f3f4f5",
+            "secondary": "#4b6547",
+            "primary-fixed-dim": "#91d78a",
+            "on-background": "#191c1d",
+            "inverse-on-surface": "#f0f1f2",
+            "surface-container": "#edeeef"
           },
-        }
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "fontFamily": {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
+        },
       }
-    </script>
-<style>
-      body { font-family: 'Inter', sans-serif; }
-      .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      }
-    </style>
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
 </head>
+
 <body class="bg-background text-on-surface">
-<!-- SideNavBar Shell -->
-<aside class="fixed left-0 top-0 h-full flex flex-col bg-slate-50 dark:bg-slate-900 h-screen w-64 border-r-0">
-<div class="px-8 py-10">
-<a href="/" style="text-decoration:none;"><h1 class="text-2xl font-black tracking-tight text-green-900 dark:text-green-500">NagarDrishti</h1></a>
-<p class="text-[0.6875rem] text-on-surface-variant uppercase tracking-widest mt-1">Civic Monitoring System</p>
-</div>
-<nav class="flex-1 space-y-2 px-4">
-<a class="flex items-center space-x-3 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-green-800 dark:text-green-300 font-bold border-l-4 border-green-800 dark:border-green-300 pl-4" href="/ai-detection">
-<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
-<span class="text-sm">AI Detection</span>
-</a>
-<a class="flex items-center space-x-3 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 pl-4" href="/manual-report">
-<span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
-<span class="text-sm">Manual Report</span>
-</a>
-<a class="flex items-center space-x-3 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 pl-4" href="/complaint-map">
-<span class="material-symbols-outlined" data-icon="map">map</span>
-<span class="text-sm">Complaint Map</span>
-</a>
-<a class="flex items-center space-x-3 py-3 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 pl-4" href="/history">
-<span class="material-symbols-outlined" data-icon="history">history</span>
-<span class="text-sm">History</span>
-</a>
-</nav>
-<div class="p-6 border-t border-outline-variant/10 space-y-4">
-<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg font-bold text-sm">Submit Feedback</button>
-<a class="flex items-center space-x-3 text-slate-500 hover:text-primary transition-colors px-4" href="/ai-detection">
-<span class="material-symbols-outlined" data-icon="info">info</span>
-<span class="text-sm">About</span>
-</a>
-</div>
-</aside>
-<!-- Main Canvas Area -->
-<main class="ml-64 min-h-screen flex flex-col">
-<!-- TopNavBar Shell -->
-<header class="flex justify-between items-center w-full px-8 py-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl sticky top-0 z-10">
-<div class="flex items-center space-x-8">
-<div class="flex space-x-6">
-<a class="text-green-900 dark:text-green-400 border-b-2 border-green-900 dark:border-green-400 pb-1 text-sm font-medium" href="/history">Overview</a>
-<a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-200 transition-all duration-300 text-sm font-medium" href="/trust-score">Analytics</a>
-<a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-200 transition-all duration-300 text-sm font-medium" href="/history">Reports</a>
-</div>
-</div>
-<div class="flex items-center space-x-6">
-<div class="relative flex items-center">
-<span class="material-symbols-outlined absolute left-3 text-outline" data-icon="search">search</span>
-<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/40 w-64 transition-all" placeholder="Search data..." type="text"/>
-</div>
-<div class="flex items-center space-x-4">
-<button class="text-outline hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button class="text-outline hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</div>
-</div>
-</header>
-<!-- Page Content -->
-<div class="flex-1 p-12 w-full px-4 md:px-8  w-full">
-<!-- Hero Title -->
-<div class="mb-12">
-<h2 class="text-[3.5rem] font-black tracking-tight text-on-surface leading-none mb-4">🤖 AI Detection</h2>
-<p class="text-lg text-on-surface-variant w-full px-4 md:px-8 leading-relaxed">AI-Powered Civic Complaint Automation System. Upload environmental visuals to initiate an automated municipal audit.</p>
-</div>
-<!-- Main Interactive Section (Bento Style) -->
-<div class="grid grid-cols-12 gap-8">
-<!-- Section Header -->
-<div class="col-span-12 mb-2">
-<h3 class="text-2xl font-bold text-on-surface">Upload a Photo for AI Analysis</h3>
-<div class="h-1 w-20 bg-primary mt-2"></div>
-</div>
-<!-- Left Column: Photo Preview -->
-<div class="col-span-12 lg:col-span-6">
-<div class="bg-surface-container-lowest p-8 rounded-xl overflow-hidden group">
-<div class="relative aspect-video rounded-lg overflow-hidden shadow-sm">
-<img alt="pothole on road" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="close-up of a large circular pothole filled with rainwater on a grey asphalt city road during a cloudy afternoon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_gHx-L1RNmNJbvD4GUdsqVxg-MYpigvrKHlehPUWK9VDcHOFIvJeOxNBENpqBl45-C5ggvl6xKq8OOuoa0qQ2jRgiZ0Ho1O7ihwMMiD8LlvxwU2Z9wkdylwyKXUL5T_9yZlfGeQo4CDfNunUCANDms9iF23TfatHWQ-a3aawGybCDjgN8QpTUQjkqMBQnbEKxFZQLS_Xi9hKrIQ-qy1ibqh4P7iTdC4Y8gKlFOTLTKJ1zbeVyHJuB_XbOkS8F2azDuy83X88bm-0"/>
-<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
-</div>
-<p class="mt-4 text-center text-on-surface-variant font-medium text-sm tracking-wide">Uploaded Image</p>
-</div>
-</div>
-<!-- Right Column: Form -->
-<div class="col-span-12 lg:col-span-6">
-<div class="bg-surface-container p-8 rounded-xl space-y-6 h-full flex flex-col justify-between">
-<div class="space-y-5">
-<div>
-<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Location</label>
-<div class="bg-surface-container-low p-4 rounded-lg flex items-center space-x-3">
-<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 w-full text-on-surface font-medium" type="text" value="MG Road, near City Mall, Pune"/>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Lat</label>
-<div class="bg-surface-container-low p-4 rounded-lg text-on-surface font-mono">18.5204</div>
-</div>
-<div>
-<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Lng</label>
-<div class="bg-surface-container-low p-4 rounded-lg text-on-surface font-mono">73.8567</div>
-</div>
-</div>
-<div>
-<label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Issue Type</label>
-<select class="w-full bg-surface-container-low border-none rounded-lg p-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 appearance-none">
-<option selected="">Pothole</option>
-<option>Garbage Overflow</option>
-<option>Broken Street Light</option>
-<option>Water Leakage</option>
-</select>
-</div>
-</div>
-<button class="w-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300 py-5 rounded-lg font-bold text-lg flex items-center justify-center space-x-3 shadow-lg shadow-primary/10 group">
-<span>🚀 Analyze &amp; Generate Complaint</span>
-</button>
-</div>
-</div>
-<!-- Results Placeholder Section -->
-<div class="col-span-12 mt-8">
-<div class="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-16 flex flex-col items-center justify-center text-center space-y-4">
-<div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center text-outline">
-<span class="material-symbols-outlined text-3xl" data-icon="analytics">analytics</span>
-</div>
-<div>
-<p class="text-xl font-bold text-on-surface">System Standby</p>
-<p class="text-on-surface-variant">Results will appear here after analysis</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Sticky Footer Info -->
-<footer class="mt-auto p-8 bg-surface-container-lowest flex justify-between items-center text-sm border-t border-outline-variant/20">
-<div class="text-on-surface-variant">
-                © 2024 NagarDrishti AI • Municipal Governance Framework
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
+      <div>
+        <h1>NagarDrishti</h1>
+        <p>AI Civic Platform</p>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="/">
+        <span class="material-symbols-outlined">home</span> Home
+      </a>
+      <a class="sidebar-link active" href="/ai-detection">
+        <span class="material-symbols-outlined">psychology</span> AI Detection
+      </a>
+      <a class="sidebar-link" href="/manual-report">
+        <span class="material-symbols-outlined">edit_document</span> Manual Report
+      </a>
+      <a class="sidebar-link" href="/complaint-map">
+        <span class="material-symbols-outlined">map</span> Complaint Map
+      </a>
+      <a class="sidebar-link" href="/history">
+        <span class="material-symbols-outlined">history</span> History
+      </a>
+      <a class="sidebar-link" href="/departments">
+        <span class="material-symbols-outlined">apartment</span> Departments
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
+        email them to authorities — all in one click.</div>
+      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
+        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        support@nagardrishti.in
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Canvas Area -->
+  <main class="ml-64 min-h-screen flex flex-col">
+    <!-- TopNavBar Shell -->
+    <header
+      class="flex justify-between items-center w-full px-8 py-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl sticky top-0 z-10">
+      <div class="flex items-center space-x-8">
+        <div class="flex space-x-6">
+          <a class="text-green-900 dark:text-green-400 border-b-2 border-green-900 dark:border-green-400 pb-1 text-sm font-medium"
+            href="/history">Overview</a>
+          <a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-200 transition-all duration-300 text-sm font-medium"
+            href="/trust-score">Analytics</a>
+          <a class="text-slate-500 dark:text-slate-400 hover:text-green-700 dark:hover:text-green-200 transition-all duration-300 text-sm font-medium"
+            href="/history">Reports</a>
+        </div>
+      </div>
+      <div class="flex items-center space-x-6">
+        <div class="relative flex items-center">
+          <span class="material-symbols-outlined absolute left-3 text-outline" data-icon="search">search</span>
+          <input
+            class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/40 w-64 transition-all"
+            placeholder="Search data..." type="text" />
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="text-outline hover:text-primary transition-colors">
+
+          </button>
+          <button class="text-outline hover:text-primary transition-colors">
+            <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <!-- Page Content -->
+    <div class="flex-1 p-12 w-full px-4 md:px-8  w-full">
+      <!-- Hero Title -->
+      <div class="mb-12">
+        <h2 class="text-[3.5rem] font-black tracking-tight text-on-surface leading-none mb-4">🤖 AI Detection</h2>
+        <p class="text-lg text-on-surface-variant w-full px-4 md:px-8 leading-relaxed">AI-Powered Civic Complaint
+          Automation System. Upload environmental visuals to initiate an automated municipal audit.</p>
+      </div>
+      <!-- Main Interactive Section (Bento Style) -->
+      <div class="grid grid-cols-12 gap-8">
+        <!-- Section Header -->
+        <div class="col-span-12 mb-2">
+          <h3 class="text-2xl font-bold text-on-surface">Upload a Photo for AI Analysis</h3>
+          <div class="h-1 w-20 bg-primary mt-2"></div>
+        </div>
+        <!-- Left Column: Photo Preview -->
+        <div class="col-span-12 lg:col-span-6">
+          <div class="bg-surface-container-lowest p-8 rounded-xl overflow-hidden group">
+            <div class="relative aspect-video rounded-lg overflow-hidden shadow-sm">
+              <img alt="pothole on road"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                data-alt="close-up of a large circular pothole filled with rainwater on a grey asphalt city road during a cloudy afternoon"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_gHx-L1RNmNJbvD4GUdsqVxg-MYpigvrKHlehPUWK9VDcHOFIvJeOxNBENpqBl45-C5ggvl6xKq8OOuoa0qQ2jRgiZ0Ho1O7ihwMMiD8LlvxwU2Z9wkdylwyKXUL5T_9yZlfGeQo4CDfNunUCANDms9iF23TfatHWQ-a3aawGybCDjgN8QpTUQjkqMBQnbEKxFZQLS_Xi9hKrIQ-qy1ibqh4P7iTdC4Y8gKlFOTLTKJ1zbeVyHJuB_XbOkS8F2azDuy83X88bm-0" />
+              <div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
             </div>
-<div class="flex space-x-6 text-on-surface-variant font-medium">
-<a class="hover:text-primary transition-colors" href="/">Privacy Policy</a>
-<a class="hover:text-primary transition-colors" href="/trust-score">System Health</a>
-<a class="hover:text-primary transition-colors" href="/manual-report">API Docs</a>
-</div>
-</footer>
-</main>
-</body></html>
+            <p class="mt-4 text-center text-on-surface-variant font-medium text-sm tracking-wide">Uploaded Image</p>
+          </div>
+        </div>
+        <!-- Right Column: Form -->
+        <div class="col-span-12 lg:col-span-6">
+          <div class="bg-surface-container p-8 rounded-xl space-y-6 h-full flex flex-col justify-between">
+            <div class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Location</label>
+                <div class="bg-surface-container-low p-4 rounded-lg flex items-center space-x-3">
+                  <span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+                  <input class="bg-transparent border-none p-0 focus:ring-0 w-full text-on-surface font-medium"
+                    type="text" value="MG Road, near City Mall, Pune" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Lat</label>
+                  <div class="bg-surface-container-low p-4 rounded-lg text-on-surface font-mono">18.5204</div>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Lng</label>
+                  <div class="bg-surface-container-low p-4 rounded-lg text-on-surface font-mono">73.8567</div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-outline mb-2">Issue Type</label>
+                <select
+                  class="w-full bg-surface-container-low border-none rounded-lg p-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 appearance-none">
+                  <option selected="">Pothole</option>
+                  <option>Garbage Overflow</option>
+                  <option>Broken Street Light</option>
+                  <option>Water Leakage</option>
+                </select>
+              </div>
+            </div>
+            <button
+              class="w-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-all duration-300 py-5 rounded-lg font-bold text-lg flex items-center justify-center space-x-3 shadow-lg shadow-primary/10 group">
+              <span>🚀 Analyze &amp; Generate Complaint</span>
+            </button>
+          </div>
+        </div>
+        <!-- Results Placeholder Section -->
+        <div class="col-span-12 mt-8">
+          <div
+            class="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-16 flex flex-col items-center justify-center text-center space-y-4">
+            <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center text-outline">
+              <span class="material-symbols-outlined text-3xl" data-icon="analytics">analytics</span>
+            </div>
+            <div>
+              <p class="text-xl font-bold text-on-surface">System Standby</p>
+              <p class="text-on-surface-variant">Results will appear here after analysis</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Sticky Footer Info -->
+    <footer
+      class="mt-auto p-8 bg-surface-container-lowest flex justify-between items-center text-sm border-t border-outline-variant/20">
+      © 2026 NagarDrishti — AI-Powered Civic Complaint System</footer>
+  </main>
+</body>
+
+</html>

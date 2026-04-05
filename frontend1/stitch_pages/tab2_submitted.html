@@ -1,195 +1,743 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NagarDrishti — Manual Report Submitted</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--shadow-md:0 4px 12px rgba(0,0,0,.06);--transition:.2s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50}
-.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
-.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem}
-.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
-.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
-.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
-.topbar-nav{display:flex;gap:1.5rem}.topbar-nav a{font-size:.8125rem;font-weight:500;color:var(--text-muted);padding:4px 0;border-bottom:2px solid transparent}.topbar-nav a.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
-.topbar-right{display:flex;align-items:center;gap:1rem}
-.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
-.content{padding:2rem;max-width:1120px;width:100%}
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>NagarDrishti — Manual Report Submitted</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --white: #fff;
+      --bg: #f7f8fa;
+      --bg-alt: #f0f2f5;
+      --border: #e2e5ea;
+      --border-light: #edf0f4;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --primary: #0d7c44;
+      --primary-dark: #095c32;
+      --primary-light: #e6f5ed;
+      --primary-glow: rgba(13, 124, 68, .08);
+      --error: #dc2626;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .06);
+      --transition: .2s cubic-bezier(.4, 0, .2, 1)
+    }
 
-/* SUCCESS BANNER */
-.success-banner{background:var(--primary-light);border-left:6px solid var(--primary);padding:1.5rem 2rem;border-radius:var(--radius-md);margin-bottom:2rem;display:flex;gap:1rem}
-.success-banner h3{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:.5rem}
-.success-banner p{font-size:.8125rem;color:#065f46;line-height:1.6}
-.success-banner code{background:rgba(13,124,68,.1);padding:2px 8px;border-radius:4px;font-size:.8125rem}
-.success-banner .mail-line{display:flex;align-items:center;gap:6px;margin-top:.5rem;font-weight:600;font-size:.8125rem}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-.submitted-grid{display:grid;grid-template-columns:2fr 1fr;gap:2rem}
-.form-review{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:2rem}
-.form-review-inner{opacity:.75}
-.review-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.25rem}
-.review-field label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.35rem;display:block}
-.review-value{background:var(--bg);padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-primary)}
-.review-desc{min-height:80px;line-height:1.6}
-.review-location{display:flex;align-items:flex-start;gap:8px}.review-location .material-symbols-outlined{color:var(--primary);font-size:20px;margin-top:2px}
-.review-gps{display:flex;justify-content:space-between;align-items:center;font-family:monospace}
-.review-gps .material-symbols-outlined{color:var(--text-muted);font-size:16px}
-.review-file{display:flex;align-items:center;gap:8px}.review-file .material-symbols-outlined{color:var(--primary);font-size:20px}
-.submitted-disabled{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-md);font-family:inherit;font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;opacity:.5;cursor:not-allowed;margin-top:1.5rem}
-.action-buttons{display:flex;gap:.75rem;margin-top:1.5rem;flex-wrap:wrap}
-.btn-primary-sm{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:12px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:700;border:none;cursor:pointer;transition:all var(--transition);box-shadow:0 4px 14px rgba(13,124,68,.15)}
-.btn-primary-sm:hover{background:var(--primary-dark);transform:translateY(-1px)}
-.btn-outline-sm{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--primary);padding:12px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:700;border:2px solid var(--primary);cursor:pointer;transition:all var(--transition)}
-.btn-outline-sm:hover{background:var(--primary-glow)}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased
+    }
 
-/* RIGHT COLUMN */
-.side-map{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.5rem}
-.side-map img{width:100%;height:180px;object-fit:cover}
-.side-map .pin-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.side-map-wrapper{position:relative}
-.pin-circle{background:var(--white);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
-.pin-circle .material-symbols-outlined{color:var(--primary);font-variation-settings:'FILL' 1}
+    a {
+      text-decoration: none;
+      color: inherit
+    }
 
-.verify-card{background:var(--bg);border:1px solid var(--border-light);padding:1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem}
-.verify-card h4{font-size:.8125rem;font-weight:700;margin-bottom:.75rem}
-.verify-item{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-secondary);margin-bottom:.5rem}
-.verify-item .material-symbols-outlined{color:var(--primary);font-size:16px}
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle
+    }
 
-.db-card{background:#0f172a;color:#e2e8f0;padding:1rem;border-radius:var(--radius-md);display:flex;align-items:center;gap:10px;font-size:.75rem}
-.db-card .material-symbols-outlined{color:#4ade80;font-size:20px}
-.page-footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--border-light);text-align:center;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
-.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.08);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}
-.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:0 4px 12px rgba(0,0,0,.06)}
-.conn-dot{width:8px;height:8px;border-radius:50%}.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
-</style>
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: var(--white);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      z-index: 50
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2rem
+    }
+
+    .sidebar-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .sidebar-brand h1 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: var(--primary)
+    }
+
+    .sidebar-brand p {
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted)
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      cursor: pointer
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg)
+    }
+
+    .sidebar-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    .sidebar-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light)
+    }
+
+    .sidebar-about {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1rem
+    }
+
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700
+    }
+
+    .topbar-nav {
+      display: flex;
+      gap: 1.5rem
+    }
+
+    .topbar-nav a {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 4px 0;
+      border-bottom: 2px solid transparent
+    }
+
+    .topbar-nav a.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem
+    }
+
+    .topbar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition)
+    }
+
+    .topbar-icon:hover {
+      background: var(--bg)
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 1120px;
+      width: 100%
+    }
+
+    /* SUCCESS BANNER */
+    .success-banner {
+      background: var(--primary-light);
+      border-left: 6px solid var(--primary);
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem
+    }
+
+    .success-banner h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: .5rem
+    }
+
+    .success-banner p {
+      font-size: .8125rem;
+      color: #065f46;
+      line-height: 1.6
+    }
+
+    .success-banner code {
+      background: rgba(13, 124, 68, .1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: .8125rem
+    }
+
+    .success-banner .mail-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: .5rem;
+      font-weight: 600;
+      font-size: .8125rem
+    }
+
+    .submitted-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem
+    }
+
+    .form-review {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2rem
+    }
+
+    .form-review-inner {
+      opacity: .75
+    }
+
+    .review-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem
+    }
+
+    .review-field label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: .35rem;
+      display: block
+    }
+
+    .review-value {
+      background: var(--bg);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-primary)
+    }
+
+    .review-desc {
+      min-height: 80px;
+      line-height: 1.6
+    }
+
+    .review-location {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px
+    }
+
+    .review-location .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 20px;
+      margin-top: 2px
+    }
+
+    .review-gps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: monospace
+    }
+
+    .review-gps .material-symbols-outlined {
+      color: var(--text-muted);
+      font-size: 16px
+    }
+
+    .review-file {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .review-file .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 20px
+    }
+
+    .submitted-disabled {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: .5;
+      cursor: not-allowed;
+      margin-top: 1.5rem
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: .75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap
+    }
+
+    .btn-primary-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 4px 14px rgba(13, 124, 68, .15)
+    }
+
+    .btn-primary-sm:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px)
+    }
+
+    .btn-outline-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--primary);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 700;
+      border: 2px solid var(--primary);
+      cursor: pointer;
+      transition: all var(--transition)
+    }
+
+    .btn-outline-sm:hover {
+      background: var(--primary-glow)
+    }
+
+    /* RIGHT COLUMN */
+    .side-map {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem
+    }
+
+    .side-map img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover
+    }
+
+    .side-map .pin-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .side-map-wrapper {
+      position: relative
+    }
+
+    .pin-circle {
+      background: var(--white);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md)
+    }
+
+    .pin-circle .material-symbols-outlined {
+      color: var(--primary);
+      font-variation-settings: 'FILL' 1
+    }
+
+    .verify-card {
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem
+    }
+
+    .verify-card h4 {
+      font-size: .8125rem;
+      font-weight: 700;
+      margin-bottom: .75rem
+    }
+
+    .verify-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .75rem;
+      color: var(--text-secondary);
+      margin-bottom: .5rem
+    }
+
+    .verify-item .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 16px
+    }
+
+    .db-card {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .75rem
+    }
+
+    .db-card .material-symbols-outlined {
+      color: #4ade80;
+      font-size: 20px
+    }
+
+    .page-footer {
+      margin-top: 3rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border-light);
+      text-align: center;
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted)
+    }
+
+    .toast {
+      position: fixed;
+      top: 72px;
+      right: 2rem;
+      z-index: 9999;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+      transform: translateX(120%);
+      transition: transform .4s ease
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .toast-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac
+    }
+
+    .conn-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .06)
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%
+    }
+
+    .conn-ok .conn-dot {
+      background: #22c55e
+    }
+
+    .conn-fail .conn-dot {
+      background: #ef4444
+    }
+  </style>
 </head>
+
 <body>
-<div id="toast" class="toast"></div>
+  <div id="toast" class="toast"></div>
 
-<aside class="sidebar">
-  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Monitoring</p></div></a>
-  <nav class="sidebar-nav">
-    <a class="sidebar-link" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
-    <a class="sidebar-link active" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
-    <a class="sidebar-link" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
-    <a class="sidebar-link" href="/history"><span class="material-symbols-outlined">history</span> History</a>
-  </nav>
-  <div class="sidebar-footer"><div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and email them to authorities.</div></div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <a href="/" class="topbar-title">🏙️ NagarDrishti</a>
-      <nav class="topbar-nav">
-        <a href="/ai-detection">AI Detection</a>
-        <a class="active" href="/manual-report">Manual Report</a>
-        <a href="/complaint-map">Complaint Map</a>
-        <a href="/history">History</a>
-      </nav>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
-      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
-    </div>
-  </header>
-
-  <div class="content">
-    <div class="success-banner">
-      <span style="font-size:1.5rem">✅</span>
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
       <div>
-        <h3>Complaint submitted!</h3>
-        <p><strong>Category:</strong> <span id="submittedCategory">Garbage / Waste</span></p>
-        <p><strong>Location:</strong> <span id="submittedLocation">Bus Stand Road, near Gandhi Chowk, Bikaner</span></p>
-        <p><strong>Complaint ID:</strong> <code id="submittedComplaintId">ND-20260403-150200</code></p>
-        <p style="margin-top:.5rem">Your complaint has been forwarded to the <span id="submittedDepartment">Sanitation</span> department.</p>
-        <div class="mail-line"><span class="material-symbols-outlined" style="font-size:16px">mail</span> Email sent to sanitation@bikanercorp.gov.in</div>
+        <h1>NagarDrishti</h1>
+        <p>AI Civic Platform</p>
       </div>
     </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="/">
+        <span class="material-symbols-outlined">home</span> Home
+      </a>
+      <a class="sidebar-link" href="/ai-detection">
+        <span class="material-symbols-outlined">psychology</span> AI Detection
+      </a>
+      <a class="sidebar-link" href="/manual-report">
+        <span class="material-symbols-outlined">edit_document</span> Manual Report
+      </a>
+      <a class="sidebar-link" href="/complaint-map">
+        <span class="material-symbols-outlined">map</span> Complaint Map
+      </a>
+      <a class="sidebar-link active" href="/history">
+        <span class="material-symbols-outlined">history</span> History
+      </a>
+      <a class="sidebar-link" href="/departments">
+        <span class="material-symbols-outlined">apartment</span> Departments
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
+        email them to authorities — all in one click.</div>
+      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
+        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        support@nagardrishti.in
+      </a>
+    </div>
+  </aside>
 
-    <div class="submitted-grid">
-      <div>
-        <div class="form-review">
-          <div class="form-review-inner">
-            <div class="review-row">
-              <div class="review-field"><label>Issue Category</label><div class="review-value" id="submittedCategoryCard">Garbage / Waste</div></div>
-              <div class="review-field"><label>Municipal Department</label><div class="review-value" id="submittedDepartmentCard">Sanitation</div></div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <nav class="topbar-nav">
+          <a href="/ai-detection">AI Detection</a>
+          <a class="active" href="/manual-report">Manual Report</a>
+          <a href="/complaint-map">Complaint Map</a>
+          <a href="/history">History</a>
+        </nav>
+      </div>
+      <div class="topbar-right">
+
+
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="success-banner">
+        <span style="font-size:1.5rem">✅</span>
+        <div>
+          <h3>Complaint submitted!</h3>
+          <p><strong>Category:</strong> <span id="submittedCategory">Garbage / Waste</span></p>
+          <p><strong>Location:</strong> <span id="submittedLocation">Bus Stand Road, near Gandhi Chowk, Bikaner</span>
+          </p>
+          <p><strong>Complaint ID:</strong> <code data-complaint-id></code></p>
+          <p style="margin-top:.5rem">Your complaint has been forwarded to the <span
+              id="submittedDepartment">Sanitation</span> department.</p>
+          <div class="mail-line"><span class="material-symbols-outlined" style="font-size:16px">mail</span> Email sent
+            to <span id="email-display"></span></div>
+        </div>
+      </div>
+
+      <div class="submitted-grid">
+        <div>
+          <div class="form-review">
+            <div class="form-review-inner">
+              <div class="review-row">
+                <div class="review-field"><label>Issue Category</label>
+                  <div class="review-value" id="submittedCategoryCard">Garbage / Waste</div>
+                </div>
+                <div class="review-field"><label>Municipal Department</label>
+                  <div class="review-value" id="submittedDepartmentCard">Sanitation</div>
+                </div>
+              </div>
+              <div class="review-field" style="margin-bottom:1.25rem"><label>Description</label>
+                <div class="review-value review-desc">Large pile of garbage dumped near the bus stand. Has been
+                  accumulating for over a week. Foul smell and mosquito breeding. Needs immediate cleanup.</div>
+              </div>
+              <div class="review-field" style="margin-bottom:1.25rem"><label>Location Address</label>
+                <div class="review-value review-location"><span
+                    class="material-symbols-outlined">location_on</span><span id="submittedLocationCard">Bus Stand Road,
+                    near Gandhi Chowk, Bikaner, Rajasthan</span></div>
+              </div>
+              <div class="review-row">
+                <div class="review-field"><label>GPS Coordinates</label>
+                  <div class="review-value review-gps"><span>28.0229, 73.3119</span><span
+                      class="material-symbols-outlined">gps_fixed</span></div>
+                </div>
+                <div class="review-field"><label>Attachment</label>
+                  <div class="review-value review-file"><span class="material-symbols-outlined">image</span><span
+                      id="submittedAttachmentName">garbage_dump.jpg (2.4 MB)</span></div>
+                </div>
+              </div>
             </div>
-            <div class="review-field" style="margin-bottom:1.25rem"><label>Description</label><div class="review-value review-desc">Large pile of garbage dumped near the bus stand. Has been accumulating for over a week. Foul smell and mosquito breeding. Needs immediate cleanup.</div></div>
-            <div class="review-field" style="margin-bottom:1.25rem"><label>Location Address</label><div class="review-value review-location"><span class="material-symbols-outlined">location_on</span><span id="submittedLocationCard">Bus Stand Road, near Gandhi Chowk, Bikaner, Rajasthan</span></div></div>
-            <div class="review-row">
-              <div class="review-field"><label>GPS Coordinates</label><div class="review-value review-gps"><span>28.0229, 73.3119</span><span class="material-symbols-outlined">gps_fixed</span></div></div>
-              <div class="review-field"><label>Attachment</label><div class="review-value review-file"><span class="material-symbols-outlined">image</span><span id="submittedAttachmentName">garbage_dump.jpg (2.4 MB)</span></div></div>
+            <button class="submitted-disabled" disabled><span class="material-symbols-outlined"
+                style="font-variation-settings:'FILL' 1">check_circle</span> Complaint Submitted</button>
+          </div>
+          <div class="action-buttons">
+            <button class="btn-primary-sm" id="submittedDownloadBtn"><span class="material-symbols-outlined"
+                style="font-size:18px">download</span> Download PDF Report</button>
+            <button class="btn-outline-sm" onclick="window.location.href='/history'"><span
+                class="material-symbols-outlined" style="font-size:18px">history</span> View Complaint History</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="side-map">
+            <div class="side-map-wrapper">
+              <img alt="Map view"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA_vwZdEcFEu3uApsW0_g6XmUmzmBWlOyKtFa5PKHvAf5QX5NBmo0YkhWVk7oT9cawzQQDbY_DXSRHCCXzFRpADPAuYrf_t_5uC7j6I8z2eod_TP-7wWouO2KXT2xN23kKYi9pVLgTXJGdwAidtWEYIhUX7JCBZ6YDf1q2rTSZN0nBWDHj0SehapdC_MVAAtiYY-VKuidgNwy-ES8L8K8I84d61ioiz3o9pxdER4cUC8qMwUnUM-tS2_M2F1ke669tVf4qkOtvJVY" />
             </div>
           </div>
-          <button class="submitted-disabled" disabled><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">check_circle</span> Complaint Submitted</button>
-        </div>
-        <div class="action-buttons">
-          <button class="btn-primary-sm" id="submittedDownloadBtn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download PDF Report</button>
-          <button class="btn-outline-sm" onclick="window.location.href='/history'"><span class="material-symbols-outlined" style="font-size:18px">history</span> View Complaint History</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="side-map">
-          <div class="side-map-wrapper">
-            <img alt="Map view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA_vwZdEcFEu3uApsW0_g6XmUmzmBWlOyKtFa5PKHvAf5QX5NBmo0YkhWVk7oT9cawzQQDbY_DXSRHCCXzFRpADPAuYrf_t_5uC7j6I8z2eod_TP-7wWouO2KXT2xN23kKYi9pVLgTXJGdwAidtWEYIhUX7JCBZ6YDf1q2rTSZN0nBWDHj0SehapdC_MVAAtiYY-VKuidgNwy-ES8L8K8I84d61ioiz3o9pxdER4cUC8qMwUnUM-tS2_M2F1ke669tVf4qkOtvJVY"/>
+          <div class="verify-card">
+            <h4>Verification Status</h4>
+            <div class="verify-item"><span class="material-symbols-outlined">verified</span> AI Image Verification:
+              Passed</div>
+            <div class="verify-item"><span class="material-symbols-outlined">task_alt</span> Geo-tag Matching: Confirmed
+            </div>
+            <div class="verify-item"><span class="material-symbols-outlined">forward_to_inbox</span> Authority Notified:
+              Success</div>
           </div>
+          <div class="db-card"><span class="material-symbols-outlined">database</span> Complaint stored in database
+            successfully</div>
         </div>
-        <div class="verify-card">
-          <h4>Verification Status</h4>
-          <div class="verify-item"><span class="material-symbols-outlined">verified</span> AI Image Verification: Passed</div>
-          <div class="verify-item"><span class="material-symbols-outlined">task_alt</span> Geo-tag Matching: Confirmed</div>
-          <div class="verify-item"><span class="material-symbols-outlined">forward_to_inbox</span> Authority Notified: Success</div>
-        </div>
-        <div class="db-card"><span class="material-symbols-outlined">database</span> Complaint stored in database successfully</div>
       </div>
-    </div>
 
-    <div class="page-footer">© 2026 NagarDrishti Civic Solutions • Intelligent Urban Governance</div>
+      <div class="page-footer">© 2026 NagarDrishti — AI-Powered Civic Complaint System</div>
+    </div>
   </div>
-</div>
 
-<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+  <div class="conn-indicator" id="connIndicator">
+    <div class="conn-dot"></div><span>Checking...</span>
+  </div>
 
-<script>
-function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.className = 'toast toast-' + type + ' show';
-    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type==='success'?'check_circle':'error') + '</span>' + msg;
-    setTimeout(() => t.classList.remove('show'), 3500);
-}
-(async () => {
-    const el = document.getElementById('connIndicator');
-    try {
-        const r = await fetch('/api/complaints');
-        if (r.ok) { el.className='conn-indicator conn-ok'; el.innerHTML='<div class="conn-dot"></div><span>Backend Connected</span>'; }
-        else throw 0;
-    } catch { el.className='conn-indicator conn-fail'; el.innerHTML='<div class="conn-dot"></div><span>Backend Offline</span>'; }
-    setTimeout(() => el.style.opacity='0', 4000);
-})();
-const submittedParams = new URLSearchParams(window.location.search);
-const submittedComplaintId = submittedParams.get("complaint_id");
-const submittedCategory = submittedParams.get("category");
-const submittedLocation = submittedParams.get("location");
-const submittedDepartment = submittedParams.get("municipal_dept");
-const submittedAttachment = submittedParams.get("attachment_name");
-if (submittedComplaintId) document.getElementById("submittedComplaintId").textContent = submittedComplaintId;
-if (submittedCategory) { document.getElementById("submittedCategory").textContent = submittedCategory; document.getElementById("submittedCategoryCard").textContent = submittedCategory; }
-if (submittedLocation) { document.getElementById("submittedLocation").textContent = submittedLocation; document.getElementById("submittedLocationCard").textContent = submittedLocation; }
-if (submittedDepartment) { document.getElementById("submittedDepartment").textContent = submittedDepartment; document.getElementById("submittedDepartmentCard").textContent = submittedDepartment; }
-if (submittedAttachment) document.getElementById("submittedAttachmentName").textContent = submittedAttachment;
-
-document.getElementById("submittedDownloadBtn").addEventListener("click", () => {
-    const cid = submittedComplaintId || 'unknown';
-    showToast(`PDF report ready: reports/${cid}_manual.pdf`, 'success');
-});
-
-if (submittedComplaintId) showToast('Complaint ' + submittedComplaintId + ' submitted successfully!', 'success');
-</script>
+  <script>
+    window.onload = function () {
+      var id = sessionStorage.getItem('lastManualComplaintId') || 'Pending';
+      document.querySelectorAll('[data-complaint-id]').forEach(function (el) {
+        el.textContent = id;
+      });
+      // Remove any hardcoded email display
+      var emailEl = document.getElementById('email-display');
+      if (emailEl) emailEl.textContent = 'Municipal department';
+    };
+  </script>
 </body>
+
 </html>

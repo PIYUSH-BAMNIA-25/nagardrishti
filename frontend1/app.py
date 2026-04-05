@@ -3,6 +3,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from werkzeug.utils import secure_filename
 
@@ -22,6 +24,21 @@ STITCH_DIR = Path(__file__).parent / "stitch_pages"
 # Configure Flask to use stitch_pages as the template folder
 app = Flask(__name__, template_folder=str(STITCH_DIR), static_folder=str(STITCH_DIR))
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "fallback-dev-secret-key-nagardrishti")
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+
+# Rate limiting to prevent API abuse
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # Ensure REPORTS_DIR exists for PDF output
 os.makedirs(REPORTS_DIR, exist_ok=True)
@@ -56,23 +73,24 @@ def safe_get_complaints_with_coordinates():
 
 
 def build_home_stats():
-    complaints = safe_get_all_complaints()
-    total_complaints = len(complaints)
-    verified_count = sum(1 for complaint in complaints if complaint.get("is_verified"))
-    connected_departments = len(
-        {
-            (complaint.get("municipal_dept") or "").strip()
-            for complaint in complaints
-            if (complaint.get("municipal_dept") or "").strip()
+    try:
+        all_complaints = db.get_all_complaints() or []
+        total = len(all_complaints)
+        verified = sum(1 for c in all_complaints 
+                      if c.get('is_verified') == True)
+        verified_pct = round((verified/total*100)) if total > 0 else 0
+        stats = {
+            "total_complaints" : total,
+            "verified_pct"     : verified_pct,
+            "depts_connected"  : 8,
         }
-    )
-    verified_rate = round((verified_count / total_complaints) * 100) if total_complaints else 0
-
-    return {
-        "total_complaints": total_complaints,
-        "verified_rate": verified_rate,
-        "connected_departments": connected_departments,
-    }
+    except:
+        stats = {
+            "total_complaints" : 0,
+            "verified_pct"     : 0,
+            "depts_connected"  : 8,
+        }
+    return stats
 
 
 def build_departments_context():
@@ -143,7 +161,27 @@ def manual_report_submitted():
 
 @app.route("/departments")
 def departments():
-    return render_template("departments.html", **build_departments_context())
+    from config import MUNICIPAL_EMAILS
+
+    departments_list = [
+        {"name": "Roads & Infrastructure", 
+         "email": "tailaung16@gmail.com",
+         "status": "Active"},
+        {"name": "Sanitation & Waste", 
+         "email": "tailaung16@gmail.com",
+         "status": "Active"},
+        {"name": "Electrical & Lighting", 
+         "email": "tailaung16@gmail.com",
+         "status": "Active"},
+        {"name": "Public Works (PWD)", 
+         "email": "tailaung16@gmail.com",
+         "status": "Active"},
+        {"name": "Drainage & Sewerage", 
+         "email": "tailaung16@gmail.com",
+         "status": "Active"},
+    ]
+    return render_template('departments.html', 
+                           departments=departments_list)
 
 @app.route("/complaint-map")
 def complaint_map():
@@ -153,34 +191,43 @@ def complaint_map():
 
 @app.route("/history")
 def history():
-    # Fetch all complaints from Supabase for the history table
-    complaints = safe_get_all_complaints()
-    return render_template("tab4_history.html", complaints=complaints)
+    try:
+        all_complaints = db.get_all_complaints() or []
+        display_complaints = [
+            c for c in all_complaints
+            if c.get('is_verified') == True
+            or c.get('source') == 'manual_text_only'
+        ]
+        return render_template("tab4_history.html", complaints=display_complaints)
+    except Exception as e:
+        print(f"[History] Error: {e}")
+        return render_template("tab4_history.html", complaints=[])
 
 @app.route("/history/<complaint_id>")
 def complaint_detail(complaint_id):
-    complaint = safe_get_complaint_by_public_id(complaint_id)
-    if not complaint:
-        # Fallback: build complaint object from URL query params (for demo use)
-        complaint = {
-            "complaint_id": complaint_id,
-            "category": request.args.get("category", "Complaint"),
-            "description": request.args.get("description", "Complaint details are unavailable."),
-            "severity": request.args.get("severity", "N/A"),
-            "severity_label": request.args.get("severity_label", ""),
-            "location": request.args.get("location", "Unknown location"),
-            "status": request.args.get("status", "Pending"),
-            "municipal_dept": request.args.get("municipal_dept", "Municipal Department"),
-            "source": request.args.get("source", "Citizen Portal"),
-            "created_at": request.args.get("created_at", datetime.now().isoformat()),
-            "latitude": request.args.get("latitude", ""),
-            "longitude": request.args.get("longitude", ""),
-            "pdf_url": request.args.get("pdf_url", ""),
-            "email_sent": request.args.get("email_sent", "false").lower() == "true",
-            "is_verified": request.args.get("is_verified", "true").lower() == "true",
-            "issue_type": request.args.get("issue_type", request.args.get("category", "Complaint")),
-        }
-    return render_template("complaint_detail.html", complaint=complaint)
+    try:
+        complaint = db.get_complaint_by_public_id(complaint_id)
+        if not complaint:
+            return "Complaint not found", 404
+
+        # Set PDF filename for download
+        if complaint.get('is_verified'):
+            complaint['pdf_filename'] = f"{complaint_id}_report.pdf"
+        else:
+            complaint['pdf_filename'] = f"{complaint_id}_REJECTED.pdf"
+
+        # Add display flags
+        complaint['show_email_actions'] = complaint.get('is_verified', False)
+
+        # Normalize field names for template compatibility
+        complaint['issue_type']     = complaint.get('category')
+        complaint['severity_level'] = complaint.get('severity')
+        complaint['location_text']  = complaint.get('location')
+
+        return render_template("complaint_detail.html", complaint=complaint)
+    except Exception as e:
+        print(f"[Detail] Error: {e}")
+        return f"Error loading complaint: {e}", 500
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -197,8 +244,30 @@ def api_get_complaints():
 @app.route("/api/complaints/geo", methods=["GET"])
 def api_get_geo_complaints():
     """Returns only complaints with GPS coordinates — for map markers."""
-    complaints = safe_get_complaints_with_coordinates()
-    return jsonify({"success": True, "data": complaints})
+    try:
+        all_complaints = db.get_all_complaints() or []
+        geo_complaints = []
+        for c in all_complaints:
+            lat = c.get('latitude')
+            lng = c.get('longitude')
+            # Only show verified complaints with real GPS
+            if (c.get('is_verified') == True and
+                lat and lng and
+                float(lat) != 0.0 and
+                float(lng) != 0.0):
+                geo_complaints.append({
+                    "complaint_id"  : c.get('complaint_id'),
+                    "issue_type"    : c.get('category'),
+                    "severity_level": c.get('severity'),
+                    "severity_label": c.get('severity_label'),
+                    "location_text" : c.get('location'),
+                    "latitude"      : float(lat),
+                    "longitude"     : float(lng),
+                    "status"        : c.get('status', 'Pending'),
+                })
+        return jsonify({"success": True, "complaints": geo_complaints})
+    except Exception as e:
+        return jsonify({"success": False, "complaints": [], "error": str(e)})
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -206,6 +275,7 @@ def api_get_geo_complaints():
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.route("/api/analyze", methods=["POST"])
+@limiter.limit("10 per minute")
 def api_analyze():
     if 'image' not in request.files:
         return jsonify({"success": False, "error": "No image uploaded"}), 400
@@ -213,6 +283,12 @@ def api_analyze():
     file = request.files['image']
     if file.filename == '':
         return jsonify({"success": False, "error": "Empty filename"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({
+            "success": False, 
+            "error": "Only JPG and PNG files are allowed"
+        }), 400
 
     location = request.form.get("location", "Unknown Location")
     issue_type = request.form.get("issue_type", "pothole")
@@ -243,23 +319,35 @@ def api_analyze():
             longitude=longitude,
         )
 
-        # Save to Supabase
-        db.insert_complaint({
-            "complaint_id":    result.complaint_id,
-            "category":        result.issue_type,
-            "description":     result.description,
-            "severity":        result.severity_level,
-            "severity_label":  result.severity_label,
-            "latitude":        result.latitude,
-            "longitude":       result.longitude,
-            "location":        result.location_text,
-            "is_verified":     result.is_verified,
-            "veracity_reason": result.veracity_reason,
-            "pdf_url":         result.pdf_path,
-            "email_sent":      result.email_sent,
-            "municipal_dept":  result.municipal_dept,
-            "source":          result.source,
-        })
+        # Only save VERIFIED complaints to Supabase
+        # Rejected complaints are logged but NOT stored
+        if result.is_verified:
+            try:
+                pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
+                complaint_data = {
+                    "complaint_id"   : result.complaint_id,
+                    "category"       : result.issue_type,
+                    "description"    : result.description,
+                    "severity"       : result.severity_level,
+                    "severity_label" : result.severity_label,
+                    "latitude"       : latitude if latitude != 0.0 else None,
+                    "longitude"      : longitude if longitude != 0.0 else None,
+                    "location"       : result.location_text,
+                    "status"         : "Pending",
+                    "is_verified"    : True,
+                    "veracity_reason": result.veracity_reason,
+                    "image_url"      : filepath if filepath else None,
+                    "pdf_url"        : pdf_filename,
+                    "email_sent"     : getattr(result, 'email_sent', False),
+                    "municipal_dept" : result.municipal_dept,
+                    "source"         : "ai_detection",
+                }
+                db.insert_complaint(complaint_data)
+                print(f"[Analyze] Saved verified complaint {result.complaint_id} to Supabase")
+            except Exception as e:
+                print(f"[Analyze] Supabase save error: {e}")
+        else:
+            print(f"[Analyze] Complaint {result.complaint_id} REJECTED — not saved to Supabase")
 
         return jsonify({
             "success": True,
@@ -346,63 +434,105 @@ def api_resend_email(complaint_id):
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.route("/api/manual-report", methods=["POST"])
+@limiter.limit("10 per minute")
 def api_manual_report():
-    data = request.json or request.form
-    complaint_id = f"ND-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-    category = data.get("category", "Other")
-    description = data.get("description", "")
-    location = data.get("location", "Unknown location")
-    municipal_dept = data.get("municipal_department") or data.get("department") or "General"
-    latitude = data.get("latitude") or None
-    longitude = data.get("longitude") or None
-    attachment_name = None
-
-    if "image" in request.files:
-        image = request.files["image"]
-        if image and image.filename:
-            attachment_name = secure_filename(image.filename)
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], attachment_name)
-            image.save(filepath)
-
-    complaint_record = {
-        "complaint_id": complaint_id,
-        "category": category,
-        "description": description,
-        "severity": 1,
-        "severity_label": "Medium",
-        "latitude": latitude,
-        "longitude": longitude,
-        "location": location,
-        "status": "Pending",
-        "image_url": attachment_name,
-        "pdf_url": "",
-        "email_sent": False,
-        "municipal_dept": municipal_dept,
-        "source": "manual_report",
-        "is_verified": True,
-    }
-
     try:
-        db.insert_complaint(complaint_record)
-    except Exception:
-        pass
+        description  = request.form.get("description", "")
+        location     = request.form.get("location", "")
+        category     = request.form.get("category", "Other")
+        latitude     = float(request.form.get("latitude", 0.0) or 0.0)
+        longitude    = float(request.form.get("longitude", 0.0) or 0.0)
 
-    return jsonify({
-        "success": True,
-        "message": "Manual report saved",
-        "data": {
-            "complaint_id": complaint_id,
-            "category": category,
-            "location": location,
-            "municipal_dept": municipal_dept,
-            "attachment_name": attachment_name or "No attachment uploaded",
-        }
-    })
+        image_path = ""
+        if "image" in request.files:
+            file = request.files["image"]
+            if file.filename:
+                fname = secure_filename(file.filename)
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], fname)
+                file.save(image_path)
+
+        # Run full AI pipeline (same as AI route)
+        result = gateway_agent.process_citizen_report(
+            image_path  = image_path,
+            description = description,
+            location    = location,
+            issue_type  = category,
+            latitude    = latitude,
+            longitude   = longitude,
+        )
+
+        # Manual report storage logic
+        try:
+            pdf_filename = os.path.basename(result.pdf_path) if result.pdf_path else f"{result.complaint_id}_report.pdf"
+            complaint_data = {
+                "complaint_id"   : result.complaint_id,
+                "category"       : result.issue_type,
+                "description"    : result.description,
+                "severity"       : result.severity_level,
+                "severity_label" : result.severity_label,
+                "latitude"       : latitude if latitude != 0.0 else None,
+                "longitude"      : longitude if longitude != 0.0 else None,
+                "location"       : result.location_text or location,
+                "status"         : "Pending",
+                "is_verified"    : result.is_verified,
+                "veracity_reason": result.veracity_reason,
+                "image_url"      : image_path if image_path else None,
+                "pdf_url"        : pdf_filename,
+                "email_sent"     : getattr(result, 'email_sent', False),
+                "municipal_dept" : result.municipal_dept,
+                "source"         : "citizen_manual",
+            }
+
+            # Manual reports with images go through full pipeline
+            if image_path and result.is_verified:
+                # Save verified manual complaints normally
+                complaint_data['is_verified'] = True
+                db.insert_complaint(complaint_data)
+                print(f"[Analyze] Saved verified manual complaint {result.complaint_id} to Supabase")
+            elif not image_path:
+                # Text-only manual reports: save as pending
+                complaint_data['is_verified'] = False
+                complaint_data['source'] = 'manual_text_only'
+                db.insert_complaint(complaint_data)
+                print(f"[Analyze] Saved text-only manual complaint {result.complaint_id} to Supabase")
+            else:
+                # Has image but rejected — don't save
+                print(f"[Analyze] Manual complaint {result.complaint_id} REJECTED — not saved to Supabase")
+
+        except Exception as e:
+            print(f"[Analyze] Supabase save error: {e}")
+
+        if result.is_verified:
+            return jsonify({
+                "success":        True,
+                "complaint_id":   result.complaint_id,
+                "severity_level": result.severity_level,
+                "severity_label": result.severity_label,
+                "is_verified":    True,
+                "pdf_url":        f"/reports/{os.path.basename(result.pdf_path)}" if result.pdf_path else "",
+                "message":        "Complaint submitted and verified successfully",
+            })
+        else:
+            return jsonify({
+                "success":       False,
+                "complaint_id":  result.complaint_id,
+                "is_verified":   False,
+                "message":       f"Complaint rejected: {result.veracity_reason}",
+            }), 400
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Static file serving (favicon, etc.)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+@app.route("/reports/<path:filename>")
+def download_report(filename):
+    """Serve generated PDF reports for download."""
+    return send_from_directory(REPORTS_DIR, filename, as_attachment=True)
+
 
 @app.route("/favicon.png")
 def favicon():
@@ -410,4 +540,5 @@ def favicon():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode)

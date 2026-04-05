@@ -1,37 +1,40 @@
-# ── Python ──────────────────────────────────
+﻿# NagarDrishti
+.env
+.env.local
+.env.production
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
 *.egg-info/
 dist/
 build/
 *.egg
-
-# ── Environment ─────────────────────────────
-.env
-venv/
-.venv/
-env/
-
-# ── IDE ─────────────────────────────────────
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
+*.db
+*.sqlite3
 
-# ── OS ──────────────────────────────────────
+# User Data - NEVER commit
+reports/
+*.pdf
+
+# Dev-only files
+test_image.jpg
+test_api.py
+cleanup_rejected.py
+recover_html.py
+update_ui.py
+update_ui_2.py
+
+# Audit/Internal docs
+AUDIT_*.md
+FINAL_SECURITY_REPORT.md
+sachin_anti.md
+
+# System files
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# ── Reports (generated at runtime) ──────────
-reports/*.pdf
-reports/*.jpg
-
-# ── Model cache ─────────────────────────────
-*.onnx
-models/
-
-# ── Temp files ──────────────────────────────
-temp_upload.*
-*.tmp
+*.log
+*.resolved
+node_modules/
+.antigravityignore

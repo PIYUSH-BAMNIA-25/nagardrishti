@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from google import genai
 from google.genai import types
 from config import GEMINI_API_KEY, REPORTS_DIR
+from agents.gemini_client import call_with_fallback, TEXT_MODELS, VISION_MODELS
 
 from agents.veracity_agent import VeracityAgent
 from agents.legal_agent    import LegalAgent
@@ -86,7 +87,7 @@ class GatewayAgent:
 
     def __init__(self):
         self.client    = genai.Client(api_key=GEMINI_API_KEY)
-        self.model     = "gemini-2.5-flash"
+        # No default model — uses fallback system per call
         self.veracity  = VeracityAgent()
         self.legal     = LegalAgent()
         self.action    = ActionAgent()
@@ -111,6 +112,15 @@ class GatewayAgent:
         payload.issue_type     = (
             "pothole" if detection_result.pothole_count > 0 else "crack"
         )
+        payload.latitude       = getattr(detection_result, 'latitude', 0.0)
+        payload.longitude      = getattr(detection_result, 'longitude', 0.0)
+        
+        # Use camera_source as location hint if available
+        # (set by detector.py real_agent_callback)
+        if detection_result.camera_source and detection_result.camera_source != "[WEBCAM]":
+            payload.location_text = detection_result.camera_source
+        else:
+            payload.location_text = "Location via Vision Engine"
 
         # Ask Gemini to generate a description from the detection data
         payload.description = self._generate_description(payload)
@@ -201,51 +211,49 @@ class GatewayAgent:
         return payload
 
     # ── Gemini Helpers ────────────────────────────────────────────────────────
-    def _generate_description(self, payload: ComplaintPayload) -> str:
-        """Generates a human-readable complaint description from detection data."""
+    def _generate_description(self, payload) -> str:
         prompt = (
-            f"A road issue was automatically detected by the NagarDrishti AI system.\n"
-            f"Issue type: {payload.issue_type}\n"
+            f"A road issue was automatically detected by NagarDrishti AI.\n"
+            f"Issue: {payload.issue_type}\n"
             f"Severity: Level {payload.severity_level} ({payload.severity_label})\n\n"
-            f"Write a concise 2-sentence official complaint description for this road issue. "
-            f"Be factual and formal. Do not mention AI or cameras."
+            f"Write a concise 2-sentence formal complaint description. "
+            f"Be factual. Do not mention AI or cameras."
         )
         try:
-            resp = self.client.models.generate_content(
-                model=self.model, contents=prompt
+            return call_with_fallback(
+                self.client, prompt, TEXT_MODELS, "description"
             )
-            return resp.text.strip()
         except Exception as e:
-            print(f"[Gateway] Gemini description failed: {e}")
+            print(f"[Gateway] Description generation failed: {e}")
             return (
-                f"A {payload.issue_type} classified as Level {payload.severity_level} "
-                f"({payload.severity_label}) was detected on the road surface. "
-                f"Immediate inspection and repair is requested."
+                f"A {payload.issue_type} at Level {payload.severity_level} "
+                f"({payload.severity_label}) was detected. "
+                f"Immediate inspection and repair is required."
             )
 
-    def _assess_severity(self, payload: ComplaintPayload) -> tuple:
-        """Uses Gemini Vision to assess severity from citizen-uploaded image."""
+    def _assess_severity(self, payload) -> tuple:
         if not payload.image_b64:
             return 2, "Risky"
         prompt = (
-            "Look at this road image. Classify the road damage severity as exactly one of:\n"
-            "- Level 1 Safe (minor cracks, surface wear)\n"
-            "- Level 2 Risky (pothole, moderate damage)\n"
-            "- Level 3 High Alert (large pothole, severe damage, immediate danger)\n\n"
-            "Reply with ONLY the level number and label. Example: 2 Risky"
+            "Classify this road damage image severity as exactly one of:\n"
+            "Level 1 Safe - minor cracks\n"
+            "Level 2 Risky - pothole or moderate damage\n"
+            "Level 3 High Alert - large pothole, severe damage\n\n"
+            "Reply with ONLY: number and label. Example: 2 Risky"
         )
         try:
-            image_bytes = __import__('base64').b64decode(payload.image_b64)
-            resp = self.client.models.generate_content(
-                model=self.model,
-                contents=[
-                    prompt,
-                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
-                ]
+            import base64
+            image_bytes = base64.b64decode(payload.image_b64)
+            from google.genai import types
+            contents = [
+                prompt,
+                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
+            ]
+            result = call_with_fallback(
+                self.client, contents, VISION_MODELS, "severity assessment"
             )
-            text  = resp.text.strip()
-            level = int(text[0]) if text and text[0].isdigit() else 2
-            label = text[2:].strip() if len(text) > 2 else "Risky"
+            level = int(result[0]) if result and result[0].isdigit() else 2
+            label = result[2:].strip() if len(result) > 2 else "Risky"
             return level, label
         except Exception as e:
             print(f"[Gateway] Severity assessment failed: {e}")

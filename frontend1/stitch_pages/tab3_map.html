@@ -1,321 +1,961 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NagarDrishti | Complaint Heatmap</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--warning:#f59e0b;--blue:#3b82f6;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--shadow-md:0 4px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 30px rgba(0,0,0,.08);--transition:.2s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50}
-.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
-.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6}
-.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
-.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
-.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
-.topbar-nav{display:flex;gap:1.5rem}.topbar-nav a{font-size:.8125rem;font-weight:500;color:var(--text-muted);padding:4px 0;border-bottom:2px solid transparent}.topbar-nav a.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
-.topbar-right{display:flex;align-items:center;gap:1rem}
-.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
-.content{padding:2rem;width:100%}
-.map-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
-.map-header h2{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
-.map-header p{font-size:.875rem;color:var(--text-secondary);margin-top:.25rem}
-.map-header-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:flex-end}
-.export-btn{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:10px 18px;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:600;border:none;cursor:pointer;transition:all var(--transition)}.export-btn:hover{background:var(--primary-dark)}
-.header-link-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);color:var(--text-primary);padding:10px 14px;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:700;border:1px solid var(--border)}
-.filter-row{display:grid;grid-template-columns:1fr 1fr 2fr;gap:1rem;margin-bottom:1.5rem}
-.filter-group label{display:block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.35rem}
-.filter-select{width:100%;padding:10px 14px;border:none;border-radius:var(--radius-sm);background:var(--white);font-family:inherit;font-size:.8125rem;box-shadow:var(--shadow-md);outline:none}
-.filter-meta{display:flex;align-items:flex-end;justify-content:flex-end;font-size:.75rem;color:var(--text-muted);font-style:italic}
-/* MAP */
-.map-container{position:relative;background:var(--bg-alt);border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:21/9;box-shadow:var(--shadow-lg);margin-bottom:2rem}
-.map-container img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);opacity:.35;mix-blend-mode:multiply}
-.map-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(239,68,68,.06),transparent)}
-.marker{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;transition:transform .2s}
-.marker:hover{transform:scale(1.5);z-index:10}
-.marker.pending{background:#facc15}.marker.resolved{background:#22c55e}.marker.progress{background:#3b82f6}
-.marker.pulse{animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.4)}70%{box-shadow:0 0 0 10px rgba(250,204,21,0)}}
-.map-legend{position:absolute;bottom:1.5rem;right:1.5rem;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);padding:1rem;border-radius:var(--radius-md);box-shadow:var(--shadow-md)}
-.map-legend h5{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.5rem}
-.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:.35rem;font-size:.75rem;font-weight:500}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-.heat-legend{position:absolute;bottom:1.5rem;left:1.5rem;display:flex;flex-direction:column;gap:4px}
-.heat-legend span{font-size:.55rem;font-weight:700;text-transform:uppercase;color:var(--text-muted)}
-.heat-bar{height:6px;width:120px;background:linear-gradient(to right,#fcd34d,#f97316,#dc2626);border-radius:3px}
-.no-data-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;color:var(--text-muted);gap:.5rem}
-.no-data-msg .material-symbols-outlined{font-size:48px;opacity:.4}
-.no-data-msg p{font-size:.875rem;font-weight:600}
-/* Tooltip */
-.marker-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:220px;background:var(--white);padding:.75rem;border-radius:var(--radius-md);box-shadow:var(--shadow-lg);border:1px solid var(--border-light);pointer-events:none;opacity:0;transition:opacity .2s;z-index:20;font-size:.75rem}
-.marker-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--white)}
-.marker:hover .marker-tooltip{opacity:1;pointer-events:auto}
-.marker-tooltip strong{display:block;margin-bottom:4px;font-size:.8rem}
-.marker-tooltip small{color:var(--text-muted)}
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
-.stat-card{background:var(--white);padding:1.25rem;border-radius:var(--radius-lg);transition:all var(--transition);border:1px solid var(--border-light)}
-.stat-card:hover{box-shadow:var(--shadow-md)}
-.stat-card.bordered{border-left:4px solid}
-.stat-card p{font-size:.8125rem;color:var(--text-secondary);font-weight:500;margin-bottom:.25rem}
-.stat-number{font-size:1.75rem;font-weight:900;letter-spacing:-.02em}
-/* HOTSPOTS */
-.hotspots-card{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.5rem}
-.hotspots-card h4{font-size:1rem;font-weight:700;margin-bottom:1.25rem}
-.hotspot-row{display:flex;align-items:center;justify-content:space-between;padding:1rem;background:var(--bg);border-radius:var(--radius-md);margin-bottom:.75rem;transition:background var(--transition)}
-.hotspot-row:hover{background:var(--bg-alt)}
-.hotspot-left{display:flex;align-items:center;gap:12px}
-.hotspot-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.hotspot-icon.danger{background:#fef2f2;color:var(--error)}.hotspot-icon.success{background:var(--primary-light);color:var(--primary)}
-.hotspot-name{font-size:.875rem;font-weight:700}
-.hotspot-desc{font-size:.75rem;color:var(--text-secondary)}
-.hotspot-action{font-size:.7rem;font-weight:700;background:var(--primary);color:#fff;padding:6px 14px;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:background var(--transition)}.hotspot-action:hover{background:var(--primary-dark)}
-/* Toast + Indicator */
-.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}.toast-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
-.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:var(--shadow-md)}
-.conn-dot{width:8px;height:8px;border-radius:50%}.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
-</style>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>NagarDrishti | Complaint Heatmap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --white: #fff;
+      --bg: #f7f8fa;
+      --bg-alt: #f0f2f5;
+      --border: #e2e5ea;
+      --border-light: #edf0f4;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --primary: #0d7c44;
+      --primary-dark: #095c32;
+      --primary-light: #e6f5ed;
+      --primary-glow: rgba(13, 124, 68, .08);
+      --error: #dc2626;
+      --warning: #f59e0b;
+      --blue: #3b82f6;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .06);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, .08);
+      --transition: .2s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle
+    }
+
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: var(--white);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      z-index: 50
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2rem
+    }
+
+    .sidebar-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .sidebar-brand h1 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: var(--primary)
+    }
+
+    .sidebar-brand p {
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted)
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      cursor: pointer
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg)
+    }
+
+    .sidebar-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    .sidebar-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light)
+    }
+
+    .sidebar-about {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      color: var(--text-secondary);
+      line-height: 1.6
+    }
+
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700
+    }
+
+    .topbar-nav {
+      display: flex;
+      gap: 1.5rem
+    }
+
+    .topbar-nav a {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 4px 0;
+      border-bottom: 2px solid transparent
+    }
+
+    .topbar-nav a.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem
+    }
+
+    .topbar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition)
+    }
+
+    .topbar-icon:hover {
+      background: var(--bg)
+    }
+
+    .content {
+      padding: 2rem;
+      width: 100%
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem
+    }
+
+    .map-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.02em
+    }
+
+    .map-header p {
+      font-size: .875rem;
+      color: var(--text-secondary);
+      margin-top: .25rem
+    }
+
+    .map-header-actions {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end
+    }
+
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition)
+    }
+
+    .export-btn:hover {
+      background: var(--primary-dark)
+    }
+
+    .header-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      font-weight: 700;
+      border: 1px solid var(--border)
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: .35rem
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-family: inherit;
+      font-size: .8125rem;
+      box-shadow: var(--shadow-md);
+      outline: none
+    }
+
+    .filter-meta {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      font-size: .75rem;
+      color: var(--text-muted);
+      font-style: italic
+    }
+
+    /* MAP */
+    .map-container {
+      position: relative;
+      background: var(--bg-alt);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      aspect-ratio: 21/9;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem
+    }
+
+    .map-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(1);
+      opacity: .35;
+      mix-blend-mode: multiply
+    }
+
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249, 115, 22, .12), rgba(239, 68, 68, .06), transparent)
+    }
+
+    .marker {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+      cursor: pointer;
+      transition: transform .2s
+    }
+
+    .marker:hover {
+      transform: scale(1.5);
+      z-index: 10
+    }
+
+    .marker.pending {
+      background: #facc15
+    }
+
+    .marker.resolved {
+      background: #22c55e
+    }
+
+    .marker.progress {
+      background: #3b82f6
+    }
+
+    .marker.pulse {
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, .4)
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(250, 204, 21, 0)
+      }
+    }
+
+    .map-legend {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(12px);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md)
+    }
+
+    .map-legend h5 {
+      font-size: .55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted);
+      margin-bottom: .5rem
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: .35rem;
+      font-size: .75rem;
+      font-weight: 500
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%
+    }
+
+    .heat-legend {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .heat-legend span {
+      font-size: .55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted)
+    }
+
+    .heat-bar {
+      height: 6px;
+      width: 120px;
+      background: linear-gradient(to right, #fcd34d, #f97316, #dc2626);
+      border-radius: 3px
+    }
+
+    .no-data-msg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      color: var(--text-muted);
+      gap: .5rem
+    }
+
+    .no-data-msg .material-symbols-outlined {
+      font-size: 48px;
+      opacity: .4
+    }
+
+    .no-data-msg p {
+      font-size: .875rem;
+      font-weight: 600
+    }
+
+    /* Tooltip */
+    .marker-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      background: var(--white);
+      padding: .75rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s;
+      z-index: 20;
+      font-size: .75rem
+    }
+
+    .marker-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--white)
+    }
+
+    .marker:hover .marker-tooltip {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .marker-tooltip strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: .8rem
+    }
+
+    .marker-tooltip small {
+      color: var(--text-muted)
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition);
+      border: 1px solid var(--border-light)
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--shadow-md)
+    }
+
+    .stat-card.bordered {
+      border-left: 4px solid
+    }
+
+    .stat-card p {
+      font-size: .8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: .25rem
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -.02em
+    }
+
+    /* HOTSPOTS */
+    .hotspots-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem
+    }
+
+    .hotspots-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem
+    }
+
+    .hotspot-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      margin-bottom: .75rem;
+      transition: background var(--transition)
+    }
+
+    .hotspot-row:hover {
+      background: var(--bg-alt)
+    }
+
+    .hotspot-left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .hotspot-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .hotspot-icon.danger {
+      background: #fef2f2;
+      color: var(--error)
+    }
+
+    .hotspot-icon.success {
+      background: var(--primary-light);
+      color: var(--primary)
+    }
+
+    .hotspot-name {
+      font-size: .875rem;
+      font-weight: 700
+    }
+
+    .hotspot-desc {
+      font-size: .75rem;
+      color: var(--text-secondary)
+    }
+
+    .hotspot-action {
+      font-size: .7rem;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition)
+    }
+
+    .hotspot-action:hover {
+      background: var(--primary-dark)
+    }
+
+    /* Toast + Indicator */
+    .toast {
+      position: fixed;
+      top: 72px;
+      right: 2rem;
+      z-index: 9999;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(120%);
+      transition: transform .4s ease
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .toast-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca
+    }
+
+    .conn-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md)
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%
+    }
+
+    .conn-ok .conn-dot {
+      background: #22c55e
+    }
+
+    .conn-fail .conn-dot {
+      background: #ef4444
+    }
+  </style>
 </head>
+
 <body>
-<div id="toast" class="toast"></div>
+  <div id="toast" class="toast"></div>
 
-<aside class="sidebar">
-  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Monitoring</p></div></a>
-  <nav class="sidebar-nav">
-    <a class="sidebar-link" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
-    <a class="sidebar-link" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
-    <a class="sidebar-link active" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
-    <a class="sidebar-link" href="/history"><span class="material-symbols-outlined">history</span> History</a>
-  </nav>
-  <div class="sidebar-footer"><div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, and auto-escalate to municipal authorities — all in one click.</div></div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <a href="/" class="topbar-title">🏙️ NagarDrishti</a>
-      <nav class="topbar-nav">
-        <a href="/ai-detection">AI Detection</a>
-        <a href="/manual-report">Manual Report</a>
-        <a class="active" href="/complaint-map">Complaint Map</a>
-        <a href="/history">History</a>
-      </nav>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
-      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
-    </div>
-  </header>
-
-  <div class="content">
-    <div class="map-header">
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
       <div>
-        <h2>📍 Complaint Heatmap</h2>
-        <p>View all civic complaints with GPS data on an interactive map</p>
-      </div>
-      <div class="map-header-actions">
-        <a class="header-link-btn" href="/departments"><span class="material-symbols-outlined" style="font-size:18px">apartment</span>Departments</a>
-        <a class="header-link-btn" href="/ai-detection/verified"><span class="material-symbols-outlined" style="font-size:18px">mail</span>Send Mail</a>
-        <button class="export-btn" id="exportBtn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Export Data</button>
+        <h1>NagarDrishti</h1>
+        <p>AI Civic Platform</p>
       </div>
     </div>
-
-    <div class="filter-row">
-      <div class="filter-group"><label>Filter by Status</label><select class="filter-select" id="mapStatusFilter"><option value="All">All</option><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Resolved">Resolved</option></select></div>
-      <div class="filter-group"><label>Filter by Category</label><select class="filter-select" id="mapCategoryFilter"><option value="All">All</option><option value="pothole">Pothole</option><option value="garbage">Garbage</option><option value="streetlight">Streetlight</option><option value="Other">Other</option></select></div>
-      <div class="filter-meta" id="mapResultCount">Loading data...</div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="/">
+        <span class="material-symbols-outlined">home</span> Home
+      </a>
+      <a class="sidebar-link" href="/ai-detection">
+        <span class="material-symbols-outlined">psychology</span> AI Detection
+      </a>
+      <a class="sidebar-link" href="/manual-report">
+        <span class="material-symbols-outlined">edit_document</span> Manual Report
+      </a>
+      <a class="sidebar-link active" href="/complaint-map">
+        <span class="material-symbols-outlined">map</span> Complaint Map
+      </a>
+      <a class="sidebar-link" href="/history">
+        <span class="material-symbols-outlined">history</span> History
+      </a>
+      <a class="sidebar-link" href="/departments">
+        <span class="material-symbols-outlined">apartment</span> Departments
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
+        email them to authorities — all in one click.</div>
+      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
+        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        support@nagardrishti.in
+      </a>
     </div>
+  </aside>
 
-    <div class="map-container" id="mapContainer">
-      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs3f3_6cEz3qaIGRV_AShBgUpLrKCokT4-wGjIYqdRt7ssppsLjC4lklm7_nK2lO2nEUrF1fHpbnE02FgXOeapAtHSooSu9wxKIiiRJ50bXTAjrKYkeqks-e9TUPItWTz9GsOCkc62T60vaC03P35py-GyNkKJFwe-qovkg85DUgEwW4a1s1mnre63SE0vrMcl605YDTglJZLSMHU0jNOwufMYgK2ZAAuhfL6fE6hWLsI_2RoIVE7OlSeTJxuhhDNqwTf1pPFj2YY" alt="Map"/>
-      <div class="map-overlay"></div>
-      <!-- Dynamic markers rendered by JS -->
-      <div id="markersContainer"></div>
-
-      <div class="map-legend">
-        <h5>Map Legend</h5>
-        <div class="legend-item"><div class="legend-dot" style="background:#facc15"></div> Pending (<span id="legendPending">0</span>)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> In Progress (<span id="legendProgress">0</span>)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Resolved (<span id="legendResolved">0</span>)</div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <nav class="topbar-nav">
+          <a href="/ai-detection">AI Detection</a>
+          <a href="/manual-report">Manual Report</a>
+          <a class="active" href="/complaint-map">Complaint Map</a>
+          <a href="/history">History</a>
+        </nav>
       </div>
-      <div class="heat-legend"><span>Heat Intensity</span><div class="heat-bar"></div></div>
-    </div>
+      <div class="topbar-right">
+        <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
 
-    <!-- Stats — dynamically computed from Jinja data -->
-    {% set total = complaints|length %}
-    {% set pending_count = complaints|selectattr('status', 'undefined')|list|length + complaints|selectattr('status', 'equalto', 'Pending')|list|length %}
-    <div class="stats-grid">
-      <div class="stat-card"><p>Total Complaints</p><div style="display:flex;align-items:baseline"><span class="stat-number" id="statTotal">{{ total }}</span></div></div>
-      <div class="stat-card bordered" style="border-left-color:#facc15"><p>With GPS Data</p><div style="display:flex;align-items:baseline"><span class="stat-number" id="statGps">{{ total }}</span></div></div>
-      <div class="stat-card bordered" style="border-left-color:#3b82f6"><p>Categories</p><div style="display:flex;align-items:baseline"><span class="stat-number" id="statCategories">—</span></div></div>
-      <div class="stat-card bordered" style="border-left-color:#22c55e"><p>Avg. Severity</p><div style="display:flex;align-items:baseline"><span class="stat-number" id="statAvgSev">—</span></div></div>
-    </div>
+      </div>
+    </header>
 
-    <div class="hotspots-card" id="hotspotsCard">
-      <h4>Complaint Locations</h4>
-      <div id="hotspotsList">
-        {% for c in complaints %}
-        <div class="hotspot-row" onclick="window.location.href='/history/{{ c.complaint_id }}'">
-          <div class="hotspot-left">
-            <div class="hotspot-icon {% if c.severity and c.severity|int >= 3 %}danger{% else %}success{% endif %}">
-              <span class="material-symbols-outlined">{% if c.severity and c.severity|int >= 3 %}warning{% else %}check_circle{% endif %}</span>
-            </div>
-            <div>
-              <div class="hotspot-name">{{ c.location or 'Unknown Location' }}</div>
-              <div class="hotspot-desc">{{ c.category or c.issue_type or 'Issue' }} • {{ c.complaint_id }}</div>
-            </div>
+    <div class="content">
+      <div class="map-header">
+        <div>
+          <h2>📍 Complaint Heatmap</h2>
+          <p>View all civic complaints with GPS data on an interactive map</p>
+        </div>
+        <div class="map-header-actions">
+          <a class="header-link-btn" href="/departments"><span class="material-symbols-outlined"
+              style="font-size:18px">apartment</span>Departments</a>
+          <a href="mailto:tailaung16@gmail.com?subject=NagarDrishti%20Complaint%20Escalation&body=Please%20find%20the%20complaint%20details%20attached."
+            class="header-link-btn"><span class="material-symbols-outlined" style="font-size:18px">mail</span> Send
+            Mail</a>
+          <button class="export-btn" id="exportBtn"><span class="material-symbols-outlined"
+              style="font-size:18px">download</span> Export Data</button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group"><label>Filter by Status</label><select class="filter-select" id="mapStatusFilter">
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select></div>
+        <div class="filter-group"><label>Filter by Category</label><select class="filter-select" id="mapCategoryFilter">
+            <option value="All">All</option>
+            <option value="pothole">Pothole</option>
+            <option value="garbage">Garbage</option>
+            <option value="streetlight">Streetlight</option>
+            <option value="Other">Other</option>
+          </select></div>
+        <div class="filter-meta" id="mapResultCount">Loading data...</div>
+      </div>
+
+      <div id="leaflet-map"
+        style="height: 450px; width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); margin-bottom: 2rem; z-index: 1;">
+      </div>
+
+      <!-- Stats — dynamically computed from Jinja data -->
+      {% set total = complaints|length %}
+      {% set pending_count = complaints|selectattr('status', 'undefined')|list|length + complaints|selectattr('status',
+      'equalto', 'Pending')|list|length %}
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p>Total Complaints</p>
+          <div style="display:flex;align-items:baseline"><span class="stat-number" id="statTotal">{{ total }}</span>
           </div>
-          <button class="hotspot-action" onclick="event.stopPropagation(); window.location.href='/history/{{ c.complaint_id }}'">View</button>
         </div>
-        {% endfor %}
-        {% if not complaints %}
-        <div style="text-align:center;padding:2rem;color:var(--text-muted)">
-          <span class="material-symbols-outlined" style="font-size:32px;opacity:.4">info</span>
-          <p style="margin-top:.5rem;font-size:.875rem">No complaints with GPS coordinates found.</p>
+        <div class="stat-card bordered" style="border-left-color:#facc15">
+          <p>With GPS Data</p>
+          <div style="display:flex;align-items:baseline"><span class="stat-number" id="statGps">{{ total }}</span></div>
         </div>
-        {% endif %}
+        <div class="stat-card bordered" style="border-left-color:#3b82f6">
+          <p>Categories</p>
+          <div style="display:flex;align-items:baseline"><span class="stat-number" id="statCategories">—</span></div>
+        </div>
+        <div class="stat-card bordered" style="border-left-color:#22c55e">
+          <p>Avg. Severity</p>
+          <div style="display:flex;align-items:baseline"><span class="stat-number" id="statAvgSev">—</span></div>
+        </div>
+      </div>
+
+      <div class="hotspots-card" id="hotspotsCard">
+        <h4>Complaint Locations</h4>
+        <div id="hotspotsList">
+          {% for c in complaints %}
+          <div class="hotspot-row" onclick="window.location.href='/history/{{ c.complaint_id }}'">
+            <div class="hotspot-left">
+              <div class="hotspot-icon {% if c.severity and c.severity|int >= 3 %}danger{% else %}success{% endif %}">
+                <span class="material-symbols-outlined">{% if c.severity and c.severity|int >= 3 %}warning{% else
+                  %}check_circle{% endif %}</span>
+              </div>
+              <div>
+                <div class="hotspot-name">{{ c.location or 'Unknown Location' }}</div>
+                <div class="hotspot-desc">{{ c.category or c.issue_type or 'Issue' }} • {{ c.complaint_id }}</div>
+              </div>
+            </div>
+            <button class="hotspot-action"
+              onclick="event.stopPropagation(); window.location.href='/history/{{ c.complaint_id }}'">View</button>
+          </div>
+          {% endfor %}
+          {% if not complaints %}
+          <div style="text-align:center;padding:2rem;color:var(--text-muted)">
+            <span class="material-symbols-outlined" style="font-size:32px;opacity:.4">info</span>
+            <p style="margin-top:.5rem;font-size:.875rem">No complaints with GPS coordinates found.</p>
+          </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+  <div class="conn-indicator" id="connIndicator">
+    <div class="conn-dot"></div><span>Checking...</span>
+  </div>
 
-<script>
-/* Toast */
-function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.className = 'toast toast-' + type + ' show';
-    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type==='success'?'check_circle':'error') + '</span>' + msg;
-    setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-/* Complaint data from Jinja → JS */
-const MAP_COMPLAINTS = [
-    {% for c in complaints %}
-    {
-        id: "{{ c.complaint_id or '' }}",
-        category: "{{ c.category or c.issue_type or '' }}",
-        location: "{{ c.location or '' }}",
-        status: "{{ c.status or 'Pending' }}",
-        severity: "{{ c.severity or '' }}",
-        lat: {{ c.latitude if c.latitude else 'null' }},
-        lng: {{ c.longitude if c.longitude else 'null' }}
-    }{% if not loop.last %},{% endif %}
-    {% endfor %}
-];
-
-const mapContainer = document.getElementById('mapContainer');
-const markersContainer = document.getElementById('markersContainer');
-let pendingCount=0, progressCount=0, resolvedCount=0;
-
-/* Position markers on the visual map proportionally */
-function renderMarkers(data) {
-    markersContainer.innerHTML = '';
-    pendingCount = 0; progressCount = 0; resolvedCount = 0;
-
-    const validComplaints = data.filter(c => c.lat !== null && c.lng !== null);
-
-    if (validComplaints.length === 0) {
-        markersContainer.innerHTML = '<div class="no-data-msg"><span class="material-symbols-outlined">location_off</span><p>No geolocated complaints to display</p></div>';
-        document.getElementById('mapResultCount').textContent = 'No results found';
-        return;
+  <script>
+    /* Toast */
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.className = 'toast toast-' + type + ' show';
+      t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' + msg;
+      setTimeout(() => t.classList.remove('show'), 3500);
     }
 
-    // Calculate bounds for positioning
-    const lats = validComplaints.map(c => c.lat);
-    const lngs = validComplaints.map(c => c.lng);
-    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
-    const latRange = maxLat - minLat || 0.01;
-    const lngRange = maxLng - minLng || 0.01;
+    var map = L.map('leaflet-map').setView([28.0229, 73.3119], 12);
 
-    validComplaints.forEach((c, i) => {
-        // Map GPS to percentage coordinates on the visual map
-        const top = 10 + (1 - (c.lat - minLat) / latRange) * 75; // Invert Y
-        const left = 10 + ((c.lng - minLng) / lngRange) * 75;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-        let statusClass = 'pending';
-        if (c.status === 'Resolved') { statusClass = 'resolved'; resolvedCount++; }
-        else if (c.status === 'In Progress') { statusClass = 'progress'; progressCount++; }
-        else { pendingCount++; }
+    var severityColors = {
+      1: '#22c55e',
+      2: '#f97316',
+      3: '#ef4444'
+    };
 
-        const marker = document.createElement('div');
-        marker.className = `marker ${statusClass}` + (i === 0 ? ' pulse' : '');
-        marker.style.top = top + '%';
-        marker.style.left = left + '%';
-        marker.innerHTML = `<div class="marker-tooltip"><strong>${c.category || 'Issue'}</strong>${c.location || 'Unknown'}<br/><small>${c.id} • ${c.status}</small></div>`;
-        marker.addEventListener('click', () => { window.location.href = '/history/' + c.id; });
-        markersContainer.appendChild(marker);
-    });
+    fetch('/api/complaints/geo')
+      .then(r => r.json())
+      .then(data => {
+        var complaints = data.complaints || [];
+        complaints.forEach(function (c) {
+          if (!c.latitude || !c.longitude) return;
+          var color = severityColors[c.severity_level] || '#888';
+          var marker = L.circleMarker([c.latitude, c.longitude], {
+            radius: 10,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.9
+          }).addTo(map);
+          marker.bindPopup(
+            '<b>' + (c.issue_type || 'Pothole') + '</b><br>' +
+            'Level ' + (c.severity_level || '?') + ' — ' +
+            (c.severity_label || '') + '<br>' +
+            '<small>' + (c.location_text || 'Unknown') + '</small><br>' +
+            '<a href="/history/' + c.complaint_id + '">View Details</a>'
+          );
+        });
+      });
 
-    document.getElementById('legendPending').textContent = pendingCount;
-    document.getElementById('legendProgress').textContent = progressCount;
-    document.getElementById('legendResolved').textContent = resolvedCount;
-    document.getElementById('mapResultCount').textContent = `Showing ${validComplaints.length} geolocated complaints`;
-}
-
-/* Filters */
-function applyMapFilters() {
-    const status = document.getElementById('mapStatusFilter').value;
-    const category = document.getElementById('mapCategoryFilter').value;
-    const filtered = MAP_COMPLAINTS.filter(c => {
-        if (status !== 'All' && c.status !== status) return false;
-        if (category !== 'All' && c.category.toLowerCase() !== category.toLowerCase()) return false;
-        return true;
-    });
-    renderMarkers(filtered);
-}
-
-document.getElementById('mapStatusFilter').addEventListener('change', applyMapFilters);
-document.getElementById('mapCategoryFilter').addEventListener('change', applyMapFilters);
-
-/* Compute stats */
-function computeStats() {
-    const categories = new Set(MAP_COMPLAINTS.map(c => c.category).filter(Boolean));
-    document.getElementById('statCategories').textContent = categories.size || '—';
-    const severities = MAP_COMPLAINTS.map(c => parseInt(c.severity)).filter(s => !isNaN(s));
-    if (severities.length > 0) {
-        const avg = (severities.reduce((a,b) => a+b, 0) / severities.length).toFixed(1);
+    /* Compute stats */
+    function computeStats() {
+      const categories = new Set(MAP_COMPLAINTS.map(c => c.category).filter(Boolean));
+      document.getElementById('statCategories').textContent = categories.size || '—';
+      const severities = MAP_COMPLAINTS.map(c => parseInt(c.severity)).filter(s => !isNaN(s));
+      if (severities.length > 0) {
+        const avg = (severities.reduce((a, b) => a + b, 0) / severities.length).toFixed(1);
         document.getElementById('statAvgSev').textContent = avg;
+      }
+      document.getElementById('statGps').textContent = MAP_COMPLAINTS.filter(c => c.lat !== null && c.lng !== null).length;
     }
-    document.getElementById('statGps').textContent = MAP_COMPLAINTS.filter(c => c.lat !== null && c.lng !== null).length;
-}
 
-/* Export */
-document.getElementById('exportBtn').addEventListener('click', () => {
-    if (MAP_COMPLAINTS.length === 0) {
+    /* Export */
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      if (MAP_COMPLAINTS.length === 0) {
         showToast('No data to export', 'error');
         return;
-    }
-    const headers = ['ID','Category','Location','Status','Severity','Latitude','Longitude'];
-    const rows = MAP_COMPLAINTS.map(c => [c.id, c.category, c.location, c.status, c.severity, c.lat, c.lng].join(','));
-    const csv = [headers.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], {type:'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'nagardrishti_complaints.csv'; a.click();
-    URL.revokeObjectURL(url);
-    showToast('CSV exported successfully!', 'success');
-});
+      }
+      const headers = ['ID', 'Category', 'Location', 'Status', 'Severity', 'Latitude', 'Longitude'];
+      const rows = MAP_COMPLAINTS.map(c => [c.id, c.category, c.location, c.status, c.severity, c.lat, c.lng].join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'nagardrishti_complaints.csv'; a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported successfully!', 'success');
+    });
 
-/* Connection check */
-(async () => {
-    const el = document.getElementById('connIndicator');
-    try {
+    /* Connection check */
+    (async () => {
+      const el = document.getElementById('connIndicator');
+      try {
         const r = await fetch('/api/complaints/geo');
-        if (r.ok) { el.className='conn-indicator conn-ok'; el.innerHTML='<div class="conn-dot"></div><span>Backend Connected</span>'; }
+        if (r.ok) { el.className = 'conn-indicator conn-ok'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Connected</span>'; }
         else throw 0;
-    } catch { el.className='conn-indicator conn-fail'; el.innerHTML='<div class="conn-dot"></div><span>Backend Offline</span>'; }
-    setTimeout(() => el.style.opacity='0', 4000);
-})();
+      } catch { el.className = 'conn-indicator conn-fail'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Offline</span>'; }
+      setTimeout(() => el.style.opacity = '0', 4000);
+    })();
 
-/* Init */
-renderMarkers(MAP_COMPLAINTS);
-computeStats();
-</script>
+    /* Init */
+    renderMarkers(MAP_COMPLAINTS);
+    computeStats();
+  </script>
 </body>
+
 </html>

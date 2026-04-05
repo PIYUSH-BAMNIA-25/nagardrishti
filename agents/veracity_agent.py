@@ -40,6 +40,7 @@ from PIL.ExifTags import TAGS, GPSTAGS
 from google import genai
 from google.genai import types
 from config import GEMINI_API_KEY
+from agents.gemini_client import call_with_fallback, VISION_MODELS
 
 
 class VeracityAgent:
@@ -50,7 +51,7 @@ class VeracityAgent:
 
     def __init__(self):
         self.client = genai.Client(api_key=GEMINI_API_KEY)
-        self.model  = "gemini-2.5-flash"
+        # Uses fallback system — no single model
         print("[Veracity] Agent ready ✓")
 
     def verify(self, payload) -> object:
@@ -202,15 +203,16 @@ Answer ONLY in this exact JSON format:
 }"""
 
         try:
+            import base64
+            from google.genai import types
             image_bytes = base64.b64decode(payload.image_b64)
-            resp = self.client.models.generate_content(
-                model=self.model,
-                contents=[
-                    prompt,
-                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
-                ]
+            contents = [
+                prompt,
+                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
+            ]
+            text = call_with_fallback(
+                self.client, contents, VISION_MODELS, "ai detection"
             )
-            text   = resp.text.strip()
             result = self._parse_json(text)
 
             is_ai      = result.get("is_ai_generated", False)
@@ -248,15 +250,16 @@ IRRELEVANT = not a road/infrastructure image at all (random selfie, food photo, 
 REAL_STREET_PHOTO = candid photo of actual road/street showing real damage or infrastructure"""
 
         try:
+            import base64
+            from google.genai import types
             image_bytes = base64.b64decode(payload.image_b64)
-            resp = self.client.models.generate_content(
-                model=self.model,
-                contents=[
-                    prompt,
-                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
-                ]
+            contents = [
+                prompt,
+                types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
+            ]
+            text = call_with_fallback(
+                self.client, contents, VISION_MODELS, "stock photo check"
             )
-            text   = resp.text.strip()
             result = self._parse_json(text)
 
             verdict    = result.get("verdict", "REAL_STREET_PHOTO")

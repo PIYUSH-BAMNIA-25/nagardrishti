@@ -1,270 +1,865 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NagarDrishti — AI Detection Results</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-:root{--white:#fff;--bg:#f7f8fa;--bg-alt:#f0f2f5;--surface:#fff;--border:#e2e5ea;--border-light:#edf0f4;--text-primary:#111827;--text-secondary:#4b5563;--text-muted:#9ca3af;--primary:#0d7c44;--primary-dark:#095c32;--primary-light:#e6f5ed;--primary-glow:rgba(13,124,68,.08);--error:#dc2626;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--shadow-sm:0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 30px rgba(0,0,0,.08);--transition:.2s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}a{text-decoration:none;color:inherit}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
-.sidebar{width:260px;height:100vh;position:fixed;left:0;top:0;background:var(--white);border-right:1px solid var(--border-light);display:flex;flex-direction:column;padding:1.5rem;z-index:50;overflow-y:auto}
-.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}.sidebar-brand-icon{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}.sidebar-brand h1{font-size:1.125rem;font-weight:800;color:var(--primary)}.sidebar-brand p{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}.sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:500;color:var(--text-secondary);transition:all var(--transition);cursor:pointer}.sidebar-link:hover{background:var(--bg);color:var(--text-primary)}.sidebar-link.active{background:var(--primary-light);color:var(--primary);font-weight:600}.sidebar-link .material-symbols-outlined{font-size:20px}
-.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border-light)}.sidebar-about{background:var(--bg);padding:1rem;border-radius:var(--radius-sm);font-size:.75rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem}.sidebar-contact{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:6px}
-.main{margin-left:260px;flex:1;display:flex;flex-direction:column}
-.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
-.topbar-left{display:flex;align-items:center;gap:1.5rem}.topbar-title{font-size:1rem;font-weight:700}
-.topbar-right{display:flex;align-items:center;gap:1rem}
-.topbar-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:background var(--transition)}.topbar-icon:hover{background:var(--bg)}
-.content{padding:2rem;max-width:1120px;width:100%}
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>NagarDrishti — AI Detection Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --white: #fff;
+      --bg: #f7f8fa;
+      --bg-alt: #f0f2f5;
+      --surface: #fff;
+      --border: #e2e5ea;
+      --border-light: #edf0f4;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --primary: #0d7c44;
+      --primary-dark: #095c32;
+      --primary-light: #e6f5ed;
+      --primary-glow: rgba(13, 124, 68, .08);
+      --error: #dc2626;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .06);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, .08);
+      --transition: .2s cubic-bezier(.4, 0, .2, 1)
+    }
 
-/* ═══ VERIFIED RESULTS ═══ */
-.result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
-.result-id{font-size:.875rem;color:var(--text-muted)}.result-id span{font-family:'JetBrains Mono',monospace;color:var(--primary);font-weight:600}
-.result-actions{display:flex;gap:.75rem}
-.btn-filled{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:600;border:none;cursor:pointer;transition:all var(--transition)}.btn-filled:hover{background:var(--primary-dark);transform:translateY(-1px)}
-.btn-outline{display:inline-flex;align-items:center;gap:8px;background:var(--white);color:var(--primary);padding:10px 20px;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:600;border:2px solid var(--border);cursor:pointer;transition:all var(--transition)}.btn-outline:hover{border-color:var(--primary);background:var(--primary-glow)}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
-.result-image{border-radius:var(--radius-lg);overflow:hidden;position:relative;background:var(--bg-alt);aspect-ratio:4/3}
-.result-image img{width:100%;height:100%;object-fit:cover}
-.result-image-label{position:absolute;bottom:1rem;left:1rem;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:#fff;padding:6px 12px;border-radius:var(--radius-sm);font-size:.75rem;font-weight:500}
-.result-coords{background:var(--bg);border:1px solid var(--border-light);padding:12px 16px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;margin-top:1rem;font-size:.8125rem;color:var(--text-secondary)}.result-coords .material-symbols-outlined{color:var(--primary);font-size:20px}
-.result-coords span{font-family:monospace;color:var(--text-primary)}
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      min-height: 100vh
+    }
 
-.result-card{background:var(--white);padding:2rem;border-radius:var(--radius-lg);border:1px solid var(--border-light);display:flex;flex-direction:column;gap:1.5rem}
-.verified-badge{display:flex;align-items:center;gap:10px;background:#ecfdf5;color:#065f46;padding:12px 18px;border-radius:var(--radius-md);border:1px solid #a7f3d0;font-size:1rem;font-weight:700}
-.verified-badge .material-symbols-outlined{color:#059669;font-size:24px}
+    a {
+      text-decoration: none;
+      color: inherit
+    }
 
-.severity-section label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
-.severity-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
-.severity-badge{background:var(--error);color:#fff;padding:4px 12px;border-radius:var(--radius-sm);font-size:.75rem;font-weight:700;display:inline-flex;align-items:center;gap:4px}
-.severity-bar{height:10px;background:var(--bg-alt);border-radius:5px;overflow:hidden}.severity-fill{height:100%;background:var(--error);border-radius:5px}
-.severity-labels{display:flex;justify-content:space-between;font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-top:.35rem}
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle
+    }
 
-.trust-section{background:var(--bg);padding:1.25rem;border-radius:var(--radius-md)}
-.trust-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
-.trust-header h4{font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:8px}
-.trust-header h4 .material-symbols-outlined{color:var(--primary);font-size:20px}
-.trust-score{font-size:1.5rem;font-weight:900;color:var(--primary)}.trust-score small{font-size:.8rem;font-weight:500;color:var(--text-muted)}
-.trust-bar{height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;margin-bottom:1rem}.trust-fill{height:100%;background:var(--primary);border-radius:3px}
-.trust-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:.5rem;font-size:.8rem;color:var(--text-secondary)}.trust-item .material-symbols-outlined{color:var(--primary);font-size:16px;margin-top:2px}
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: var(--white);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      z-index: 50;
+      overflow-y: auto
+    }
 
-/* ═══ EXPANDERS ═══ */
-.expander{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius-md);overflow:hidden;margin-bottom:1rem}
-.expander-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg);cursor:pointer;transition:background var(--transition);font-size:.875rem;font-weight:700}
-.expander-header:hover{background:var(--bg-alt)}
-.expander-header-left{display:flex;align-items:center;gap:10px}
-.expander-header-left .material-symbols-outlined{color:var(--primary);font-size:20px}
-.expander-body{padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.8;color:var(--text-secondary);background:var(--white)}
-.expander-body.hidden{display:none}
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2rem
+    }
 
-.page-footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
-.toast{position:fixed;top:72px;right:2rem;z-index:9999;padding:14px 20px;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);transform:translateX(120%);transition:transform .4s ease}.toast.show{transform:translateX(0)}.toast-success{background:#dcfce7;color:#166534;border:1px solid #86efac}.toast-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
-.conn-indicator{position:fixed;bottom:1rem;right:1rem;z-index:999;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.7rem;font-weight:700;background:var(--white);border:1px solid var(--border-light);box-shadow:var(--shadow-md)}
-.conn-dot{width:8px;height:8px;border-radius:50%}.conn-ok .conn-dot{background:#22c55e}.conn-fail .conn-dot{background:#ef4444}
-</style>
+    .sidebar-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .sidebar-brand h1 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: var(--primary)
+    }
+
+    .sidebar-brand p {
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted)
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      cursor: pointer
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg);
+      color: var(--text-primary)
+    }
+
+    .sidebar-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    .sidebar-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light)
+    }
+
+    .sidebar-about {
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1rem
+    }
+
+    .sidebar-contact {
+      font-size: .75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem
+    }
+
+    .topbar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition)
+    }
+
+    .topbar-icon:hover {
+      background: var(--bg)
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 1120px;
+      width: 100%
+    }
+
+    /* ═══ VERIFIED RESULTS ═══ */
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem
+    }
+
+    .result-id {
+      font-size: .875rem;
+      color: var(--text-muted)
+    }
+
+    .result-id span {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-weight: 600
+    }
+
+    .result-actions {
+      display: flex;
+      gap: .75rem
+    }
+
+    .btn-filled {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition)
+    }
+
+    .btn-filled:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px)
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--primary);
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: .8125rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition)
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow)
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem
+    }
+
+    .result-image {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      background: var(--bg-alt);
+      aspect-ratio: 4/3
+    }
+
+    .result-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .result-image-label {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      font-weight: 500
+    }
+
+    .result-coords {
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1rem;
+      font-size: .8125rem;
+      color: var(--text-secondary)
+    }
+
+    .result-coords .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 20px
+    }
+
+    .result-coords span {
+      font-family: monospace;
+      color: var(--text-primary)
+    }
+
+    .result-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem
+    }
+
+    .verified-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ecfdf5;
+      color: #065f46;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid #a7f3d0;
+      font-size: 1rem;
+      font-weight: 700
+    }
+
+    .verified-badge .material-symbols-outlined {
+      color: #059669;
+      font-size: 24px
+    }
+
+    .severity-section label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted)
+    }
+
+    .severity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .5rem
+    }
+
+    .severity-badge {
+      background: var(--error);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: .75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .severity-bar {
+      height: 10px;
+      background: var(--bg-alt);
+      border-radius: 5px;
+      overflow: hidden
+    }
+
+    .severity-fill {
+      height: 100%;
+      background: var(--error);
+      border-radius: 5px
+    }
+
+    .severity-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: .35rem
+    }
+
+    .trust-section {
+      background: var(--bg);
+      padding: 1.25rem;
+      border-radius: var(--radius-md)
+    }
+
+    .trust-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .75rem
+    }
+
+    .trust-header h4 {
+      font-size: .875rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .trust-header h4 .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 20px
+    }
+
+    .trust-score {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary)
+    }
+
+    .trust-score small {
+      font-size: .8rem;
+      font-weight: 500;
+      color: var(--text-muted)
+    }
+
+    .trust-bar {
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 1rem
+    }
+
+    .trust-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: .5rem;
+      font-size: .8rem;
+      color: var(--text-secondary)
+    }
+
+    .trust-item .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 16px;
+      margin-top: 2px
+    }
+
+    /* ═══ EXPANDERS ═══ */
+    .expander {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 1rem
+    }
+
+    .expander-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: var(--bg);
+      cursor: pointer;
+      transition: background var(--transition);
+      font-size: .875rem;
+      font-weight: 700
+    }
+
+    .expander-header:hover {
+      background: var(--bg-alt)
+    }
+
+    .expander-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .expander-header-left .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 20px
+    }
+
+    .expander-body {
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      background: var(--white)
+    }
+
+    .expander-body.hidden {
+      display: none
+    }
+
+    .page-footer {
+      margin-top: 3rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      font-size: .65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted)
+    }
+
+    .toast {
+      position: fixed;
+      top: 72px;
+      right: 2rem;
+      z-index: 9999;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(120%);
+      transition: transform .4s ease
+    }
+
+    .toast.show {
+      transform: translateX(0)
+    }
+
+    .toast-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac
+    }
+
+    .toast-error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca
+    }
+
+    .conn-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md)
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%
+    }
+
+    .conn-ok .conn-dot {
+      background: #22c55e
+    }
+
+    .conn-fail .conn-dot {
+      background: #ef4444
+    }
+  </style>
 </head>
+
 <body>
-<div id="toast" class="toast"></div>
+  <div id="toast" class="toast"></div>
 
-<!-- SIDEBAR (same across dashboard pages) -->
-<aside class="sidebar">
-  <a href="/" class="sidebar-brand"><div class="sidebar-brand-icon"><span class="material-symbols-outlined">location_city</span></div><div><h1>NagarDrishti</h1><p>Civic Monitoring</p></div></a>
-  <nav class="sidebar-nav">
-    <a class="sidebar-link active" href="/ai-detection"><span class="material-symbols-outlined">psychology</span> AI Detection</a>
-    <a class="sidebar-link" href="/manual-report"><span class="material-symbols-outlined">edit_document</span> Manual Report</a>
-    <a class="sidebar-link" href="/complaint-map"><span class="material-symbols-outlined">map</span> Complaint Map</a>
-    <a class="sidebar-link" href="/history"><span class="material-symbols-outlined">history</span> History</a>
-  </nav>
-  <div class="sidebar-footer"><div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and email them to authorities.</div><a class="sidebar-contact" href="mailto:support@nagardrishti.in"><span class="material-symbols-outlined" style="font-size:16px">mail</span>support@nagardrishti.in</a></div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left"><a href="/" class="topbar-title">🏙️ NagarDrishti</a></div>
-    <div class="topbar-right">
-      <div class="topbar-icon"><span class="material-symbols-outlined">notifications</span></div>
-      <div class="topbar-icon"><span class="material-symbols-outlined">account_circle</span></div>
-    </div>
-  </header>
-
-  <div class="content">
-    <!-- Header -->
-    <div class="result-header">
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
       <div>
-        <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.25rem">🏙️ NagarDrishti</h1>
-        <div class="result-id">ID: <span id="verifiedComplaintId">ND-20260403-143025</span></div>
-      </div>
-      <div class="result-actions">
-        <button class="btn-filled" id="verifiedDownloadBtn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download PDF Report</button>
-        <button class="btn-outline" id="verifiedResendBtn">Re-send Email</button>
+        <h1>NagarDrishti</h1>
+        <p>AI Civic Platform</p>
       </div>
     </div>
-
-    <!-- Two Column -->
-    <div class="result-grid">
-      <div>
-        <div class="result-image">
-          <img alt="Uploaded Pothole Image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuA2cNXqvzNUEcA2qwan-RT0yNpqsZO__1HtfvCaGAmQb7cS9kM0zGopFaTblFm4wxnOiLZrIZ9ytRf6tw5YGYgSXbO69XAHqlwsqCiso_AKu0Hyj26QDzD2Rcf-3vLmA1aEFhtPW8hP1uIpDpztghzZuFAFIdjm90Hc8aV2FoNCqdJN-ytHLhmbADK7ZJHVHdV12p6ThHwHEs8lTuK4MPLGnywTYxteEd3jVVxdt6mSgYG34BCY6s3EiHRji1sqaTzgrciDrHIq8"/>
-          <div class="result-image-label">Uploaded Image: MG Road, Pune</div>
-        </div>
-        <div class="result-coords">
-          <span class="material-symbols-outlined">location_on</span>
-          Coordinates: <span>18.5204°N, 73.8567°E</span>
-        </div>
-      </div>
-
-      <div class="result-card">
-        <div class="verified-badge">
-          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">verified</span>
-          Verified — Authentic Photo
-        </div>
-        <div class="severity-section">
-          <div class="severity-header">
-            <label>Severity Analysis</label>
-            <div class="severity-badge"><span class="material-symbols-outlined" style="font-size:14px">warning</span> Level 3 — High Alert</div>
-          </div>
-          <div class="severity-bar"><div class="severity-fill" style="width:80%"></div></div>
-          <div class="severity-labels"><span>Minor</span><span>Moderate</span><span>Critical</span></div>
-        </div>
-        <div class="trust-section">
-          <div class="trust-header">
-            <h4><span class="material-symbols-outlined">analytics</span> AI Trust Score</h4>
-            <div class="trust-score">92<small>/100</small></div>
-          </div>
-          <div class="trust-bar"><div class="trust-fill" style="width:92%"></div></div>
-          <div class="trust-item"><span class="material-symbols-outlined">check_circle</span> EXIF data present. GPS coordinates match.</div>
-          <div class="trust-item"><span class="material-symbols-outlined">check_circle</span> No stock image signatures detected.</div>
-        </div>
-      </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="/">
+        <span class="material-symbols-outlined">home</span> Home
+      </a>
+      <a class="sidebar-link " href="/ai-detection">
+        <span class="material-symbols-outlined">psychology</span> AI Detection
+      </a>
+      <a class="sidebar-link" href="/manual-report">
+        <span class="material-symbols-outlined">edit_document</span> Manual Report
+      </a>
+      <a class="sidebar-link" href="/complaint-map">
+        <span class="material-symbols-outlined">map</span> Complaint Map
+      </a>
+      <a class="sidebar-link active" href="/history">
+        <span class="material-symbols-outlined">history</span> History
+      </a>
+      <a class="sidebar-link" href="/departments">
+        <span class="material-symbols-outlined">apartment</span> Departments
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
+        email them to authorities — all in one click.</div>
+      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
+        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+        support@nagardrishti.in
+      </a>
     </div>
+  </aside>
 
-    <!-- Expanders -->
-    <div class="expander">
-      <div class="expander-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <div class="expander-header-left"><span class="material-symbols-outlined">description</span> 📜 Generated Legal Complaint</div>
-        <span class="material-symbols-outlined">expand_less</span>
-      </div>
-      <div class="expander-body">
-        <p style="margin-bottom:1rem">To,<br/>The Executive Engineer,<br/>PWD Civil Maintenance Division,<br/>Pune Municipal Corporation.</p>
-        <p style="font-weight:700;margin-bottom:1rem">Subject: Formal Complaint Regarding Road Damage — Pothole on MG Road, Pune.</p>
-        <p style="margin-bottom:1rem">This is a system-generated formal grievance registered under ID: <span id="verifiedComplaintIdText">ND-20260403-143025</span>. Our AI diagnostic system has identified a critical infrastructure failure at the following location:</p>
-        <p style="margin-bottom:1rem"><strong>GPS:</strong> 18.5204°N, 73.8567°E (MG Road Intersection)<br/><strong>Severity:</strong> Level 3 High Alert (80% Damage Threshold)<br/><strong>Status:</strong> Urgent repair required to prevent vehicular incidents.</p>
-        <p>Sincerely,<br/>NagarDrishti Automated Governance Bridge</p>
-      </div>
-    </div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-right">
 
-    <div class="expander">
-      <div class="expander-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
-        <div class="expander-header-left"><span class="material-symbols-outlined">mail</span> 📧 Email Details</div>
-        <span class="material-symbols-outlined">expand_more</span>
+
       </div>
-      <div class="expander-body hidden">
-        <div style="margin-bottom:1rem;padding:1rem;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg)">
-          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Email Routing</div>
-          <div style="display:flex;flex-wrap:wrap;gap:.75rem">
-            <label style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
-              <input checked id="emailRouteAuto" name="emailRouteMode" type="radio" value="auto"/>
-              <span style="font-size:.82rem;font-weight:600">Auto Select Department</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
-              <input id="emailRouteManual" name="emailRouteMode" type="radio" value="manual"/>
-              <span style="font-size:.82rem;font-weight:600">Manual Selection</span>
-            </label>
-          </div>
-          <div id="manualEmailSelector" style="display:none;margin-top:12px">
-            <select id="manualDeptSelect" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font:inherit;color:var(--text-primary)">
-              <option value="PWD (Public Works)|pwd@punecorp.gov.in" selected>PWD (Public Works)</option>
-              <option value="Sanitation Department|sanitation@punecorp.gov.in">Sanitation Department</option>
-              <option value="Electrical Department|electrical@punecorp.gov.in">Electrical Department</option>
-              <option value="Water Supply Department|water@punecorp.gov.in">Water Supply Department</option>
-            </select>
-          </div>
+    </header>
+
+    <div class="content">
+      <!-- Header -->
+      <div class="result-header">
+        <div>
+          <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.25rem">🏙️ NagarDrishti</h1>
+          <div class="result-id">ID: <span data-complaint-id></span></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
-          <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Recipient Dept</div><div id="emailRecipientDept" style="font-weight:600;font-family:Inter;font-size:.875rem">PWD (Public Works)</div></div>
-          <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Official Email</div><div id="emailRecipientAddress" style="font-weight:600;font-family:Inter;font-size:.875rem">pwd@punecorp.gov.in</div></div>
-          <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Delivery Status</div><div style="font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px;font-family:Inter;font-size:.875rem"><span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Email Sent Successfully</div></div>
+        <div class="result-actions">
+          <a href="#" class="btn-filled" id="pdf-download-btn"><span class="material-symbols-outlined"
+              style="font-size:18px">download</span> Download PDF Report</a>
+          <button class="btn-outline" id="verifiedResendBtn">Re-send Email</button>
         </div>
       </div>
-    </div>
 
-    <div class="page-footer">
-      <span>© 2026 NagarDrishti Gov-Tech — Pune Division</span>
-      <span id="verifiedPdfPath">reports/ND-20260403-143025_complaint.pdf</span>
+      <!-- Two Column -->
+      <div class="result-grid">
+        <div>
+          <div class="result-image">
+            <img alt="Uploaded Pothole Image"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuA2cNXqvzNUEcA2qwan-RT0yNpqsZO__1HtfvCaGAmQb7cS9kM0zGopFaTblFm4wxnOiLZrIZ9ytRf6tw5YGYgSXbO69XAHqlwsqCiso_AKu0Hyj26QDzD2Rcf-3vLmA1aEFhtPW8hP1uIpDpztghzZuFAFIdjm90Hc8aV2FoNCqdJN-ytHLhmbADK7ZJHVHdV12p6ThHwHEs8lTuK4MPLGnywTYxteEd3jVVxdt6mSgYG34BCY6s3EiHRji1sqaTzgrciDrHIq8" />
+            <div class="result-image-label">Uploaded Image: MG Road, Pune</div>
+          </div>
+          <div class="result-coords">
+            <span class="material-symbols-outlined">location_on</span>
+            Coordinates: <span id="coordinates-display"></span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="verified-badge">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">verified</span>
+            Verified — Authentic Photo
+          </div>
+          <div class="severity-section">
+            <div class="severity-header">
+              <label>Severity Analysis</label>
+              <div class="severity-badge" id="severity-display"><span class="material-symbols-outlined"
+                  style="font-size:14px">warning</span>
+                Level 3 — High Alert</div>
+            </div>
+            <div class="severity-bar">
+              <div class="severity-fill" style="width:80%"></div>
+            </div>
+            <div class="severity-labels"><span>Minor</span><span>Moderate</span><span>Critical</span></div>
+          </div>
+          <div class="trust-section">
+            <div class="trust-header">
+              <h4><span class="material-symbols-outlined">analytics</span> AI Trust Score</h4>
+              <div class="trust-score">92<small>/100</small></div>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-fill" style="width:92%"></div>
+            </div>
+            <div class="trust-item" id="trust-reason-display"><span
+                class="material-symbols-outlined">check_circle</span> Analyzing...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expanders -->
+      <div class="expander">
+        <div class="expander-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
+          <div class="expander-header-left"><span class="material-symbols-outlined">description</span> 📜 Generated
+            Legal Complaint</div>
+          <span class="material-symbols-outlined">expand_less</span>
+        </div>
+        <div class="expander-body" id="legal-draft-display" style="white-space: pre-wrap;">
+        </div>
+      </div>
+
+      <div class="expander">
+        <div class="expander-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
+          <div class="expander-header-left"><span class="material-symbols-outlined">mail</span> 📧 Email Details</div>
+          <span class="material-symbols-outlined">expand_more</span>
+        </div>
+        <div class="expander-body hidden">
+          <div
+            style="margin-bottom:1rem;padding:1rem;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg)">
+            <div
+              style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">
+              Email Routing</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.75rem">
+              <label
+                style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
+                <input checked id="emailRouteAuto" name="emailRouteMode" type="radio" value="auto" />
+                <span style="font-size:.82rem;font-weight:600">Auto Select Department</span>
+              </label>
+              <label
+                style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
+                <input id="emailRouteManual" name="emailRouteMode" type="radio" value="manual" />
+                <span style="font-size:.82rem;font-weight:600">Manual Selection</span>
+              </label>
+            </div>
+            <div id="manualEmailSelector" style="display:none;margin-top:12px">
+              <select id="manualDeptSelect"
+                style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font:inherit;color:var(--text-primary)">
+                <option value="PWD (Public Works)|tailaung16@gmail.com" selected>PWD (Public Works)</option>
+                <option value="Sanitation Department|tailaung16@gmail.com">Sanitation Department</option>
+                <option value="Electrical Department|tailaung16@gmail.com">Electrical Department</option>
+                <option value="Water Supply Department|tailaung16@gmail.com">Water Supply Department</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+            <div>
+              <div
+                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
+                Recipient Dept</div>
+              <div id="emailRecipientDept" style="font-weight:600;font-family:Inter;font-size:.875rem">PWD (Public
+                Works)</div>
+            </div>
+            <div>
+              <div
+                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
+                Official Email</div>
+              <div id="emailRecipientAddress" style="font-weight:600;font-family:Inter;font-size:.875rem">
+                tailaung16@gmail.com</div>
+            </div>
+            <div>
+              <div
+                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
+                Delivery Status</div>
+              <div
+                style="font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px;font-family:Inter;font-size:.875rem">
+                <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Email Sent
+                Successfully
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">© 2026 NagarDrishti — AI-Powered Civic Complaint System</div>
     </div>
   </div>
-</div>
 
-<div class="conn-indicator" id="connIndicator"><div class="conn-dot"></div><span>Checking...</span></div>
+  <div class="conn-indicator" id="connIndicator">
+    <div class="conn-dot"></div><span>Checking...</span>
+  </div>
 
-<script>
-function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.className = 'toast toast-' + type + ' show';
-    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type==='success'?'check_circle':'error') + '</span>' + msg;
-    setTimeout(() => t.classList.remove('show'), 3500);
-}
+  <script>
+    window.onload = function () {
+      // Read real data from sessionStorage
+      var id = sessionStorage.getItem('lastComplaintId') || 'Unknown';
+      var level = sessionStorage.getItem('lastSeverityLevel') || '?';
+      var label = sessionStorage.getItem('lastSeverityLabel') || 'Unknown';
+      var reason = sessionStorage.getItem('lastVeracityReason') || '';
+      var pdfUrl = sessionStorage.getItem('lastPdfUrl') || '#';
+      var lat = sessionStorage.getItem('lastLatitude') || '';
+      var lng = sessionStorage.getItem('lastLongitude') || '';
+      var draft = sessionStorage.getItem('lastLegalDraft') ||
+        'Legal draft not available';
 
-/* Connection check */
-(async () => {
-    const el = document.getElementById('connIndicator');
-    try {
-        const r = await fetch('/api/complaints');
-        if (r.ok) { el.className='conn-indicator conn-ok'; el.innerHTML='<div class="conn-dot"></div><span>Backend Connected</span>'; }
-        else throw 0;
-    } catch { el.className='conn-indicator conn-fail'; el.innerHTML='<div class="conn-dot"></div><span>Backend Offline</span>'; }
-    setTimeout(() => el.style.opacity='0', 4000);
-})();
+      // Update complaint ID everywhere it appears
+      document.querySelectorAll('[data-complaint-id]').forEach(function (el) {
+        el.textContent = id;
+      });
 
-const verifiedParams = new URLSearchParams(window.location.search);
-const verifiedComplaintId = verifiedParams.get("complaint_id");
-const verifiedSeverity = verifiedParams.get("severity_label");
-const emailRouteAuto = document.getElementById("emailRouteAuto");
-const emailRouteManual = document.getElementById("emailRouteManual");
-const manualEmailSelector = document.getElementById("manualEmailSelector");
-const manualDeptSelect = document.getElementById("manualDeptSelect");
-const emailRecipientDept = document.getElementById("emailRecipientDept");
-const emailRecipientAddress = document.getElementById("emailRecipientAddress");
-if (verifiedComplaintId) {
-    document.getElementById("verifiedComplaintId").textContent = verifiedComplaintId;
-    document.getElementById("verifiedComplaintIdText").textContent = verifiedComplaintId;
-    document.getElementById("verifiedPdfPath").textContent = `reports/${verifiedComplaintId}_complaint.pdf`;
-}
-if (verifiedSeverity) {
-    const severityBadge = document.querySelector(".severity-badge");
-    if (severityBadge) severityBadge.lastChild.textContent = ` ${verifiedSeverity}`;
-}
+      // Update severity badge
+      var lvlEl = document.getElementById('severity-display');
+      if (lvlEl) lvlEl.textContent = 'Level ' + level + ' — ' + label;
 
-function syncEmailSelection() {
-    manualEmailSelector.style.display = emailRouteManual.checked ? "block" : "none";
-    const [dept, email] = manualDeptSelect.value.split("|");
-    emailRecipientDept.textContent = dept;
-    emailRecipientAddress.textContent = email;
-}
+      // Update PDF download button
+      var dlBtn = document.getElementById('pdf-download-btn');
+      if (dlBtn) {
+        dlBtn.href = pdfUrl;
+        dlBtn.setAttribute('download', '');
+      }
 
-emailRouteAuto.addEventListener("change", syncEmailSelection);
-emailRouteManual.addEventListener("change", syncEmailSelection);
-manualDeptSelect.addEventListener("change", syncEmailSelection);
-syncEmailSelection();
+      // Update coordinates display
+      var coordEl = document.getElementById('coordinates-display');
+      if (coordEl && lat && lng) {
+        coordEl.textContent = lat + '°N, ' + lng + '°E';
+      } else if (coordEl) {
+        coordEl.textContent = 'Coordinates not available';
+      }
 
-document.getElementById("verifiedDownloadBtn").addEventListener("click", () => {
-    const complaintId = document.getElementById("verifiedComplaintId").textContent.trim();
-    showToast(`PDF report ready: reports/${complaintId}_complaint.pdf`, 'success');
-});
-document.getElementById("verifiedResendBtn").addEventListener("click", async () => {
-    const complaintId = document.getElementById("verifiedComplaintId").textContent.trim();
-    showToast('Sending email for ' + complaintId + '...', 'success');
-    try {
-        const r = await fetch('/api/resend-email/' + encodeURIComponent(complaintId), { method: 'POST' });
-        const d = await r.json();
-        if (d.success) showToast('✅ ' + d.message, 'success');
-        else showToast('❌ ' + (d.error || 'Email failed'), 'error');
-    } catch (e) { showToast('❌ Connection error: ' + e, 'error'); }
-});
-</script>
+      // Update legal draft
+      var draftEl = document.getElementById('legal-draft-display');
+      if (draftEl) draftEl.textContent = draft;
+
+      // Update trust score display
+      var trustEl = document.getElementById('trust-reason-display');
+      if (trustEl) trustEl.textContent = reason;
+    };
+  </script>
 </body>
+
 </html>

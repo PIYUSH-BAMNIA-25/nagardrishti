@@ -16,6 +16,7 @@ import os
 import glob
 import threading
 import numpy as np
+import requests as http_requests
 from dataclasses import dataclass, field
 from typing import Optional, List, Tuple
 
@@ -137,10 +138,66 @@ def annotate_frame(frame, detections, level, label, color, cam_label="", fps=0) 
     return out
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Geolocation Helper
+# ──────────────────────────────────────────────────────────────────────────────
+
+def get_device_location() -> dict:
+    """
+    Gets approximate device location using IP geolocation.
+    No GPS hardware or permissions needed.
+    Returns dict with lat, lng, city, state, display_text.
+    Falls back to Bikaner (project home) if all APIs fail.
+    """
+    apis = [
+        "https://ipapi.co/json/",
+        "https://ip-api.com/json/",
+        "https://ipwho.is/",
+    ]
+    
+    for api_url in apis:
+        try:
+            resp = http_requests.get(api_url, timeout=5)
+            data = resp.json()
+            
+            # Handle different API response formats
+            lat = data.get('latitude') or data.get('lat')
+            lng = data.get('longitude') or data.get('lon') or data.get('lng')
+            city = data.get('city', '')
+            region = (data.get('region') or 
+                     data.get('regionName') or 
+                     data.get('region_name', ''))
+            country = data.get('country_name') or data.get('country', 'India')
+            
+            if lat and lng:
+                display = f"{city}, {region}, {country}".strip(', ')
+                print(f"[NagarDrishti] 📍 Location detected: {display}")
+                return {
+                    "latitude"    : float(lat),
+                    "longitude"   : float(lng),
+                    "city"        : city,
+                    "region"      : region,
+                    "display_text": display,
+                }
+        except Exception as e:
+            print(f"[NagarDrishti] Location API {api_url} failed: {e}")
+            continue
+    
+    # Fallback to Bikaner (project's home city)
+    print("[NagarDrishti] ⚠ Location detection failed — using Bikaner default")
+    return {
+        "latitude"    : 28.0229,
+        "longitude"   : 73.3119,
+        "city"        : "Bikaner",
+        "region"      : "Rajasthan",
+        "display_text": "Bikaner, Rajasthan, India",
+    }
+
+
 # ── Core Detector ─────────────────────────────────────────────────────────────
 class PotholeDetector:
 
-    def __init__(self, conf_threshold: float = 0.35):
+    def __init__(self, conf_threshold: float = 0.45):
         self.model = load_model_from_hf()
         self.conf  = conf_threshold
 
@@ -378,18 +435,115 @@ class PotholeDetector:
 
 # ── Quick Test ─────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    
+    from agents.gateway_agent import GatewayAgent
+    from database.supabase_client import SupabaseClient
 
-    def mock_agent_callback(r: DetectionResult):
-        print("\n" + "=" * 48)
-        print(f"  Camera    : {r.camera_source}")
-        print(f"  Severity  : Level {r.severity_level} — {r.severity_label}")
-        print(f"  Potholes  : {r.pothole_count}")
-        print(f"  Cracks    : {r.crack_count}")
-        print(f"  Confidence: {r.confidence:.0%}")
-        print(f"  Coverage  : {r.coverage_ratio:.1%}")
-        print(f"  Snapshot  : {'✓ Ready' if r.snapshot_b64 else 'None'}")
-        print("=" * 48 + "\n")
+    print("[NagarDrishti] Initializing agents...")
+    gateway = GatewayAgent()
+    db      = SupabaseClient()
+    print("[NagarDrishti] All agents ready ✓")
+
+    # Get device location ONCE at startup
+    print("[NagarDrishti] Detecting device location...")
+    device_location = get_device_location()
+
+    def real_agent_callback(r: DetectionResult):
+        """
+        Real pipeline callback — triggered on Level 2/3 detection.
+        Runs full pipeline and saves verified complaints to Supabase.
+        """
+        print("\n" + "=" * 52)
+        print(f"  [VISION TRIGGER] Level {r.severity_level} — {r.severity_label}")
+        print(f"  Potholes : {r.pothole_count} | Cracks: {r.crack_count}")
+        print(f"  Coverage : {r.coverage_ratio:.1%}")
+        print(f"  Location : {device_location['display_text']}")
+        print(f"  GPS      : {device_location['latitude']:.4f}, {device_location['longitude']:.4f}")
+        print("=" * 52)
+
+        if not r.snapshot_b64:
+            print("  [Skip] No snapshot captured")
+            return
+
+        print("\n  [Pipeline] Running Gateway Agent...")
+
+        try:
+            # Inject GPS location and source into the detection result
+            r.camera_source = device_location['display_text']
+            r.latitude      = device_location['latitude']
+            r.longitude     = device_location['longitude']
+            r.location_text = device_location['display_text']
+
+            # Run full pipeline via gateway. Action Agent will now
+            # have access to the correct coordinates for the PDF.
+            result = gateway.process_vision(r)
+            result.latitude      = device_location['latitude']
+            result.longitude     = device_location['longitude']
+            result.location_text = device_location['display_text']
+
+            print(f"\n  [Result]")
+            print(f"  Complaint ID : {result.complaint_id}")
+            print(f"  Verified     : {result.is_verified}")
+            print(f"  Reason       : {result.veracity_reason[:80]}")
+            print(f"  PDF          : {result.pdf_path}")
+            print(f"  Email Sent   : {result.email_sent}")
+
+            # Save ONLY verified complaints to Supabase
+            if result.is_verified:
+                try:
+                    if result.pdf_path:
+                        import os as _os
+                        pdf_filename = _os.path.basename(result.pdf_path)
+                    else:
+                        pdf_filename = f"{result.complaint_id}_report.pdf"
+
+                    complaint_data = {
+                        "complaint_id"   : result.complaint_id,
+                        "category"       : result.issue_type,
+                        "description"    : result.description,
+                        "severity"       : result.severity_level,
+                        "severity_label" : result.severity_label,
+                        "latitude"       : device_location['latitude'],
+                        "longitude"      : device_location['longitude'],
+                        "location"       : device_location['display_text'],
+                        "status"         : "Pending",
+                        "is_verified"    : True,
+                        "veracity_reason": result.veracity_reason,
+                        "image_url"      : None,
+                        "pdf_url"        : pdf_filename,
+                        "email_sent"     : getattr(result, 'email_sent', False),
+                        "municipal_dept" : result.municipal_dept,
+                        "source"         : "vision_engine",
+                    }
+                    db.insert_complaint(complaint_data)
+                    print(f"\n  ✅ Complaint saved to Supabase!")
+                    print(f"  🗺 Will appear on map at: {device_location['display_text']}")
+                    print(f"  📋 Check history at: http://127.0.0.1:5000/history")
+
+                except Exception as db_err:
+                    print(f"\n  ⚠ Supabase save failed: {db_err}")
+            else:
+                print(f"\n  ❌ Complaint REJECTED — not saved to DB")
+                print(f"  Reason: {result.veracity_reason[:100]}")
+
+        except Exception as e:
+            print(f"\n  [Pipeline Error] {e}")
+            import traceback
+            traceback.print_exc()
 
     camera   = CameraSource.select_from_terminal()
-    detector = PotholeDetector(conf_threshold=0.35)
-    detector.run_live(camera=camera, snapshot_callback=mock_agent_callback)
+    detector = PotholeDetector(conf_threshold=0.45)
+
+    print(f"\n[NagarDrishti] Device location: {device_location['display_text']}")
+    print(f"[NagarDrishti] GPS: {device_location['latitude']:.4f}, {device_location['longitude']:.4f}")
+    print("[NagarDrishti] Starting live detection...")
+    print("[NagarDrishti] S = manual snapshot | Q = quit")
+    print("[NagarDrishti] Auto-triggers on Level 2/3\n")
+
+    detector.run_live(
+        camera            = camera,
+        snapshot_callback = real_agent_callback,
+        alert_cooldown    = 15,
+    )
