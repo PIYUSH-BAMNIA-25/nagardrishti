@@ -25,6 +25,7 @@
       --primary-light: #e6f5ed;
       --primary-glow: rgba(13, 124, 68, .08);
       --error: #dc2626;
+      --warning: #f59e0b;
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
@@ -218,6 +219,23 @@
 
     .topbar-icon:hover {
       background: var(--bg)
+    }
+
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem
+    }
+
+    .topbar-nav a {
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color var(--transition)
+    }
+
+    .topbar-nav a:hover {
+      color: var(--primary)
     }
 
     .content {
@@ -659,18 +677,30 @@
     <div class="sidebar-footer">
       <div class="sidebar-about">NagarDrishti uses AI to detect road damage, verify photos, draft legal complaints, and
         email them to authorities — all in one click.</div>
-      <a class="sidebar-contact" href="mailto:support@nagardrishti.in">
-        <span class="material-symbols-outlined" style="font-size:16px">mail</span>
-        support@nagardrishti.in
+      <div class="topbar-right">
+        <div class="topbar-icon">
+          <span class="material-symbols-outlined">notifications</span>
+        </div>
+        <div class="topbar-icon">
+          <span class="material-symbols-outlined">settings</span>
+        </div>
+      </div>
+    </header>
       </a>
     </div>
   </aside>
 
   <div class="main">
     <header class="topbar">
+      <div class="topbar-left">
+        <nav class="topbar-nav">
+          <a href="/ai-detection">AI Detection</a>
+          <a href="/manual-report">Manual Report</a>
+          <a href="/complaint-map">Complaint Map</a>
+          <a href="/history">History</a>
+        </nav>
+      </div>
       <div class="topbar-right">
-
-
       </div>
     </header>
 
@@ -679,11 +709,14 @@
       <div class="result-header">
         <div>
           <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.25rem">🏙️ NagarDrishti</h1>
-          <div class="result-id">ID: <span data-complaint-id></span></div>
+          <div class="result-id">ID: <span>{{ complaint.complaint_id or 'Unknown' }}</span></div>
         </div>
         <div class="result-actions">
-          <a href="#" class="btn-filled" id="pdf-download-btn"><span class="material-symbols-outlined"
-              style="font-size:18px">download</span> Download PDF Report</a>
+          {% if complaint.is_verified %}
+          <a href="/reports/{{ complaint.complaint_id }}_report.pdf" class="btn-filled" id="pdf-download-btn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download PDF Report</a>
+          {% else %}
+          <a href="/reports/{{ complaint.complaint_id }}_REJECTED.pdf" class="btn-filled" id="pdf-download-btn"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download PDF Report</a>
+          {% endif %}
           <button class="btn-outline" id="verifiedResendBtn">Re-send Email</button>
         </div>
       </div>
@@ -692,13 +725,20 @@
       <div class="result-grid">
         <div>
           <div class="result-image">
-            <img alt="Uploaded Pothole Image"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuA2cNXqvzNUEcA2qwan-RT0yNpqsZO__1HtfvCaGAmQb7cS9kM0zGopFaTblFm4wxnOiLZrIZ9ytRf6tw5YGYgSXbO69XAHqlwsqCiso_AKu0Hyj26QDzD2Rcf-3vLmA1aEFhtPW8hP1uIpDpztghzZuFAFIdjm90Hc8aV2FoNCqdJN-ytHLhmbADK7ZJHVHdV12p6ThHwHEs8lTuK4MPLGnywTYxteEd3jVVxdt6mSgYG34BCY6s3EiHRji1sqaTzgrciDrHIq8" />
-            <div class="result-image-label">Uploaded Image: MG Road, Pune</div>
+            {% if complaint.image_url %}
+            {% if complaint.image_url.startswith('http') %}
+            <img alt="Complaint Evidence" src="{{ complaint.image_url }}" onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'"/>
+            {% else %}
+            <img alt="Complaint Evidence" src="{{ complaint.image_url }}" onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'"/>
+            {% endif %}
+            <div class="result-image-label">Submitted photo</div>
+            {% else %}
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;font-size:1.5rem;">No Image Available</div>
+            {% endif %}
           </div>
           <div class="result-coords">
             <span class="material-symbols-outlined">location_on</span>
-            Coordinates: <span id="coordinates-display"></span>
+            Coordinates: <span>{{ complaint.latitude or 'N/A' }}°N, {{ complaint.longitude or 'N/A' }}°E</span>
           </div>
         </div>
 
@@ -710,25 +750,24 @@
           <div class="severity-section">
             <div class="severity-header">
               <label>Severity Analysis</label>
-              <div class="severity-badge" id="severity-display"><span class="material-symbols-outlined"
-                  style="font-size:14px">warning</span>
-                Level 3 — High Alert</div>
+              <div class="severity-badge"><span class="material-symbols-outlined" style="font-size:14px">warning</span> Level {{ complaint.severity or 'N/A' }} — {{ complaint.severity_label or 'Unknown' }}</div>
             </div>
             <div class="severity-bar">
-              <div class="severity-fill" style="width:80%"></div>
+              <div class="severity-fill" id="severityFill"></div>
             </div>
+            <script>document.getElementById('severityFill').style.width = '{{ complaint.severity_percent if complaint.severity_percent is not none else "50" }}%';</script>
             <div class="severity-labels"><span>Minor</span><span>Moderate</span><span>Critical</span></div>
           </div>
           <div class="trust-section">
             <div class="trust-header">
               <h4><span class="material-symbols-outlined">analytics</span> AI Trust Score</h4>
-              <div class="trust-score">92<small>/100</small></div>
-            </div>
+              <div class="trust-score">{{ complaint.trust_score or '92' }}<small>/100</small></div>
             <div class="trust-bar">
-              <div class="trust-fill" style="width:92%"></div>
+              <div class="trust-fill" id="trustFill"></div>
             </div>
-            <div class="trust-item" id="trust-reason-display"><span
-                class="material-symbols-outlined">check_circle</span> Analyzing...</div>
+            <script>document.getElementById('trustFill').style.width = '{{ complaint.trust_score or "92" }}%';</script>
+            </div>
+            <div class="trust-item"><span class="material-symbols-outlined">check_circle</span> {{ complaint.veracity_reason or 'AI verification passed' }}</div>
           </div>
         </div>
       </div>
@@ -736,12 +775,10 @@
       <!-- Expanders -->
       <div class="expander">
         <div class="expander-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
-          <div class="expander-header-left"><span class="material-symbols-outlined">description</span> 📜 Generated
-            Legal Complaint</div>
+          <div class="expander-header-left"><span class="material-symbols-outlined">description</span> 📜 Generated Legal Complaint</div>
           <span class="material-symbols-outlined">expand_less</span>
         </div>
-        <div class="expander-body" id="legal-draft-display" style="white-space: pre-wrap;">
-        </div>
+        <div class="expander-body" style="white-space: pre-wrap;">{{ complaint.legal_draft or 'Legal draft not available.' }}</div>
       </div>
 
       <div class="expander">
@@ -750,26 +787,20 @@
           <span class="material-symbols-outlined">expand_more</span>
         </div>
         <div class="expander-body hidden">
-          <div
-            style="margin-bottom:1rem;padding:1rem;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg)">
-            <div
-              style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">
-              Email Routing</div>
+          <div style="margin-bottom:1rem;padding:1rem;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg)">
+            <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Email Routing</div>
             <div style="display:flex;flex-wrap:wrap;gap:.75rem">
-              <label
-                style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
+              <label style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
                 <input checked id="emailRouteAuto" name="emailRouteMode" type="radio" value="auto" />
                 <span style="font-size:.82rem;font-weight:600">Auto Select Department</span>
               </label>
-              <label
-                style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
+              <label style="display:flex;align-items:center;gap:8px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:999px;background:var(--white);cursor:pointer">
                 <input id="emailRouteManual" name="emailRouteMode" type="radio" value="manual" />
                 <span style="font-size:.82rem;font-weight:600">Manual Selection</span>
               </label>
             </div>
             <div id="manualEmailSelector" style="display:none;margin-top:12px">
-              <select id="manualDeptSelect"
-                style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font:inherit;color:var(--text-primary)">
+              <select id="manualDeptSelect" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font:inherit;color:var(--text-primary)">
                 <option value="PWD (Public Works)|tailaung16@gmail.com" selected>PWD (Public Works)</option>
                 <option value="Sanitation Department|tailaung16@gmail.com">Sanitation Department</option>
                 <option value="Electrical Department|tailaung16@gmail.com">Electrical Department</option>
@@ -779,28 +810,24 @@
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
             <div>
-              <div
-                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
-                Recipient Dept</div>
-              <div id="emailRecipientDept" style="font-weight:600;font-family:Inter;font-size:.875rem">PWD (Public
-                Works)</div>
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Recipient Dept</div>
+              <div style="font-weight:600;font-family:Inter;font-size:.875rem">{{ complaint.municipal_dept or 'PWD (Public Works)' }}</div>
             </div>
             <div>
-              <div
-                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
-                Official Email</div>
-              <div id="emailRecipientAddress" style="font-weight:600;font-family:Inter;font-size:.875rem">
-                tailaung16@gmail.com</div>
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Official Email</div>
+              <div style="font-weight:600;font-family:Inter;font-size:.875rem">{{ complaint.dept_email or 'tailaung16@gmail.com' }}</div>
             </div>
             <div>
-              <div
-                style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">
-                Delivery Status</div>
-              <div
-                style="font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px;font-family:Inter;font-size:.875rem">
-                <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Email Sent
-                Successfully
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Delivery Status</div>
+              {% if complaint.email_sent %}
+              <div style="font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px;font-family:Inter;font-size:.875rem">
+                <span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Email Sent Successfully
               </div>
+              {% else %}
+              <div style="font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:4px;font-family:Inter;font-size:.875rem">
+                <span class="material-symbols-outlined" style="font-size:16px">pending</span>Pending
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -815,50 +842,38 @@
   </div>
 
   <script>
-    window.onload = function () {
-      // Read real data from sessionStorage
-      var id = sessionStorage.getItem('lastComplaintId') || 'Unknown';
-      var level = sessionStorage.getItem('lastSeverityLevel') || '?';
-      var label = sessionStorage.getItem('lastSeverityLabel') || 'Unknown';
-      var reason = sessionStorage.getItem('lastVeracityReason') || '';
-      var pdfUrl = sessionStorage.getItem('lastPdfUrl') || '#';
-      var lat = sessionStorage.getItem('lastLatitude') || '';
-      var lng = sessionStorage.getItem('lastLongitude') || '';
-      var draft = sessionStorage.getItem('lastLegalDraft') ||
-        'Legal draft not available';
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.className = 'toast toast-' + type + ' show';
+      t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' + msg;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
 
-      // Update complaint ID everywhere it appears
-      document.querySelectorAll('[data-complaint-id]').forEach(function (el) {
-        el.textContent = id;
+    (async () => {
+      const el = document.getElementById('connIndicator');
+      try {
+        const r = await fetch('/api/complaints');
+        if (r.ok) { el.className = 'conn-indicator conn-ok'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Connected</span>'; }
+        else throw 0;
+      } catch { el.className = 'conn-indicator conn-fail'; el.innerHTML = '<div class="conn-dot"></div><span>Backend Offline</span>'; }
+      setTimeout(() => el.style.opacity = '0', 4000);
+    })();
+
+    document.getElementById("verifiedResendBtn").addEventListener("click", async () => {
+      showToast('Sending email...', 'success');
+      try {
+        const r = await fetch('/api/resend-email/{{ complaint.complaint_id }}', { method: 'POST' });
+        const d = await r.json();
+        if (d.success) showToast('Email sent successfully!', 'success');
+        else showToast('Email failed: ' + (d.error || 'Unknown error'), 'error');
+      } catch (e) { showToast('Connection error: ' + e, 'error'); }
+    });
+
+    document.querySelectorAll('input[name="emailRouteMode"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        document.getElementById('manualEmailSelector').style.display = this.value === 'manual' ? 'block' : 'none';
       });
-
-      // Update severity badge
-      var lvlEl = document.getElementById('severity-display');
-      if (lvlEl) lvlEl.textContent = 'Level ' + level + ' — ' + label;
-
-      // Update PDF download button
-      var dlBtn = document.getElementById('pdf-download-btn');
-      if (dlBtn) {
-        dlBtn.href = pdfUrl;
-        dlBtn.setAttribute('download', '');
-      }
-
-      // Update coordinates display
-      var coordEl = document.getElementById('coordinates-display');
-      if (coordEl && lat && lng) {
-        coordEl.textContent = lat + '°N, ' + lng + '°E';
-      } else if (coordEl) {
-        coordEl.textContent = 'Coordinates not available';
-      }
-
-      // Update legal draft
-      var draftEl = document.getElementById('legal-draft-display');
-      if (draftEl) draftEl.textContent = draft;
-
-      // Update trust score display
-      var trustEl = document.getElementById('trust-reason-display');
-      if (trustEl) trustEl.textContent = reason;
-    };
+    });
   </script>
 </body>
 
