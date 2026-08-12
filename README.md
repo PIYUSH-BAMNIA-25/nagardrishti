@@ -281,7 +281,7 @@ FLASK_DEBUG=false
       <sub>Flask API · Route Design · Database Integration · Email System</sub>
     </td>
     <td align="center">
-      <b>Tanushk Suthar</b><br/>
+      <b>Tansukh Suthar</b><br/>
       🎨 Frontend Developer<br/>
       <sub>UI/UX Design · HTML Templates · Map Integration · Responsive Layout</sub>
     </td>
